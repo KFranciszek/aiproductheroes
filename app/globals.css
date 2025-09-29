@@ -1,0 +1,126 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  /* New design colors */
+  --primary: #9be5a1;
+  --background-light: #f6f8f6;
+  --background-dark: #131f14;
+  --foreground-light: #101922;
+  --foreground-dark: #f6f7f8;
+  --surface-light: #ffffff;
+  --surface-dark: #1a242e;
+  --border-light: #e0e2e7;
+  --border-dark: #2c3640;
+  --muted-light: #6b7280;
+  --muted-dark: #9ca3af;
+  
+  /* Priority colors */
+  --priority-p0: #ef4444;
+  --priority-p1: #f97316;
+  --priority-p2: #eab308;
+  --priority-p3: #22c55e;
+  --priority-p4: #3b82f6;
+  --priority-p5: #8b5cf6;
+  
+  /* Status colors */
+  --status-todo: #9ca3af;
+  --status-in-progress: #3b82f6;
+  --status-in-review: #eab308;
+  --status-done: #22c55e;
+
+  --radius: 1rem;
+  
+  /* Legacy colors for compatibility */
+  --background: var(--background-light);
+  --foreground: var(--foreground-light);
+  --card: var(--surface-light);
+  --card-foreground: var(--foreground-light);
+  --popover: var(--surface-light);
+  --popover-foreground: var(--foreground-light);
+  --primary-foreground: #ffffff;
+  --secondary: #f1f5f9;
+  --secondary-foreground: var(--foreground-light);
+  --muted: #f8fafc;
+  --muted-foreground: var(--muted-light);
+  --accent: #f1f5f9;
+  --accent-foreground: var(--foreground-light);
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --border: var(--border-light);
+  --input: var(--border-light);
+  --ring: var(--primary);
+}
+
+.dark {
+  /* Dark mode variants */
+  --background: var(--background-dark);
+  --foreground: var(--foreground-dark);
+  --card: var(--surface-dark);
+  --card-foreground: var(--foreground-dark);
+  --popover: var(--surface-dark);
+  --popover-foreground: var(--foreground-dark);
+  --primary-foreground: var(--background-dark);
+  --secondary: #1e293b;
+  --secondary-foreground: var(--foreground-dark);
+  --muted: #1e293b;
+  --muted-foreground: var(--muted-dark);
+  --accent: #1e293b;
+  --accent-foreground: var(--foreground-dark);
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --border: var(--border-dark);
+  --input: var(--border-dark);
+  --ring: var(--primary);
+}
+
+@theme inline {
+  --font-display: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  
+  --color-primary: var(--primary);
+  --color-background-light: var(--background-light);
+  --color-background-dark: var(--background-dark);
+  --color-foreground-light: var(--foreground-light);
+  --color-foreground-dark: var(--foreground-dark);
+  --color-surface-light: var(--surface-light);
+  --color-surface-dark: var(--surface-dark);
+  --color-border-light: var(--border-light);
+  --color-border-dark: var(--border-dark);
+  --color-muted-light: var(--muted-light);
+  --color-muted-dark: var(--muted-dark);
+  
+  --color-priority-p0: var(--priority-p0);
+  --color-priority-p1: var(--priority-p1);
+  --color-priority-p2: var(--priority-p2);
+  --color-priority-p3: var(--priority-p3);
+  --color-priority-p4: var(--priority-p4);
+  --color-priority-p5: var(--priority-p5);
+  
+  --color-status-todo: var(--status-todo);
+  --color-status-in-progress: var(--status-in-progress);
+  --color-status-in-review: var(--status-in-review);
+  --color-status-done: var(--status-done);
+  
+  --radius-default: var(--radius);
+  --radius-lg: 2rem;
+  --radius-xl: 3rem;
+  --radius-full: 9999px;
+}
+
+@layer base {
+  * {
+    @apply border-border-light dark:border-border-dark;
+  }
+  body {
+    @apply bg-background-light dark:bg-background-dark text-foreground-light dark:text-foreground-dark;
+    font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  }
+}
+
+.kanban-column {
+  min-width: 280px;
+}
