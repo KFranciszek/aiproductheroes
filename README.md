@@ -1,4 +1,4 @@
-[4 tools called]
+**TaskFlow** — zarządzanie projektami w stylu Linear
 
 # TaskFlow - Aplikacja do zarządzania zadaniami
 
@@ -162,18 +162,3 @@ npm start
 - [ ] System komentarzy
 - [ ] Załączniki do zadań
 
-## Licencja
-
-MIT License
-
-## Wkład w projekt
-
-1. Fork projektu
-2. Stwórz branch dla nowej funkcji
-3. Commit zmiany
-4. Push do branch
-5. Otwórz Pull Request
-
----
-
-**TaskFlow** — zarządzanie projektami w stylu Linear
