@@ -4,17 +4,31 @@ import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { IssueForm } from "./issue-form"
-import type { ViewType, Issue, Sprint } from "@/types"
+import { KeyboardShortcutsHelp } from "./keyboard-shortcuts-help"
+import { TemplateSelector } from "./template-selector"
+import type { ViewType, Issue, Sprint, TaskTemplate } from "@/types"
 
 interface NavigationProps {
   currentView: ViewType
   onViewChange: (view: ViewType) => void
   issues: Issue[]
   sprints: Sprint[]
+  templates: TaskTemplate[]
   onCreateIssue: (issueData: Partial<Issue>) => void
+  onTemplateSelect: (template: TaskTemplate) => void
+  selectedTemplate: TaskTemplate | null
 }
 
-export function Navigation({ currentView, onViewChange, issues, sprints, onCreateIssue }: NavigationProps) {
+export function Navigation({
+  currentView,
+  onViewChange,
+  issues,
+  sprints,
+  templates,
+  onCreateIssue,
+  onTemplateSelect,
+  selectedTemplate
+}: NavigationProps) {
   const activeSprint = sprints.find((sprint) => sprint.status === "Active")
   const activeSprintIssues = issues.filter((issue) => issue.sprintId === activeSprint?.id)
 
@@ -30,6 +44,11 @@ export function Navigation({ currentView, onViewChange, issues, sprints, onCreat
       active: currentView === "issues",
     },
     {
+      id: "favorites" as ViewType,
+      label: "Favorites",
+      active: currentView === "favorites",
+    },
+    {
       id: "sprints" as ViewType,
       label: "Sprints",
       active: currentView === "sprints",
@@ -39,6 +58,11 @@ export function Navigation({ currentView, onViewChange, issues, sprints, onCreat
       label: "Reports",
       active: currentView === "reports",
     },
+    {
+      id: "activity" as ViewType,
+      label: "Activity",
+      active: currentView === "activity",
+    },
   ]
 
   return (
@@ -46,9 +70,13 @@ export function Navigation({ currentView, onViewChange, issues, sprints, onCreat
       <div className="flex items-center gap-6">
         <div className="flex items-center gap-2">
           <svg className="h-6 w-6 text-primary" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 2L2 7V17L12 22L22 17V7L12 2ZM4.5 7.8L12 12.2L19.5 7.8L12 3.4L4.5 7.8Z"></path>
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.94-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+            <circle cx="8" cy="8" r="1" fill="#22c55e"/>
+            <circle cx="16" cy="8" r="1" fill="#22c55e"/>
+            <circle cx="12" cy="12" r="1" fill="#22c55e"/>
+            <path d="M8 8l2 2 4-4" stroke="#22c55e" strokeWidth="1.5" fill="none"/>
           </svg>
-          <h1 className="text-xl font-bold">TaskFlow</h1>
+          <h1 className="text-xl font-bold">BrainTask</h1>
         </div>
         
         <nav className="flex items-center gap-4">
@@ -70,6 +98,24 @@ export function Navigation({ currentView, onViewChange, issues, sprints, onCreat
       </div>
       
       <div className="flex items-center gap-4">
+        <TemplateSelector
+          templates={templates}
+          onSelect={onTemplateSelect}
+        />
+        <KeyboardShortcutsHelp
+          shortcuts={[
+            { key: 'n', ctrl: true, description: 'Nowe zadanie' },
+            { key: 'f', ctrl: true, description: 'Przejdź do zadań' },
+            { key: 's', ctrl: true, description: 'Przejdź do sprintów' },
+            { key: 'r', ctrl: true, description: 'Przejdź do raportów' },
+            { key: '1', alt: true, description: 'Bieżący sprint' },
+            { key: '2', alt: true, description: 'Zadania' },
+            { key: '3', alt: true, description: 'Ulubione' },
+            { key: '4', alt: true, description: 'Sprinty' },
+            { key: '5', alt: true, description: 'Raporty' },
+            { key: '6', alt: true, description: 'Aktywność' }
+          ]}
+        />
         <IssueForm
           sprints={sprints}
           onSubmit={onCreateIssue}

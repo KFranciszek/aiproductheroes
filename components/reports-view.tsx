@@ -1,252 +1,219 @@
-"use client"
-
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Progress } from "@/components/ui/progress"
-import { Badge } from "@/components/ui/badge"
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts"
-import type { Issue, Sprint } from "@/types"
+import React, { useState, useMemo } from 'react';
+import { Issue, Sprint } from '@/types';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
 
 interface ReportsViewProps {
-  issues: Issue[]
-  sprints: Sprint[]
-}
-
-interface EngineerUtilization {
-  name: string
-  totalTasks: number
-  completedTasks: number
-  inProgressTasks: number
-  todoTasks: number
-  utilizationRate: number
-  currentSprintTasks: number
+  issues: Issue[];
+  sprints: Sprint[];
 }
 
 export function ReportsView({ issues, sprints }: ReportsViewProps) {
-  const activeSprint = sprints.find((sprint) => sprint.status === "Active")
+  const [filters, setFilters] = useState({
+    assignee: '',
+    status: '',
+    sprintId: '',
+    priority: ''
+  });
 
-  // Calculate engineer utilization data
-  const engineerStats = calculateEngineerUtilization(issues, activeSprint?.id)
+  // Pobierz unikalnych assignee
+  const uniqueAssignees = useMemo(() => {
+    const assignees = new Set(issues.map(i => i.assignee).filter(Boolean));
+    return Array.from(assignees);
+  }, [issues]);
 
-  // Prepare chart data
-  const utilizationChartData = engineerStats.map((engineer) => ({
-    name: engineer.name,
-    utilization: engineer.utilizationRate,
-    tasks: engineer.totalTasks,
-  }))
+  // Filtrowanie issues
+  const filteredIssues = useMemo(() => {
+    return issues.filter(issue => {
+      if (filters.assignee && filters.assignee !== 'all-assignees' && issue.assignee !== filters.assignee) return false;
+      if (filters.status && filters.status !== 'all-statuses' && issue.status !== filters.status) return false;
+      if (filters.sprintId && filters.sprintId !== 'all-sprints' && issue.sprintId !== filters.sprintId) return false;
+      if (filters.priority && filters.priority !== 'all-priorities' && issue.priority !== filters.priority) return false;
+      return true;
+    });
+  }, [issues, filters]);
 
-  const taskDistributionData = engineerStats.map((engineer) => ({
-    name: engineer.name,
-    completed: engineer.completedTasks,
-    inProgress: engineer.inProgressTasks,
-    todo: engineer.todoTasks,
-  }))
+  // Obliczenia metryk
+  const metrics = useMemo(() => {
+    const total = filteredIssues.length;
+    const completed = filteredIssues.filter(i => i.status === 'Done').length;
+    const inProgress = filteredIssues.filter(i => i.status === 'In Progress').length;
+    const todo = filteredIssues.filter(i => i.status === 'Todo').length;
+    const inReview = filteredIssues.filter(i => i.status === 'In Review').length;
 
-  const overallStats = {
-    totalEngineers: engineerStats.length,
-    averageUtilization: engineerStats.reduce((sum, eng) => sum + eng.utilizationRate, 0) / engineerStats.length,
-    totalActiveTasks: engineerStats.reduce((sum, eng) => sum + eng.inProgressTasks, 0),
-    totalCompletedTasks: engineerStats.reduce((sum, eng) => sum + eng.completedTasks, 0),
-  }
+    return { total, completed, inProgress, todo, inReview };
+  }, [filteredIssues]);
 
-  const pieColors = ["#8884d8", "#82ca9d", "#ffc658", "#ff7c7c"]
+  const exportToCSV = () => {
+    const csvData = filteredIssues.map(issue => ({
+      ID: issue.id,
+      Title: issue.title,
+      Status: issue.status,
+      Priority: issue.priority,
+      Assignee: issue.assignee || 'Unassigned',
+      Sprint: sprints.find(s => s.id === issue.sprintId)?.name || 'No Sprint',
+      Created: issue.createdAt.toISOString().split('T')[0],
+      Updated: issue.updatedAt.toISOString().split('T')[0]
+    }));
+
+    // Tworzenie i pobieranie pliku CSV
+    const headers = Object.keys(csvData[0] || {}).join(',');
+    const rows = csvData.map(row => Object.values(row).join(',')).join('\n');
+    const csvContent = `${headers}\n${rows}`;
+
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `issues-report-${new Date().toISOString().split('T')[0]}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+  };
+
+  const clearFilters = () => {
+    setFilters({
+      assignee: '',
+      status: '',
+      sprintId: '',
+      priority: ''
+    });
+  };
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Raporty Utylizacji Inżynierów</h1>
-          <p className="text-muted-foreground">Analiza poziomu wykorzystania i wydajności zespołu inżynierskiego</p>
-        </div>
-      </div>
-
-      {/* Overview Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Liczba Inżynierów</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{overallStats.totalEngineers}</div>
-            <p className="text-xs text-muted-foreground">Aktywnych członków zespołu</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Średnia Utylizacja</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{overallStats.averageUtilization.toFixed(1)}%</div>
-            <p className="text-xs text-muted-foreground">Ogólny poziom wykorzystania</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Zadania w Toku</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{overallStats.totalActiveTasks}</div>
-            <p className="text-xs text-muted-foreground">Obecnie realizowane</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Ukończone Zadania</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{overallStats.totalCompletedTasks}</div>
-            <p className="text-xs text-muted-foreground">Całkowicie zakończone</p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Engineer Utilization Details */}
+      {/* Filtry */}
       <Card>
         <CardHeader>
-          <CardTitle>Szczegółowa Utylizacja Inżynierów</CardTitle>
-          <CardDescription>Poziom wykorzystania każdego członka zespołu z podziałem na statusy zadań</CardDescription>
+          <CardTitle>Filters</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-6">
-            {engineerStats.map((engineer) => (
-              <div key={engineer.name} className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <h3 className="font-medium">{engineer.name}</h3>
-                    <Badge variant="outline">{engineer.utilizationRate.toFixed(1)}% utylizacji</Badge>
-                  </div>
-                  <div className="text-sm text-muted-foreground">{engineer.totalTasks} zadań łącznie</div>
-                </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <Select value={filters.assignee} onValueChange={(value) => setFilters(prev => ({ ...prev, assignee: value }))}>
+              <SelectTrigger>
+                <SelectValue placeholder="Filter by assignee" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all-assignees">All Assignees</SelectItem>
+                {uniqueAssignees.map(assignee => (
+                  <SelectItem key={assignee} value={assignee!}>
+                    {assignee}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
 
-                <Progress value={engineer.utilizationRate} className="h-2" />
+            <Select value={filters.status} onValueChange={(value) => setFilters(prev => ({ ...prev, status: value }))}>
+              <SelectTrigger>
+                <SelectValue placeholder="Filter by status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all-statuses">All Statuses</SelectItem>
+                <SelectItem value="Todo">Todo</SelectItem>
+                <SelectItem value="In Progress">In Progress</SelectItem>
+                <SelectItem value="In Review">In Review</SelectItem>
+                <SelectItem value="Done">Done</SelectItem>
+              </SelectContent>
+            </Select>
 
-                <div className="flex gap-4 text-sm">
-                  <span className="flex items-center gap-1">
-                    <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                    Ukończone: {engineer.completedTasks}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <div className="w-3 h-3 bg-blue-500 rounded-full"></div>W toku: {engineer.inProgressTasks}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <div className="w-3 h-3 bg-gray-400 rounded-full"></div>
-                    Do zrobienia: {engineer.todoTasks}
-                  </span>
-                  {activeSprint && (
-                    <span className="flex items-center gap-1">
-                      <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
-                      Aktualny sprint: {engineer.currentSprintTasks}
-                    </span>
-                  )}
-                </div>
-              </div>
-            ))}
+            <Select value={filters.sprintId} onValueChange={(value) => setFilters(prev => ({ ...prev, sprintId: value }))}>
+              <SelectTrigger>
+                <SelectValue placeholder="Filter by sprint" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all-sprints">All Sprints</SelectItem>
+                {sprints.map(sprint => (
+                  <SelectItem key={sprint.id} value={sprint.id}>
+                    {sprint.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <Select value={filters.priority} onValueChange={(value) => setFilters(prev => ({ ...prev, priority: value }))}>
+              <SelectTrigger>
+                <SelectValue placeholder="Filter by priority" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all-priorities">All Priorities</SelectItem>
+                <SelectItem value="P0">P0</SelectItem>
+                <SelectItem value="P1">P1</SelectItem>
+                <SelectItem value="P2">P2</SelectItem>
+                <SelectItem value="P3">P3</SelectItem>
+                <SelectItem value="P4">P4</SelectItem>
+                <SelectItem value="P5">P5</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex gap-2 mt-4">
+            <Button onClick={exportToCSV} variant="outline">
+              Export to CSV ({filteredIssues.length} issues)
+            </Button>
+            <Button onClick={clearFilters} variant="ghost">
+              Clear Filters
+            </Button>
           </div>
         </CardContent>
       </Card>
 
-      {/* Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* Metryki */}
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
         <Card>
-          <CardHeader>
-            <CardTitle>Wykres Utylizacji</CardTitle>
-            <CardDescription>Poziom wykorzystania każdego inżyniera</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={utilizationChartData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip
-                  formatter={(value, name) => [
-                    name === "utilization" ? `${value}%` : value,
-                    name === "utilization" ? "Utylizacja" : "Zadania",
-                  ]}
-                />
-                <Bar dataKey="utilization" fill="#8884d8" />
-              </BarChart>
-            </ResponsiveContainer>
+          <CardContent className="p-4">
+            <div className="text-2xl font-bold">{metrics.total}</div>
+            <p className="text-sm text-muted-foreground">Total Issues</p>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader>
-            <CardTitle>Rozkład Zadań</CardTitle>
-            <CardDescription>Podział zadań według statusów dla każdego inżyniera</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={taskDistributionData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="completed" stackId="a" fill="#82ca9d" name="Ukończone" />
-                <Bar dataKey="inProgress" stackId="a" fill="#8884d8" name="W toku" />
-                <Bar dataKey="todo" stackId="a" fill="#ffc658" name="Do zrobienia" />
-              </BarChart>
-            </ResponsiveContainer>
+          <CardContent className="p-4">
+            <div className="text-2xl font-bold text-green-600">{metrics.completed}</div>
+            <p className="text-sm text-muted-foreground">Completed</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4">
+            <div className="text-2xl font-bold text-blue-600">{metrics.inProgress}</div>
+            <p className="text-sm text-muted-foreground">In Progress</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4">
+            <div className="text-2xl font-bold text-yellow-600">{metrics.inReview}</div>
+            <p className="text-sm text-muted-foreground">In Review</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4">
+            <div className="text-2xl font-bold text-gray-600">{metrics.todo}</div>
+            <p className="text-sm text-muted-foreground">Todo</p>
           </CardContent>
         </Card>
       </div>
+
+      {/* Aktywne filtry */}
+      {(filters.assignee || filters.status || filters.sprintId || filters.priority) && (
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex flex-wrap gap-2">
+              <span className="text-sm text-muted-foreground">Active filters:</span>
+              {filters.assignee && <Badge variant="secondary">{filters.assignee}</Badge>}
+              {filters.status && <Badge variant="secondary">{filters.status}</Badge>}
+              {filters.sprintId && <Badge variant="secondary">
+                {sprints.find(s => s.id === filters.sprintId)?.name}
+              </Badge>}
+              {filters.priority && <Badge variant="secondary">Priority {filters.priority}</Badge>}
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
-  )
-}
-
-function calculateEngineerUtilization(issues: Issue[], activeSprintId?: string): EngineerUtilization[] {
-  const engineerMap = new Map<string, EngineerUtilization>()
-
-  // Initialize engineers
-  issues.forEach((issue) => {
-    if (issue.assignee && !engineerMap.has(issue.assignee)) {
-      engineerMap.set(issue.assignee, {
-        name: issue.assignee,
-        totalTasks: 0,
-        completedTasks: 0,
-        inProgressTasks: 0,
-        todoTasks: 0,
-        utilizationRate: 0,
-        currentSprintTasks: 0,
-      })
-    }
-  })
-
-  // Calculate stats for each engineer
-  issues.forEach((issue) => {
-    if (!issue.assignee) return
-
-    const engineer = engineerMap.get(issue.assignee)!
-    engineer.totalTasks++
-
-    switch (issue.status) {
-      case "Done":
-        engineer.completedTasks++
-        break
-      case "In Progress":
-        engineer.inProgressTasks++
-        break
-      case "In Review":
-        engineer.inProgressTasks++
-        break
-      case "Todo":
-        engineer.todoTasks++
-        break
-    }
-
-    if (activeSprintId && issue.sprintId === activeSprintId) {
-      engineer.currentSprintTasks++
-    }
-  })
-
-  // Calculate utilization rate (completed + in progress tasks / total tasks * 100)
-  engineerMap.forEach((engineer) => {
-    if (engineer.totalTasks > 0) {
-      engineer.utilizationRate = ((engineer.completedTasks + engineer.inProgressTasks) / engineer.totalTasks) * 100
-    }
-  })
-
-  return Array.from(engineerMap.values()).sort((a, b) => b.utilizationRate - a.utilizationRate)
+  );
 }

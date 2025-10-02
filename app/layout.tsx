@@ -12,7 +12,7 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: "TaskFlow - Current Sprint",
+  title: "BrainTask - Current Sprint",
   description: "A complete task management app with sprints, kanban boards, and issue tracking",
   generator: "v0.app",
 }

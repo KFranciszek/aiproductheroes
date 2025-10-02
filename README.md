@@ -1,8 +1,8 @@
-**TaskFlow** — zarządzanie projektami w stylu Linear
+**BrainTask** — zarządzanie projektami w stylu Linear
 
-# TaskFlow - Aplikacja do zarządzania zadaniami
+# BrainTask - Aplikacja do zarządzania zadaniami
 
-TaskFlow to aplikacja do zarządzania projektami i zadaniami, zbudowana w Next.js z TypeScript. Oferuje narzędzia do sprintów, zadań i zespołów w stylu Linear/Jira.
+BrainTask to aplikacja do zarządzania projektami i zadaniami, zbudowana w Next.js z TypeScript. Oferuje narzędzia do sprintów, zadań i zespołów w stylu Linear/Jira.
 
 ## Funkcjonalności
 
@@ -80,7 +80,7 @@ TaskFlow to aplikacja do zarządzania projektami i zadaniami, zbudowana w Next.j
 ## Struktura projektu
 
 ```
-taskflow/
+braintask/
 ├── app/                    # Next.js App Router
 │   ├── globals.css        # Globalne style
 │   ├── layout.tsx         # Główny layout

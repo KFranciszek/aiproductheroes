@@ -2,11 +2,50 @@
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { IssueForm } from "./issue-form"
-import { Search, Plus, MoreVertical } from "lucide-react"
+import { IssueCard } from "./issue-card"
+import { 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableHead, 
+  TableHeader, 
+  TableRow 
+} from "@/components/ui/table"
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuTrigger 
+} from "@/components/ui/dropdown-menu"
+import { 
+  AlertDialog, 
+  AlertDialogAction, 
+  AlertDialogCancel, 
+  AlertDialogContent, 
+  AlertDialogDescription, 
+  AlertDialogFooter, 
+  AlertDialogHeader, 
+  AlertDialogTitle, 
+  AlertDialogTrigger 
+} from "@/components/ui/alert-dialog"
+import { 
+  Plus, 
+  MoreHorizontal, 
+  Edit, 
+  Trash2, 
+  ArrowUpDown, 
+  Star, 
+  ChevronUp, 
+  ChevronDown 
+} from "lucide-react"
 import { cn } from "@/lib/utils"
+import { SearchBar } from "./search-bar"
+import { IssueAssignmentDialog } from "./issue-assignment-dialog"
+import { FavoriteButton } from "./favorite-button"
+import { priorityColors, statusColors } from "@/lib/data"
+import { SavedFilter } from "@/types"
 import type { Issue, Sprint, Priority, IssueStatus } from "@/types"
 
 interface IssuesListProps {
@@ -16,6 +55,8 @@ interface IssuesListProps {
   onEditIssue: (issue: Issue) => void
   onDeleteIssue: (issueId: string) => void
   onAssignToSprint: (issueId: string, sprintId: string | undefined) => void
+  onToggleFavorite?: (issueId: string) => void
+  onViewDetails?: (issueId: string) => void
 }
 
 export function IssuesList({
@@ -25,25 +66,62 @@ export function IssuesList({
   onEditIssue,
   onDeleteIssue,
   onAssignToSprint,
+  onToggleFavorite,
+  onViewDetails,
 }: IssuesListProps) {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [priorityFilter, setPriorityFilter] = useState<Priority | "all">("all")
-  const [statusFilter, setStatusFilter] = useState<IssueStatus | "all">("all")
-  const [sprintFilter, setSprintFilter] = useState<string>("all")
+  const [filteredIssues, setFilteredIssues] = useState<Issue[]>(issues)
+  const [savedFilters, setSavedFilters] = useState<SavedFilter[]>([])
+  const [sortField, setSortField] = useState<keyof Issue | null>(null)
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
 
-  const filteredIssues = issues.filter((issue) => {
-    const matchesSearch =
-      issue.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      issue.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      issue.assignee.toLowerCase().includes(searchTerm.toLowerCase())
+  const handleFilteredResults = (filtered: Issue[]) => {
+    setFilteredIssues(filtered)
+  }
 
-    const matchesPriority = priorityFilter === "all" || issue.priority === priorityFilter
-    const matchesStatus = statusFilter === "all" || issue.status === statusFilter
-    const matchesSprint =
-      sprintFilter === "all" || (sprintFilter === "backlog" && !issue.sprintId) || issue.sprintId === sprintFilter
+  const handleSaveFilter = (filter: SavedFilter) => {
+    setSavedFilters(prev => [...prev, filter])
+  }
 
-    return matchesSearch && matchesPriority && matchesStatus && matchesSprint
-  })
+  const handleSort = (field: keyof Issue) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')
+    } else {
+      setSortField(field)
+      setSortDirection('asc')
+    }
+  }
+
+  const getSortedIssues = () => {
+    if (!sortField) return filteredIssues
+
+    return [...filteredIssues].sort((a, b) => {
+      const aValue = a[sortField]
+      const bValue = b[sortField]
+      
+      if (aValue === bValue) return 0
+      if (aValue == null) return 1
+      if (bValue == null) return -1
+      
+      if (typeof aValue === 'string' && typeof bValue === 'string') {
+        return sortDirection === 'asc' 
+          ? aValue.localeCompare(bValue)
+          : bValue.localeCompare(aValue)
+      }
+      
+      if (typeof aValue === 'number' && typeof bValue === 'number') {
+        return sortDirection === 'asc' ? aValue - bValue : bValue - aValue
+      }
+      
+      return 0
+    })
+  }
+
+  const getSortIcon = (field: keyof Issue) => {
+    if (sortField !== field) return null
+    return sortDirection === 'asc' ? 
+      <ChevronUp className="h-4 w-4" /> : 
+      <ChevronDown className="h-4 w-4" />
+  }
 
   const getPriorityColor = (priority: Priority) => {
     switch (priority) {
@@ -67,6 +145,8 @@ export function IssuesList({
     }
   }
 
+  const sortedIssues = getSortedIssues()
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -83,172 +163,213 @@ export function IssuesList({
         />
       </div>
 
-      {/* Search Bar */}
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-light dark:text-muted-dark" />
-        <Input
-          placeholder="Search title, description, assignee..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="pl-10 rounded-lg border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark"
-        />
-      </div>
-
-      {/* Filter Buttons */}
-      <div className="space-y-4">
-        {/* Priority Filters */}
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-muted-light dark:text-muted-dark">Priority:</span>
-          <div className="flex gap-2">
-            {["P0", "P1", "P2", "all"].map((priority) => (
-              <button
-                key={priority}
-                onClick={() => setPriorityFilter(priority as Priority | "all")}
-                className={cn(
-                  "px-3 py-1 rounded-full text-xs font-medium transition-colors",
-                  priorityFilter === priority
-                    ? priority === "all" 
-                      ? "bg-primary text-white" 
-                      : getPriorityColor(priority as Priority)
-                    : priority === "all"
-                    ? "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                )}
-              >
-                {priority === "all" ? "All" : priority}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Status Filters */}
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-muted-light dark:text-muted-dark">Status:</span>
-          <div className="flex gap-2">
-            {["Todo", "In Progress", "all"].map((status) => (
-              <button
-                key={status}
-                onClick={() => setStatusFilter(status as IssueStatus | "all")}
-                className={cn(
-                  "px-3 py-1 rounded-full text-xs font-medium transition-colors",
-                  statusFilter === status
-                    ? status === "all" 
-                      ? "bg-primary text-white" 
-                      : getStatusColor(status as IssueStatus)
-                    : status === "all"
-                    ? "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                )}
-              >
-                {status === "all" ? "All" : status}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Sprint Filters */}
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-muted-light dark:text-muted-dark">Sprint:</span>
-          <div className="flex gap-2">
-            <button
-              onClick={() => setSprintFilter("all")}
-              className={cn(
-                "px-3 py-1 rounded-full text-xs font-medium transition-colors",
-                sprintFilter === "all"
-                  ? "bg-primary text-white"
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-              )}
-            >
-              All Sprints
-            </button>
-            <button
-              onClick={() => setSprintFilter("backlog")}
-              className={cn(
-                "px-3 py-1 rounded-full text-xs font-medium transition-colors",
-                sprintFilter === "backlog"
-                  ? "bg-gray-100 text-gray-800"
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-              )}
-            >
-              Backlog
-            </button>
-            {sprints.map((sprint) => (
-              <button
-                key={sprint.id}
-                onClick={() => setSprintFilter(sprint.id)}
-                className={cn(
-                  "px-3 py-1 rounded-full text-xs font-medium transition-colors",
-                  sprintFilter === sprint.id
-                    ? "bg-gray-100 text-gray-800"
-                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                )}
-              >
-                {sprint.name}
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
+      {/* Zaawansowane wyszukiwanie */}
+      <SearchBar
+        issues={issues}
+        onFilteredResults={handleFilteredResults}
+        savedFilters={savedFilters}
+        onSaveFilter={handleSaveFilter}
+      />
 
       {/* Issues Table */}
-      <div className="rounded-xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="border-b border-border-light dark:border-border-dark">
-              <tr>
-                <th className="text-left p-4 font-medium text-muted-light dark:text-muted-dark">ID</th>
-                <th className="text-left p-4 font-medium text-muted-light dark:text-muted-dark">TITLE</th>
-                <th className="text-left p-4 font-medium text-muted-light dark:text-muted-dark">DESCRIPTION</th>
-                <th className="text-left p-4 font-medium text-muted-light dark:text-muted-dark">PRIORITY</th>
-                <th className="text-left p-4 font-medium text-muted-light dark:text-muted-dark">STATUS</th>
-                <th className="text-left p-4 font-medium text-muted-light dark:text-muted-dark">ASSIGNEE</th>
-                <th className="text-left p-4 font-medium text-muted-light dark:text-muted-dark"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredIssues.map((issue, index) => (
-                <tr 
+      <div className="border rounded-lg">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-12"></TableHead>
+              <TableHead 
+                className="cursor-pointer hover:bg-muted/50"
+                onClick={() => handleSort('id')}
+              >
+                <div className="flex items-center gap-2">
+                  ID
+                  {getSortIcon('id')}
+                </div>
+              </TableHead>
+              <TableHead 
+                className="cursor-pointer hover:bg-muted/50"
+                onClick={() => handleSort('title')}
+              >
+                <div className="flex items-center gap-2">
+                  Title
+                  {getSortIcon('title')}
+                </div>
+              </TableHead>
+              <TableHead 
+                className="cursor-pointer hover:bg-muted/50"
+                onClick={() => handleSort('priority')}
+              >
+                <div className="flex items-center gap-2">
+                  Priority
+                  {getSortIcon('priority')}
+                </div>
+              </TableHead>
+              <TableHead 
+                className="cursor-pointer hover:bg-muted/50"
+                onClick={() => handleSort('status')}
+              >
+                <div className="flex items-center gap-2">
+                  Status
+                  {getSortIcon('status')}
+                </div>
+              </TableHead>
+              <TableHead 
+                className="cursor-pointer hover:bg-muted/50"
+                onClick={() => handleSort('assignee')}
+              >
+                <div className="flex items-center gap-2">
+                  Assignee
+                  {getSortIcon('assignee')}
+                </div>
+              </TableHead>
+              <TableHead 
+                className="cursor-pointer hover:bg-muted/50"
+                onClick={() => handleSort('sprintId')}
+              >
+                <div className="flex items-center gap-2">
+                  Sprint
+                  {getSortIcon('sprintId')}
+                </div>
+              </TableHead>
+              <TableHead 
+                className="cursor-pointer hover:bg-muted/50"
+                onClick={() => handleSort('createdAt')}
+              >
+                <div className="flex items-center gap-2">
+                  Created
+                  {getSortIcon('createdAt')}
+                </div>
+              </TableHead>
+              <TableHead className="w-12"></TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {sortedIssues.map((issue) => {
+              const sprint = sprints.find((s) => s.id === issue.sprintId)
+              return (
+                <TableRow 
                   key={issue.id} 
-                  className={cn(
-                    "border-b border-border-light dark:border-border-dark hover:bg-muted/50 transition-colors",
-                    index === filteredIssues.length - 1 && "border-b-0"
-                  )}
+                  className="cursor-pointer hover:bg-muted/50"
+                  onClick={() => onViewDetails?.(issue.id)}
                 >
-                  <td className="p-4 text-sm font-mono text-muted-light dark:text-muted-dark">
+                  <TableCell onClick={(e) => e.stopPropagation()}>
+                    {onToggleFavorite && (
+                      <FavoriteButton
+                        issueId={issue.id}
+                        isFavorite={issue.isFavorite || false}
+                        onToggle={onToggleFavorite}
+                      />
+                    )}
+                  </TableCell>
+                  <TableCell className="font-mono text-sm">
                     {issue.id}
-                  </td>
-                  <td className="p-4 text-sm font-medium">
-                    {issue.title}
-                  </td>
-                  <td className="p-4 text-sm text-muted-light dark:text-muted-dark max-w-xs truncate">
-                    {issue.description}
-                  </td>
-                  <td className="p-4">
-                    <Badge className={getPriorityColor(issue.priority)}>
+                  </TableCell>
+                  <TableCell className="max-w-xs">
+                    <div className="space-y-1">
+                      <div className="font-medium truncate">{issue.title}</div>
+                      {issue.description && (
+                        <div className="text-sm text-muted-foreground line-clamp-1">
+                          {issue.description}
+                        </div>
+                      )}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <Badge className={priorityColors[issue.priority]} variant="secondary">
                       {issue.priority}
                     </Badge>
-                  </td>
-                  <td className="p-4">
-                    <Badge className={getStatusColor(issue.status)}>
+                  </TableCell>
+                  <TableCell>
+                    <Badge className={statusColors[issue.status]} variant="outline">
                       {issue.status}
                     </Badge>
-                  </td>
-                  <td className="p-4 text-sm text-muted-light dark:text-muted-dark">
-                    {issue.assignee || "-"}
-                  </td>
-                  <td className="p-4">
-                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                      <MoreVertical className="h-4 w-4" />
-                    </Button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                  </TableCell>
+                  <TableCell className="text-sm">
+                    {issue.assignee || '-'}
+                  </TableCell>
+                  <TableCell>
+                    {sprint ? (
+                      <Badge variant="secondary" className="text-xs">
+                        {sprint.name}
+                      </Badge>
+                    ) : (
+                      <Badge variant="outline" className="text-xs text-muted-foreground">
+                        Backlog
+                      </Badge>
+                    )}
+                  </TableCell>
+                  <TableCell className="text-sm text-muted-foreground">
+                    {new Date(issue.createdAt).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell onClick={(e) => e.stopPropagation()}>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <IssueForm
+                          issue={issue}
+                          sprints={sprints}
+                          onSubmit={(issueData) => {
+                            const updatedIssue: Issue = { ...issue, ...issueData }
+                            onEditIssue(updatedIssue)
+                          }}
+                          trigger={
+                            <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                              <Edit className="h-4 w-4 mr-2" />
+                              Edit
+                            </DropdownMenuItem>
+                          }
+                        />
+                        <IssueAssignmentDialog
+                          issue={issue}
+                          sprints={sprints}
+                          onAssign={onAssignToSprint}
+                          trigger={
+                            <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                              <ArrowUpDown className="h-4 w-4 mr-2" />
+                              Assign to Sprint
+                            </DropdownMenuItem>
+                          }
+                        />
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                              <Trash2 className="h-4 w-4 mr-2" />
+                              Delete
+                            </DropdownMenuItem>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Delete Issue</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Are you sure you want to delete "{issue.title}"? This action cannot be undone.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction 
+                                onClick={() => onDeleteIssue(issue.id)} 
+                                className="bg-red-500 hover:bg-red-600"
+                              >
+                                Delete
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+              )
+            })}
+          </TableBody>
+        </Table>
       </div>
 
-      {filteredIssues.length === 0 && (
+      {sortedIssues.length === 0 && (
         <div className="text-center py-12">
           <p className="text-muted-foreground">No issues found matching your filters.</p>
         </div>

@@ -11,9 +11,10 @@ interface CurrentSprintViewProps {
   sprint: Sprint | null
   issues: Issue[]
   onUpdateIssueStatus: (issueId: string, newStatus: IssueStatus) => void
+  onViewDetails?: (issueId: string) => void
 }
 
-export function CurrentSprintView({ sprint, issues, onUpdateIssueStatus }: CurrentSprintViewProps) {
+export function CurrentSprintView({ sprint, issues, onUpdateIssueStatus, onViewDetails }: CurrentSprintViewProps) {
   if (!sprint) {
     return (
       <div className="space-y-6">
@@ -104,7 +105,7 @@ export function CurrentSprintView({ sprint, issues, onUpdateIssueStatus }: Curre
         </div>
       </div>
 
-      <KanbanBoard sprint={sprint} issues={issues} onUpdateIssueStatus={onUpdateIssueStatus} />
+      <KanbanBoard sprint={sprint} issues={issues} onUpdateIssueStatus={onUpdateIssueStatus} onViewDetails={onViewDetails} />
     </div>
   )
 }

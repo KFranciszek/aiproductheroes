@@ -15,6 +15,7 @@ interface KanbanBoardProps {
   sprint: Sprint;
   issues: Issue[];
   onUpdateIssueStatus: (issueId: string, newStatus: IssueStatus) => void;
+  onViewDetails?: (issueId: string) => void;
 }
 
 const columns: { id: IssueStatus; title: string; color: string; dotColor: string }[] = [
@@ -48,6 +49,7 @@ export function KanbanBoard({
   sprint,
   issues,
   onUpdateIssueStatus,
+  onViewDetails,
 }: KanbanBoardProps) {
   const [mounted, setMounted] = useState(false);
   const [sprintIssues, setSprintIssues] = useState<Issue[]>([]);
@@ -120,6 +122,10 @@ export function KanbanBoard({
                             className={`rounded-lg border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark p-4 cursor-grab active:cursor-grabbing transition-shadow ${
                               snapshot.isDragging ? "shadow-lg rotate-1" : ""
                             }`}
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              onViewDetails?.(issue.id)
+                            }}
                           >
                             <div className="flex justify-between items-start mb-2">
                               <p className="font-semibold text-sm">{issue.title}</p>

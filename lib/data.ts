@@ -1,4 +1,4 @@
-import type { Issue, Sprint, Priority, IssueStatus } from "@/types"
+import type { Issue, Sprint, Priority, IssueStatus, Comment, TimeEntry, Attachment, ActivityLog, TaskTemplate } from "@/types"
 
 // Priority color mapping
 export const priorityColors: Record<Priority, string> = {
@@ -25,6 +25,24 @@ export const generateTaskId = (existingIssues: Issue[]): string => {
     return num > max ? num : max
   }, 0)
   return `TSK-${String(maxId + 1).padStart(3, "0")}`
+}
+
+// Generate auto-incrementing comment ID
+export const generateCommentId = (existingComments: Comment[]): string => {
+  const maxId = existingComments.reduce((max, comment) => {
+    const num = Number.parseInt(comment.id.replace("comment-", ""))
+    return num > max ? num : max
+  }, 0)
+  return `comment-${String(maxId + 1).padStart(3, "0")}`
+}
+
+// Generate auto-incrementing attachment ID
+export const generateAttachmentId = (existingAttachments: Attachment[]): string => {
+  const maxId = existingAttachments.reduce((max, attachment) => {
+    const num = Number.parseInt(attachment.id.replace("attachment-", ""))
+    return num > max ? num : max
+  }, 0)
+  return `attachment-${String(maxId + 1).padStart(3, "0")}`
 }
 
 // Sample data
@@ -68,6 +86,9 @@ export const initialIssues: Issue[] = [
     status: "Done",
     assignee: "Alice Johnson",
     sprintId: "sprint-1",
+    attachments: [],
+    isFavorite: false,
+    favoritedBy: [],
     createdAt: new Date("2023-12-28"),
     updatedAt: new Date("2024-01-05"),
   },
@@ -79,6 +100,9 @@ export const initialIssues: Issue[] = [
     status: "Done",
     assignee: "Bob Smith",
     sprintId: "sprint-1",
+    attachments: [],
+    isFavorite: true,
+    favoritedBy: ["Alice Johnson", "Charlie Brown"],
     createdAt: new Date("2023-12-29"),
     updatedAt: new Date("2024-01-08"),
   },
@@ -90,6 +114,9 @@ export const initialIssues: Issue[] = [
     status: "Done",
     assignee: "Charlie Brown",
     sprintId: "sprint-1",
+    attachments: [],
+    isFavorite: false,
+    favoritedBy: [],
     createdAt: new Date("2023-12-30"),
     updatedAt: new Date("2024-01-10"),
   },
@@ -103,6 +130,9 @@ export const initialIssues: Issue[] = [
     status: "In Progress",
     assignee: "Alice Johnson",
     sprintId: "sprint-2",
+    attachments: [],
+    isFavorite: true,
+    favoritedBy: ["Alice Johnson"],
     createdAt: new Date("2024-01-10"),
     updatedAt: new Date("2024-01-18"),
   },
@@ -114,6 +144,9 @@ export const initialIssues: Issue[] = [
     status: "In Review",
     assignee: "Bob Smith",
     sprintId: "sprint-2",
+    attachments: [],
+    isFavorite: false,
+    favoritedBy: [],
     createdAt: new Date("2024-01-11"),
     updatedAt: new Date("2024-01-19"),
   },
@@ -125,6 +158,9 @@ export const initialIssues: Issue[] = [
     status: "Todo",
     assignee: "Charlie Brown",
     sprintId: "sprint-2",
+    attachments: [],
+    isFavorite: false,
+    favoritedBy: [],
     createdAt: new Date("2024-01-12"),
     updatedAt: new Date("2024-01-12"),
   },
@@ -136,6 +172,9 @@ export const initialIssues: Issue[] = [
     status: "Todo",
     assignee: "Diana Prince",
     sprintId: "sprint-2",
+    attachments: [],
+    isFavorite: false,
+    favoritedBy: [],
     createdAt: new Date("2024-01-13"),
     updatedAt: new Date("2024-01-13"),
   },
@@ -149,6 +188,9 @@ export const initialIssues: Issue[] = [
     status: "Todo",
     assignee: "Alice Johnson",
     sprintId: "sprint-3",
+    attachments: [],
+    isFavorite: false,
+    favoritedBy: [],
     createdAt: new Date("2024-01-20"),
     updatedAt: new Date("2024-01-20"),
   },
@@ -160,6 +202,9 @@ export const initialIssues: Issue[] = [
     status: "Todo",
     assignee: "Bob Smith",
     sprintId: "sprint-3",
+    attachments: [],
+    isFavorite: false,
+    favoritedBy: [],
     createdAt: new Date("2024-01-21"),
     updatedAt: new Date("2024-01-21"),
   },
@@ -172,6 +217,9 @@ export const initialIssues: Issue[] = [
     priority: "P2",
     status: "Todo",
     assignee: "Charlie Brown",
+    attachments: [],
+    isFavorite: false,
+    favoritedBy: [],
     createdAt: new Date("2024-01-15"),
     updatedAt: new Date("2024-01-15"),
   },
@@ -182,6 +230,9 @@ export const initialIssues: Issue[] = [
     priority: "P3",
     status: "Todo",
     assignee: "Diana Prince",
+    attachments: [],
+    isFavorite: false,
+    favoritedBy: [],
     createdAt: new Date("2024-01-16"),
     updatedAt: new Date("2024-01-16"),
   },
@@ -192,6 +243,9 @@ export const initialIssues: Issue[] = [
     priority: "P4",
     status: "Todo",
     assignee: "Alice Johnson",
+    attachments: [],
+    isFavorite: false,
+    favoritedBy: [],
     createdAt: new Date("2024-01-17"),
     updatedAt: new Date("2024-01-17"),
   },
@@ -202,6 +256,9 @@ export const initialIssues: Issue[] = [
     priority: "P3",
     status: "Todo",
     assignee: "Bob Smith",
+    attachments: [],
+    isFavorite: false,
+    favoritedBy: [],
     createdAt: new Date("2024-01-18"),
     updatedAt: new Date("2024-01-18"),
   },
@@ -212,6 +269,9 @@ export const initialIssues: Issue[] = [
     priority: "P4",
     status: "Todo",
     assignee: "Charlie Brown",
+    attachments: [],
+    isFavorite: false,
+    favoritedBy: [],
     createdAt: new Date("2024-01-19"),
     updatedAt: new Date("2024-01-19"),
   },
@@ -222,6 +282,9 @@ export const initialIssues: Issue[] = [
     priority: "P2",
     status: "Todo",
     assignee: "Diana Prince",
+    attachments: [],
+    isFavorite: false,
+    favoritedBy: [],
     createdAt: new Date("2024-01-20"),
     updatedAt: new Date("2024-01-20"),
   },
@@ -232,7 +295,154 @@ export const initialIssues: Issue[] = [
     priority: "P5",
     status: "Todo",
     assignee: "Alice Johnson",
+    attachments: [],
+    isFavorite: false,
+    favoritedBy: [],
     createdAt: new Date("2024-01-21"),
     updatedAt: new Date("2024-01-21"),
+  },
+]
+
+// Przykładowe komentarze
+export const initialComments: Comment[] = [
+  {
+    id: "comment-1",
+    issueId: "TSK-004",
+    userId: "Alice Johnson",
+    content: "Rozpocząłem pracę nad systemem autoryzacji. Mam już podstawową strukturę.",
+    createdAt: new Date("2024-01-16"),
+    updatedAt: new Date("2024-01-16"),
+  },
+  {
+    id: "comment-2",
+    issueId: "TSK-004",
+    userId: "Bob Smith",
+    content: "@Alice Johnson Świetnie! Pamiętaj o dodaniu testów jednostkowych dla endpointów.",
+    createdAt: new Date("2024-01-17"),
+    updatedAt: new Date("2024-01-17"),
+  },
+  {
+    id: "comment-3",
+    issueId: "TSK-005",
+    userId: "Charlie Brown",
+    content: "Ukończyłem główny layout dashboardu. Czekam na review.",
+    createdAt: new Date("2024-01-18"),
+    updatedAt: new Date("2024-01-18"),
+  },
+]
+
+// Przykładowe wpisy czasu pracy
+export const initialTimeEntries: TimeEntry[] = [
+  {
+    id: "time-1",
+    issueId: "TSK-004",
+    userId: "Alice Johnson",
+    startTime: new Date("2024-01-16T09:00:00"),
+    endTime: new Date("2024-01-16T11:30:00"),
+    duration: 150,
+    description: "Implementacja podstawowej autoryzacji",
+    type: "manual",
+  },
+  {
+    id: "time-2",
+    issueId: "TSK-005",
+    userId: "Bob Smith",
+    startTime: new Date("2024-01-17T14:00:00"),
+    endTime: new Date("2024-01-17T16:45:00"),
+    duration: 165,
+    description: "Tworzenie komponentów nawigacji",
+    type: "manual",
+  },
+]
+
+// Przykładowe załączniki
+export const initialAttachments: Attachment[] = [
+  {
+    id: "attachment-1",
+    issueId: "TSK-005",
+    type: "link",
+    name: "Projekt UI/UX",
+    url: "https://www.figma.com/file/example",
+  },
+  {
+    id: "attachment-2",
+    issueId: "TSK-006",
+    type: "file",
+    name: "API_specification.pdf",
+    url: "/files/api_spec.pdf",
+    size: 245760,
+    mimeType: "application/pdf",
+  },
+]
+
+// Przykładowa historia aktywności
+export const initialActivityLogs: ActivityLog[] = [
+  {
+    id: "activity-1",
+    issueId: "TSK-004",
+    userId: "Alice Johnson",
+    action: "created",
+    newValue: "User authentication system",
+    timestamp: new Date("2024-01-10T10:00:00"),
+  },
+  {
+    id: "activity-2",
+    issueId: "TSK-004",
+    userId: "Alice Johnson",
+    action: "status_changed",
+    oldValue: "Todo",
+    newValue: "In Progress",
+    field: "status",
+    timestamp: new Date("2024-01-16T09:00:00"),
+  },
+  {
+    id: "activity-3",
+    issueId: "TSK-005",
+    userId: "Bob Smith",
+    action: "status_changed",
+    oldValue: "In Progress",
+    newValue: "In Review",
+    field: "status",
+    timestamp: new Date("2024-01-18T15:00:00"),
+  },
+]
+
+// Przykładowe szablony zadań
+export const initialTemplates: TaskTemplate[] = [
+  {
+    id: "template-1",
+    name: "Bug Report",
+    description: "Standardowy szablon dla zgłaszania błędów",
+    category: "Development",
+    fields: {
+      title: "[BUG] ",
+      priority: "P2",
+      status: "Todo",
+      description: "Opisz szczegółowo napotkany błąd...",
+    },
+  },
+  {
+    id: "template-2",
+    name: "Feature Request",
+    description: "Szablon dla nowych funkcjonalności",
+    category: "Product",
+    fields: {
+      title: "[FEATURE] ",
+      priority: "P3",
+      status: "Todo",
+      description: "Opisz proponowaną funkcjonalność...",
+    },
+  },
+  {
+    id: "template-3",
+    name: "Code Review",
+    description: "Szablon dla review kodu",
+    category: "Development",
+    fields: {
+      title: "[REVIEW] ",
+      priority: "P1",
+      status: "In Review",
+      description: "Wymagany review kodu przed mergem...",
+    },
   },
 ]
