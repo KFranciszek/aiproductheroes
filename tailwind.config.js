@@ -18,26 +18,26 @@ module.exports = {
     },
     extend: {
       colors: {
-        // New design colors
-        primary: "#9be5a1",
-        "background-light": "#f6f8f6",
-        "background-dark": "#131f14",
+        // New design colors - Calm by Default
+        primary: "#84a98c", // Szałwiowy zielony - bardziej stonowany
+        "background-light": "#FBFBFA", // Off-white zamiast czystej bieli
+        "background-dark": "#181818", // Ciemny szary zamiast czarnego
         "foreground-light": "#101922",
         "foreground-dark": "#f6f7f8",
         "surface-light": "#ffffff",
-        "surface-dark": "#1a242e",
-        "border-light": "#e0e2e7",
-        "border-dark": "#2c3640",
+        "surface-dark": "#1e1e1e",
+        "border-light": "#e5e7eb",
+        "border-dark": "#2c2c2c",
         "muted-light": "#6b7280",
         "muted-dark": "#9ca3af",
         
-        // Priority colors
-        "priority-p0": "#ef4444",
-        "priority-p1": "#f97316",
-        "priority-p2": "#eab308",
-        "priority-p3": "#22c55e",
-        "priority-p4": "#3b82f6",
-        "priority-p5": "#8b5cf6",
+        // Priority colors - Calm approach (tylko P0/P1 kolorowe)
+        "priority-p0": "#ef4444", // Czerwony - tylko dla krytycznych
+        "priority-p1": "#f97316", // Pomarańczowy - tylko dla wysokich
+        "priority-p2": "#9ca3af", // Szary - neutralny
+        "priority-p3": "#9ca3af", // Szary - neutralny
+        "priority-p4": "#9ca3af", // Szary - neutralny
+        "priority-p5": "#9ca3af", // Szary - neutralny
         
         // Status colors
         "status-todo": "#9ca3af",

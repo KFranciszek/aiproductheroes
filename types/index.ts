@@ -119,7 +119,7 @@ export interface KeyboardShortcut {
   description: string
 }
 
-export type ViewType = "issues" | "current-sprint" | "sprints" | "reports" | "favorites" | "activity"
+export type ViewType = "dashboard" | "issues" | "current-sprint" | "sprints" | "reports" | "favorites" | "activity" | "settings"
 
 // From etap_2.5.md
 export type UserRole = 'Admin' | 'Developer' | 'Designer' | 'Product Owner' | 'Viewer';

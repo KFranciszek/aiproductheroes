@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Navigation } from "@/components/navigation"
+import { SidebarNavigation } from "@/components/sidebar-navigation"
 import { IssuesList } from "@/components/issues-list"
 import { CurrentSprintView } from "@/components/current-sprint-view"
 import { SprintsView } from "@/components/sprints-view"
@@ -9,14 +9,18 @@ import { ReportsView } from "@/components/reports-view"
 import { ActivityView } from "@/components/activity-view"
 import { KeyboardShortcutsHelp } from "@/components/keyboard-shortcuts-help"
 import { DataManager } from "@/components/data-manager"
+import { CommandPalette } from "@/components/command-palette"
+import { PersonalDashboard } from "@/components/personal-dashboard"
+import { SettingsView } from "@/components/settings-view"
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts"
+import { cn } from "@/lib/utils"
 import { initialIssues, initialSprints, initialActivityLogs, initialComments, initialAttachments, initialTemplates, generateTaskId, generateCommentId, generateAttachmentId } from "@/lib/data"
 import { mockData } from "@/lib/mock-data"
 import type { Issue, Sprint, ViewType, IssueStatus, ActivityLog, KeyboardShortcut, Comment, Attachment, TaskTemplate } from "@/types"
 import { IssueDetailView } from "@/components/issue-detail-view"
 
 export default function TaskFlowApp() {
-  const [currentView, setCurrentView] = useState<ViewType>("current-sprint")
+  const [currentView, setCurrentView] = useState<ViewType>("dashboard")
   const [selectedIssueId, setSelectedIssueId] = useState<string | null>(null)
   const [issues, setIssues] = useState<Issue[]>(mockData.issues)
   const [sprints, setSprints] = useState<Sprint[]>(mockData.sprints)
@@ -388,38 +392,16 @@ export default function TaskFlowApp() {
   }
 
   const renderCurrentView = () => {
-    // Jeśli wybrano zadanie, pokaż widok szczegółów
-    if (selectedIssueId) {
-      const issue = issues.find(i => i.id === selectedIssueId)
-      if (!issue) {
-        setSelectedIssueId(null)
-        return null
-      }
-
-      return (
-        <IssueDetailView
-          issue={issue}
-          sprints={sprints}
-          allIssues={issues}
-          comments={comments}
-          attachments={attachments}
-          activities={activities}
-          onBack={handleBackFromDetails}
-          onEdit={handleEditIssue}
-          onDelete={handleDeleteIssue}
-          onToggleFavorite={handleToggleFavorite}
-          onAddComment={handleAddComment}
-          onFileUpload={handleFileUpload}
-          onAddLink={handleAddLink}
-          onDeleteAttachment={handleDeleteAttachment}
-          onTimeLogged={(entry) => {
-            // Tutaj możesz dodać logikę zapisu czasu
-            console.log('Time logged:', entry)
-          }}
-        />
-      )
-    }
     switch (currentView) {
+      case "dashboard":
+        return (
+          <PersonalDashboard
+            issues={issues}
+            sprints={sprints}
+            onNavigate={setCurrentView}
+            onViewIssue={handleViewIssueDetails}
+          />
+        )
       case "issues":
         return (
           <IssuesList
@@ -472,10 +454,10 @@ export default function TaskFlowApp() {
         return <ActivityView activities={activities} />
       case "settings":
         return (
-          <div className="space-y-6">
-            <h1 className="text-2xl font-semibold">Ustawienia</h1>
-            <DataManager onExport={handleExportData} onImport={handleImportData} />
-          </div>
+          <SettingsView 
+            onExport={handleExportData} 
+            onImport={handleImportData} 
+          />
         )
       default:
         return null
@@ -483,8 +465,15 @@ export default function TaskFlowApp() {
   }
 
   return (
-    <div className="flex h-screen flex-col">
-      <Navigation
+    <div className="flex h-screen">
+      <CommandPalette
+        issues={issues}
+        sprints={sprints}
+        onNavigate={setCurrentView}
+        onOpenIssue={handleViewIssueDetails}
+        onCreateIssue={() => setCurrentView('issues')}
+      />
+      <SidebarNavigation
         currentView={currentView}
         onViewChange={setCurrentView}
         issues={issues}
@@ -494,11 +483,54 @@ export default function TaskFlowApp() {
         onTemplateSelect={handleTemplateSelect}
         selectedTemplate={selectedTemplate}
       />
-      <main className="flex-1 overflow-x-auto p-6">
-        <div className="mx-auto max-w-full">
-          {renderCurrentView()}
+      <div className="flex-1 overflow-hidden flex">
+        {/* Main Content Area */}
+        <div className={cn(
+          "transition-all duration-300 overflow-auto p-6",
+          selectedIssueId ? "w-3/5" : "w-full"
+        )}>
+          <div className="mx-auto max-w-full">
+            {renderCurrentView()}
+          </div>
         </div>
-      </main>
+
+        {/* Split View Panel - Issue Details */}
+        {selectedIssueId && (
+          <div className="w-2/5 border-l border-border-light dark:border-border-dark overflow-auto bg-background animate-in slide-in-from-right duration-300">
+            {(() => {
+              const issue = issues.find(i => i.id === selectedIssueId)
+              if (!issue) {
+                setSelectedIssueId(null)
+                return null
+              }
+
+              return (
+                <div className="relative h-full">
+                  <IssueDetailView
+                    issue={issue}
+                    sprints={sprints}
+                    allIssues={issues}
+                    comments={comments}
+                    attachments={attachments}
+                    activities={activities}
+                    onBack={handleBackFromDetails}
+                    onEdit={handleEditIssue}
+                    onDelete={handleDeleteIssue}
+                    onToggleFavorite={handleToggleFavorite}
+                    onAddComment={handleAddComment}
+                    onFileUpload={handleFileUpload}
+                    onAddLink={handleAddLink}
+                    onDeleteAttachment={handleDeleteAttachment}
+                    onTimeLogged={(entry) => {
+                      console.log('Time logged:', entry)
+                    }}
+                  />
+                </div>
+              )
+            })()}
+          </div>
+        )}
+      </div>
     </div>
   )
 }

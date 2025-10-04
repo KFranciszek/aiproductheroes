@@ -18,6 +18,14 @@ interface KanbanBoardProps {
   onViewDetails?: (issueId: string) => void;
 }
 
+// WIP Limits - Work In Progress limits per column
+const WIP_LIMITS: Record<IssueStatus, number | null> = {
+  "Todo": null, // Bez limitu
+  "In Progress": 5, // Max 5 zadań jednocześnie
+  "In Review": 3, // Max 3 w review
+  "Done": null, // Bez limitu
+};
+
 const columns: { id: IssueStatus; title: string; color: string; dotColor: string }[] = [
   { 
     id: "Todo", 
@@ -96,9 +104,23 @@ export function KanbanBoard({
                   <span className={column.dotColor}>●</span> 
                   {column.title}
                 </h2>
-                <span className="text-sm font-medium text-muted-light dark:text-muted-dark">
-                  {columnIssues.length}
-                </span>
+                <div className="flex items-center gap-2">
+                  {WIP_LIMITS[column.id] && columnIssues.length > WIP_LIMITS[column.id]! && (
+                    <Badge variant="destructive" className="text-xs">
+                      ⚠️ {columnIssues.length}/{WIP_LIMITS[column.id]}
+                    </Badge>
+                  )}
+                  {WIP_LIMITS[column.id] && columnIssues.length <= WIP_LIMITS[column.id]! && (
+                    <Badge variant="outline" className="text-xs">
+                      {columnIssues.length}/{WIP_LIMITS[column.id]}
+                    </Badge>
+                  )}
+                  {!WIP_LIMITS[column.id] && (
+                    <span className="text-sm font-medium text-muted-light dark:text-muted-dark">
+                      {columnIssues.length}
+                    </span>
+                  )}
+                </div>
               </div>
 
               <Droppable droppableId={column.id}>
@@ -119,8 +141,8 @@ export function KanbanBoard({
                             ref={provided.innerRef}
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
-                            className={`rounded-lg border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark p-4 cursor-grab active:cursor-grabbing transition-shadow ${
-                              snapshot.isDragging ? "shadow-lg rotate-1" : ""
+                            className={`rounded-lg border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark p-4 cursor-grab active:cursor-grabbing transition-all duration-200 hover:shadow-md hover:scale-[1.02] ${
+                              snapshot.isDragging ? "shadow-lg rotate-2 scale-105" : ""
                             }`}
                             onClick={(e) => {
                               e.stopPropagation()

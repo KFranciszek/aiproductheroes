@@ -3,6 +3,7 @@ import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { Suspense } from "react"
+import { ExtendedThemeProvider } from "@/components/extended-theme-provider"
 import "./globals.css"
 
 const inter = Inter({ 
@@ -23,10 +24,12 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={inter.variable}>
+    <html lang="en" className={inter.variable} suppressHydrationWarning>
       <body className="font-display bg-background-light dark:bg-background-dark text-foreground-light dark:text-foreground-dark">
-        <Suspense fallback={null}>{children}</Suspense>
-        <Analytics />
+        <ExtendedThemeProvider>
+          <Suspense fallback={null}>{children}</Suspense>
+          <Analytics />
+        </ExtendedThemeProvider>
       </body>
     </html>
   )

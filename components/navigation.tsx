@@ -36,6 +36,11 @@ export function Navigation({
 
   const navItems = [
     {
+      id: "dashboard" as ViewType,
+      label: "Dashboard",
+      active: currentView === "dashboard",
+    },
+    {
       id: "current-sprint" as ViewType,
       label: "Current Sprint",
       active: currentView === "current-sprint",

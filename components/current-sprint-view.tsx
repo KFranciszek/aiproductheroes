@@ -3,7 +3,7 @@
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Calendar, Users, Target, MoreHorizontal } from "lucide-react"
+import { Calendar, Users, Target, MoreHorizontal, AlertTriangle, TrendingUp, Clock } from "lucide-react"
 import { KanbanBoard } from "./kanban-board"
 import type { Issue, Sprint, IssueStatus } from "@/types"
 
@@ -52,6 +52,29 @@ export function CurrentSprintView({ sprint, issues, onUpdateIssueStatus, onViewD
   }
 
   const daysRemaining = getDaysRemaining()
+
+  // AI Insights - Smart suggestions
+  const blockedIssues = sprintIssues.filter(i => i.parentId && i.status !== "Done").length
+  const openIssues = sprintIssues.filter(i => i.status !== "Done").length
+  const progressPercentage = sprintIssues.length > 0 ? (completedIssues.length / sprintIssues.length) * 100 : 0
+  
+  const aiInsights = [
+    blockedIssues > 0 && {
+      icon: AlertTriangle,
+      message: `${blockedIssues} ${blockedIssues === 1 ? 'zadanie jest zablokowane' : 'zadania są zablokowane'}`,
+      type: 'warning' as const
+    },
+    daysRemaining < 3 && openIssues > 5 && {
+      icon: Clock,
+      message: `Ryzyko niedokończenia sprintu - ${openIssues} otwartych zadań, ${daysRemaining} dni pozostało`,
+      type: 'error' as const
+    },
+    progressPercentage > 80 && {
+      icon: TrendingUp,
+      message: `Świetny postęp! Sprint jest na dobrej drodze do zakończenia`,
+      type: 'success' as const
+    },
+  ].filter(Boolean)
 
   return (
     <div className="space-y-6">
@@ -105,6 +128,35 @@ export function CurrentSprintView({ sprint, issues, onUpdateIssueStatus, onViewD
           </div>
         </div>
       </div>
+
+      {/* AI Insights */}
+      {aiInsights.length > 0 && (
+        <Card className="border-yellow-200 dark:border-yellow-800 bg-yellow-50 dark:bg-yellow-950/20">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base flex items-center gap-2">
+              💡 AI Insights
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ul className="space-y-2">
+              {aiInsights.map((insight: any, index) => {
+                const Icon = insight.icon
+                const colorClass = 
+                  insight.type === 'error' ? 'text-red-600 dark:text-red-400' :
+                  insight.type === 'warning' ? 'text-yellow-600 dark:text-yellow-400' :
+                  'text-green-600 dark:text-green-400'
+                
+                return (
+                  <li key={index} className="flex items-start gap-2">
+                    <Icon className={`h-4 w-4 mt-0.5 ${colorClass}`} />
+                    <span className="text-sm">{insight.message}</span>
+                  </li>
+                )
+              })}
+            </ul>
+          </CardContent>
+        </Card>
+      )}
 
       <KanbanBoard sprint={sprint} issues={issues} onUpdateIssueStatus={onUpdateIssueStatus} onViewDetails={onViewDetails} />
     </div>
