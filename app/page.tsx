@@ -11,18 +11,19 @@ import { KeyboardShortcutsHelp } from "@/components/keyboard-shortcuts-help"
 import { DataManager } from "@/components/data-manager"
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts"
 import { initialIssues, initialSprints, initialActivityLogs, initialComments, initialAttachments, initialTemplates, generateTaskId, generateCommentId, generateAttachmentId } from "@/lib/data"
+import { mockData } from "@/lib/mock-data"
 import type { Issue, Sprint, ViewType, IssueStatus, ActivityLog, KeyboardShortcut, Comment, Attachment, TaskTemplate } from "@/types"
 import { IssueDetailView } from "@/components/issue-detail-view"
 
 export default function TaskFlowApp() {
   const [currentView, setCurrentView] = useState<ViewType>("current-sprint")
   const [selectedIssueId, setSelectedIssueId] = useState<string | null>(null)
-  const [issues, setIssues] = useState<Issue[]>(initialIssues)
-  const [sprints, setSprints] = useState<Sprint[]>(initialSprints)
-  const [activities, setActivities] = useState<ActivityLog[]>(initialActivityLogs)
-  const [comments, setComments] = useState<Comment[]>(initialComments)
-  const [attachments, setAttachments] = useState<Attachment[]>(initialAttachments)
-  const [templates, setTemplates] = useState<TaskTemplate[]>(initialTemplates)
+  const [issues, setIssues] = useState<Issue[]>(mockData.issues)
+  const [sprints, setSprints] = useState<Sprint[]>(mockData.sprints)
+  const [activities, setActivities] = useState<ActivityLog[]>(mockData.activityLogs)
+  const [comments, setComments] = useState<Comment[]>(mockData.comments)
+  const [attachments, setAttachments] = useState<Attachment[]>(mockData.attachments)
+  const [templates, setTemplates] = useState<TaskTemplate[]>(mockData.taskTemplates)
   const [selectedTemplate, setSelectedTemplate] = useState<TaskTemplate | null>(null)
 
   // Definicja skrótów klawiaturowych

@@ -14,7 +14,7 @@ export function FavoriteButton({ issueId, isFavorite, onToggle }: FavoriteButton
       variant="ghost"
       size="sm"
       onClick={() => onToggle(issueId)}
-      className={`p-1 ${isFavorite ? 'text-yellow-500' : 'text-muted-foreground'}`}
+      className={`p-1 opacity-100 hover:opacity-100 ${isFavorite ? 'text-yellow-500' : 'text-muted-foreground'}`}
     >
       <Star className={`h-4 w-4 ${isFavorite ? 'fill-current' : ''}`} />
     </Button>

@@ -53,7 +53,8 @@ export function SprintsView({
   }
 
   const getDaysRemaining = (sprint: Sprint) => {
-    const today = new Date()
+    // Use a fixed date for consistent server/client rendering
+    const today = new Date('2024-01-20T12:00:00Z')
     const endDate = new Date(sprint.endDate)
     const diffTime = endDate.getTime() - today.getTime()
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))

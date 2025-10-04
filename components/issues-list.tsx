@@ -4,7 +4,10 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { IssueForm } from "./issue-form"
-import { IssueCard } from "./issue-card"
+import { Plus, MoreVertical, Edit, Trash2, Star, StarOff } from "lucide-react"
+import { cn } from "@/lib/utils"
+import { SearchBar } from "./search-bar"
+import { SavedFilter } from "@/types"
 import { 
   Table, 
   TableBody, 
@@ -13,39 +16,6 @@ import {
   TableHeader, 
   TableRow 
 } from "@/components/ui/table"
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuTrigger 
-} from "@/components/ui/dropdown-menu"
-import { 
-  AlertDialog, 
-  AlertDialogAction, 
-  AlertDialogCancel, 
-  AlertDialogContent, 
-  AlertDialogDescription, 
-  AlertDialogFooter, 
-  AlertDialogHeader, 
-  AlertDialogTitle, 
-  AlertDialogTrigger 
-} from "@/components/ui/alert-dialog"
-import { 
-  Plus, 
-  MoreHorizontal, 
-  Edit, 
-  Trash2, 
-  ArrowUpDown, 
-  Star, 
-  ChevronUp, 
-  ChevronDown 
-} from "lucide-react"
-import { cn } from "@/lib/utils"
-import { SearchBar } from "./search-bar"
-import { IssueAssignmentDialog } from "./issue-assignment-dialog"
-import { FavoriteButton } from "./favorite-button"
-import { priorityColors, statusColors } from "@/lib/data"
-import { SavedFilter } from "@/types"
 import type { Issue, Sprint, Priority, IssueStatus } from "@/types"
 
 interface IssuesListProps {
@@ -55,8 +25,8 @@ interface IssuesListProps {
   onEditIssue: (issue: Issue) => void
   onDeleteIssue: (issueId: string) => void
   onAssignToSprint: (issueId: string, sprintId: string | undefined) => void
-  onToggleFavorite?: (issueId: string) => void
-  onViewDetails?: (issueId: string) => void
+  onToggleFavorite: (issueId: string) => void
+  onViewDetails: (issueId: string) => void
 }
 
 export function IssuesList({
@@ -71,8 +41,6 @@ export function IssuesList({
 }: IssuesListProps) {
   const [filteredIssues, setFilteredIssues] = useState<Issue[]>(issues)
   const [savedFilters, setSavedFilters] = useState<SavedFilter[]>([])
-  const [sortField, setSortField] = useState<keyof Issue | null>(null)
-  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
 
   const handleFilteredResults = (filtered: Issue[]) => {
     setFilteredIssues(filtered)
@@ -80,47 +48,6 @@ export function IssuesList({
 
   const handleSaveFilter = (filter: SavedFilter) => {
     setSavedFilters(prev => [...prev, filter])
-  }
-
-  const handleSort = (field: keyof Issue) => {
-    if (sortField === field) {
-      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')
-    } else {
-      setSortField(field)
-      setSortDirection('asc')
-    }
-  }
-
-  const getSortedIssues = () => {
-    if (!sortField) return filteredIssues
-
-    return [...filteredIssues].sort((a, b) => {
-      const aValue = a[sortField]
-      const bValue = b[sortField]
-      
-      if (aValue === bValue) return 0
-      if (aValue == null) return 1
-      if (bValue == null) return -1
-      
-      if (typeof aValue === 'string' && typeof bValue === 'string') {
-        return sortDirection === 'asc' 
-          ? aValue.localeCompare(bValue)
-          : bValue.localeCompare(aValue)
-      }
-      
-      if (typeof aValue === 'number' && typeof bValue === 'number') {
-        return sortDirection === 'asc' ? aValue - bValue : bValue - aValue
-      }
-      
-      return 0
-    })
-  }
-
-  const getSortIcon = (field: keyof Issue) => {
-    if (sortField !== field) return null
-    return sortDirection === 'asc' ? 
-      <ChevronUp className="h-4 w-4" /> : 
-      <ChevronDown className="h-4 w-4" />
   }
 
   const getPriorityColor = (priority: Priority) => {
@@ -144,8 +71,6 @@ export function IssuesList({
       default: return "bg-gray-100 text-gray-800"
     }
   }
-
-  const sortedIssues = getSortedIssues()
 
   return (
     <div className="space-y-6">
@@ -172,195 +97,99 @@ export function IssuesList({
       />
 
       {/* Issues Table */}
-      <div className="border rounded-lg">
+      <div className="rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-12"></TableHead>
-              <TableHead 
-                className="cursor-pointer hover:bg-muted/50"
-                onClick={() => handleSort('id')}
-              >
-                <div className="flex items-center gap-2">
-                  ID
-                  {getSortIcon('id')}
-                </div>
-              </TableHead>
-              <TableHead 
-                className="cursor-pointer hover:bg-muted/50"
-                onClick={() => handleSort('title')}
-              >
-                <div className="flex items-center gap-2">
-                  Title
-                  {getSortIcon('title')}
-                </div>
-              </TableHead>
-              <TableHead 
-                className="cursor-pointer hover:bg-muted/50"
-                onClick={() => handleSort('priority')}
-              >
-                <div className="flex items-center gap-2">
-                  Priority
-                  {getSortIcon('priority')}
-                </div>
-              </TableHead>
-              <TableHead 
-                className="cursor-pointer hover:bg-muted/50"
-                onClick={() => handleSort('status')}
-              >
-                <div className="flex items-center gap-2">
-                  Status
-                  {getSortIcon('status')}
-                </div>
-              </TableHead>
-              <TableHead 
-                className="cursor-pointer hover:bg-muted/50"
-                onClick={() => handleSort('assignee')}
-              >
-                <div className="flex items-center gap-2">
-                  Assignee
-                  {getSortIcon('assignee')}
-                </div>
-              </TableHead>
-              <TableHead 
-                className="cursor-pointer hover:bg-muted/50"
-                onClick={() => handleSort('sprintId')}
-              >
-                <div className="flex items-center gap-2">
-                  Sprint
-                  {getSortIcon('sprintId')}
-                </div>
-              </TableHead>
-              <TableHead 
-                className="cursor-pointer hover:bg-muted/50"
-                onClick={() => handleSort('createdAt')}
-              >
-                <div className="flex items-center gap-2">
-                  Created
-                  {getSortIcon('createdAt')}
-                </div>
-              </TableHead>
-              <TableHead className="w-12"></TableHead>
+              <TableHead className="w-[50px]">ID</TableHead>
+              <TableHead>Title</TableHead>
+              <TableHead>Priority</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Assignee</TableHead>
+              <TableHead>Sprint</TableHead>
+              <TableHead>Story Points</TableHead>
+              <TableHead className="w-[100px]">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {sortedIssues.map((issue) => {
-              const sprint = sprints.find((s) => s.id === issue.sprintId)
+            {filteredIssues.map((issue) => {
+              const sprint = sprints.find(s => s.id === issue.sprintId)
               return (
                 <TableRow 
-                  key={issue.id} 
+                  key={issue.id}
                   className="cursor-pointer hover:bg-muted/50"
-                  onClick={() => onViewDetails?.(issue.id)}
+                  onClick={() => onViewDetails(issue.id)}
                 >
-                  <TableCell onClick={(e) => e.stopPropagation()}>
-                    {onToggleFavorite && (
-                      <FavoriteButton
-                        issueId={issue.id}
-                        isFavorite={issue.isFavorite || false}
-                        onToggle={onToggleFavorite}
-                      />
-                    )}
-                  </TableCell>
-                  <TableCell className="font-mono text-sm">
-                    {issue.id}
-                  </TableCell>
-                  <TableCell className="max-w-xs">
-                    <div className="space-y-1">
-                      <div className="font-medium truncate">{issue.title}</div>
-                      {issue.description && (
-                        <div className="text-sm text-muted-foreground line-clamp-1">
-                          {issue.description}
-                        </div>
+                  <TableCell className="font-medium">{issue.id}</TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium">{issue.title}</span>
+                      {issue.isFavorite && (
+                        <Star className="h-4 w-4 text-yellow-500 fill-current" />
                       )}
                     </div>
+                    {issue.description && (
+                      <p className="text-sm text-muted-foreground mt-1 line-clamp-1">
+                        {issue.description}
+                      </p>
+                    )}
                   </TableCell>
                   <TableCell>
-                    <Badge className={priorityColors[issue.priority]} variant="secondary">
+                    <Badge className={getPriorityColor(issue.priority)}>
                       {issue.priority}
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    <Badge className={statusColors[issue.status]} variant="outline">
+                    <Badge className={getStatusColor(issue.status)}>
                       {issue.status}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-sm">
-                    {issue.assignee || '-'}
-                  </TableCell>
+                  <TableCell>{issue.assignee}</TableCell>
                   <TableCell>
                     {sprint ? (
-                      <Badge variant="secondary" className="text-xs">
-                        {sprint.name}
-                      </Badge>
+                      <Badge variant="secondary">{sprint.name}</Badge>
                     ) : (
-                      <Badge variant="outline" className="text-xs text-muted-foreground">
-                        Backlog
-                      </Badge>
+                      <Badge variant="outline">Backlog</Badge>
                     )}
                   </TableCell>
-                  <TableCell className="text-sm text-muted-foreground">
-                    {new Date(issue.createdAt).toLocaleDateString()}
-                  </TableCell>
-                  <TableCell onClick={(e) => e.stopPropagation()}>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <IssueForm
-                          issue={issue}
-                          sprints={sprints}
-                          onSubmit={(issueData) => {
-                            const updatedIssue: Issue = { ...issue, ...issueData }
-                            onEditIssue(updatedIssue)
-                          }}
-                          trigger={
-                            <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                              <Edit className="h-4 w-4 mr-2" />
-                              Edit
-                            </DropdownMenuItem>
-                          }
-                        />
-                        <IssueAssignmentDialog
-                          issue={issue}
-                          sprints={sprints}
-                          onAssign={onAssignToSprint}
-                          trigger={
-                            <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                              <ArrowUpDown className="h-4 w-4 mr-2" />
-                              Assign to Sprint
-                            </DropdownMenuItem>
-                          }
-                        />
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                              <Trash2 className="h-4 w-4 mr-2" />
-                              Delete
-                            </DropdownMenuItem>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>Delete Issue</AlertDialogTitle>
-                              <AlertDialogDescription>
-                                Are you sure you want to delete "{issue.title}"? This action cannot be undone.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>Cancel</AlertDialogCancel>
-                              <AlertDialogAction 
-                                onClick={() => onDeleteIssue(issue.id)} 
-                                className="bg-red-500 hover:bg-red-600"
-                              >
-                                Delete
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                  <TableCell>{issue.storyPoints}</TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-1">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          onToggleFavorite(issue.id)
+                        }}
+                      >
+                        {issue.isFavorite ? (
+                          <StarOff className="h-4 w-4" />
+                        ) : (
+                          <Star className="h-4 w-4" />
+                        )}
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          onEditIssue(issue)
+                        }}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          onDeleteIssue(issue.id)
+                        }}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               )
@@ -369,7 +198,7 @@ export function IssuesList({
         </Table>
       </div>
 
-      {sortedIssues.length === 0 && (
+      {filteredIssues.length === 0 && (
         <div className="text-center py-12">
           <p className="text-muted-foreground">No issues found matching your filters.</p>
         </div>

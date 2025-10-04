@@ -1,11 +1,12 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { Plus } from "lucide-react"
+import { Plus, Menu } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { IssueForm } from "./issue-form"
 import { KeyboardShortcutsHelp } from "./keyboard-shortcuts-help"
 import { TemplateSelector } from "./template-selector"
+import { useState } from "react"
 import type { ViewType, Issue, Sprint, TaskTemplate } from "@/types"
 
 interface NavigationProps {
@@ -29,6 +30,7 @@ export function Navigation({
   onTemplateSelect,
   selectedTemplate
 }: NavigationProps) {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const activeSprint = sprints.find((sprint) => sprint.status === "Active")
   const activeSprintIssues = issues.filter((issue) => issue.sprintId === activeSprint?.id)
 
@@ -79,7 +81,19 @@ export function Navigation({
           <h1 className="text-xl font-bold">BrainTask</h1>
         </div>
         
-        <nav className="flex items-center gap-4">
+        {/* Mobile menu button */}
+        <Button
+          variant="ghost"
+          size="icon"
+          className="md:hidden"
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        >
+          <Menu className="h-5 w-5" />
+          <span className="sr-only">Toggle menu</span>
+        </Button>
+        
+        {/* Desktop navigation */}
+        <nav className="hidden md:flex items-center gap-4">
           {navItems.map((item) => (
             <button
               key={item.id}
@@ -128,6 +142,31 @@ export function Navigation({
         />
         <div className="h-10 w-10 rounded-full bg-cover bg-center" style={{backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuBZ3mp4fJA4ACTLlujOEomAklJD1C4F7wHqYnuc9EyLmmM2LLX5m9CA8HEEu_USv4GeA0bwsXlxoxq5l-jLhCwJhVxktyDj6i7UUbQlxpd2flzx9HCSHOr8y4V7PsBZBf99cUfyM_WGNpzkXRFksZHXCnNtLelekaOdVUjeCjn9NaNo4DpxdZ5GKup_8m34mWiGqvNjNKzTnHrYz97UuCtOZLNkhYammJX9wyWIKFDvAwq5Kr0YD0uQL3wQ2m0k8oQS79QdOCTXZGNL")'}}></div>
       </div>
+      
+      {/* Mobile menu dropdown */}
+      {isMobileMenuOpen && (
+        <div className="absolute top-16 left-0 right-0 bg-background-light dark:bg-background-dark border-b border-border-light dark:border-border-dark shadow-lg md:hidden z-50">
+          <nav className="flex flex-col p-4 space-y-2">
+            {navItems.map((item) => (
+              <button
+                key={item.id}
+                onClick={() => {
+                  onViewChange(item.id)
+                  setIsMobileMenuOpen(false)
+                }}
+                className={cn(
+                  "text-left px-3 py-2 text-sm font-medium transition-colors rounded-md",
+                  item.active 
+                    ? "text-foreground-light dark:text-foreground-dark bg-accent" 
+                    : "text-muted-light dark:text-muted-dark hover:text-foreground-light dark:hover:text-foreground-dark hover:bg-accent"
+                )}
+              >
+                {item.label}
+              </button>
+            ))}
+          </nav>
+        </div>
+      )}
     </header>
   )
 }

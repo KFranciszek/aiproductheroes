@@ -12,6 +12,8 @@ export interface Issue {
   description?: string
   priority: Priority
   status: IssueStatus
+  storyPoints?: number // Story Points dla zadania
+  type?: 'Bug' | 'Feature' | 'Chore' // Typ zadania
   assignee?: string
   sprintId?: string
   parentId?: string // Dla hierarchii zadań
@@ -19,6 +21,7 @@ export interface Issue {
   attachments: Attachment[] // Załączniki
   isFavorite?: boolean // Ulubione zadanie
   favoritedBy?: string[] // Lista użytkowników, którzy dodali do ulubionych
+  statusHistory?: { status: IssueStatus; date: Date }[] // Historia zmian statusu
   createdAt: Date
   updatedAt: Date
 }
@@ -29,6 +32,8 @@ export interface Sprint {
   status: SprintStatus
   startDate: Date
   endDate: Date
+  velocity?: number
+  capacity?: number
   createdAt: Date
   updatedAt: Date
 }
@@ -115,6 +120,27 @@ export interface KeyboardShortcut {
 }
 
 export type ViewType = "issues" | "current-sprint" | "sprints" | "reports" | "favorites" | "activity"
+
+// From etap_2.5.md
+export type UserRole = 'Admin' | 'Developer' | 'Designer' | 'Product Owner' | 'Viewer';
+
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  avatar?: string;
+  role: UserRole;
+  skills: string[];
+  capacity: number; // hours per day
+  isActive: boolean;
+  joinedAt: Date;
+  lastSeen?: Date;
+}
+
+export interface Permission {
+  resource: string;
+  action: 'create' | 'read' | 'update' | 'delete';
+}
 
 // Funkcja pomocnicza do obliczania progresu zadań
 export function calculateProgress(issue: Issue, allIssues: Issue[]): number {
