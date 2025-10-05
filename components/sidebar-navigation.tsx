@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 import { IssueForm } from "./issue-form"
-import { ThemeSelector } from "./theme-selector"
 import { 
   LayoutDashboard,
   Target,
@@ -19,7 +18,7 @@ import {
   ChevronRight,
   HelpCircle
 } from "lucide-react"
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import type { ViewType, Issue, Sprint, TaskTemplate } from "@/types"
 
 interface SidebarNavigationProps {
@@ -62,6 +61,17 @@ export function SidebarNavigation({
 
   const activeSprint = sprints.find((sprint) => sprint.status === "Active")
 
+  // Memoize badge calculations to prevent hydration mismatch
+  const openIssuesCount = useMemo(() => 
+    issues.filter(i => i.status !== "Done").length, 
+    [issues]
+  )
+  
+  const favoritesCount = useMemo(() => 
+    issues.filter(i => i.isFavorite).length, 
+    [issues]
+  )
+
   const navItems = [
     {
       id: "dashboard" as ViewType,
@@ -80,14 +90,14 @@ export function SidebarNavigation({
       label: "Issues",
       icon: ListTodo,
       active: currentView === "issues",
-      badge: issues.filter(i => i.status !== "Done").length,
+      badge: openIssuesCount,
     },
     {
       id: "favorites" as ViewType,
       label: "Favorites",
       icon: Star,
       active: currentView === "favorites",
-      badge: issues.filter(i => i.isFavorite).length,
+      badge: favoritesCount,
     },
     {
       id: "sprints" as ViewType,
@@ -120,10 +130,15 @@ export function SidebarNavigation({
       <div className="h-16 flex items-center justify-between px-4 border-b border-border-light dark:border-border-dark">
         {!isCollapsed && (
           <div className="flex items-center gap-2">
-            <svg className="h-6 w-6 text-primary" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.94-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+            <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              {/* Three celestial bodies in alignment - Syzygy */}
+              <circle cx="6" cy="12" r="3" fill="#3b82f6" opacity="0.8"/>
+              <circle cx="12" cy="12" r="3" fill="#8b5cf6" opacity="0.9"/>
+              <circle cx="18" cy="12" r="3" fill="#10b981" opacity="0.8"/>
+              {/* Alignment line */}
+              <line x1="3" y1="12" x2="21" y2="12" stroke="currentColor" strokeWidth="0.5" opacity="0.3"/>
             </svg>
-            <h1 className="text-lg font-bold">TaskFlow</h1>
+            <h1 className="text-lg font-bold">Syzio</h1>
           </div>
         )}
         <Button
@@ -218,15 +233,12 @@ export function SidebarNavigation({
           {!isCollapsed && <span className="flex-1 text-left">Settings</span>}
         </Button>
 
-        {/* Theme Selector & Help */}
-        <div className="flex gap-2">
-          <ThemeSelector />
-          {!isCollapsed && (
-            <Button variant="ghost" size="icon" title="Keyboard Shortcuts">
-              <HelpCircle className="h-5 w-5" />
-            </Button>
-          )}
-        </div>
+        {/* Help */}
+        {!isCollapsed && (
+          <Button variant="ghost" size="icon" title="Keyboard Shortcuts">
+            <HelpCircle className="h-5 w-5" />
+          </Button>
+        )}
       </div>
     </aside>
   )

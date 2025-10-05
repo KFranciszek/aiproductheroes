@@ -68,25 +68,27 @@ export function IssuesList({
     setSavedFilters(prev => [...prev, filter])
   }
 
-  const getPriorityColor = (priority: Priority) => {
+  // Precision + Signals: Priority badges (hybrid approach)
+  const getPriorityVariant = (priority: Priority) => {
     switch (priority) {
-      case "P0": return "bg-priority-p0 text-white"
-      case "P1": return "bg-priority-p1 text-white"
-      case "P2": return "bg-priority-p2 text-white"
-      case "P3": return "bg-priority-p3 text-white"
-      case "P4": return "bg-priority-p4 text-white"
-      case "P5": return "bg-priority-p5 text-white"
-      default: return "bg-gray-100 text-gray-800"
+      case "P0": return "p0"  // RED signal + pulse animation
+      case "P1": return "p1"  // ORANGE signal
+      case "P2": 
+      case "P3": 
+      case "P4": 
+      case "P5": return "p2"  // NEUTRAL (no signal)
+      default: return "neutral"
     }
   }
 
-  const getStatusColor = (status: IssueStatus) => {
+  // monday.com-style: Status badges with strong color signals
+  const getStatusVariant = (status: IssueStatus) => {
     switch (status) {
-      case "Todo": return "bg-gray-100 text-gray-800"
-      case "In Progress": return "bg-blue-100 text-blue-800"
-      case "In Review": return "bg-yellow-100 text-yellow-800"
-      case "Done": return "bg-green-100 text-green-800"
-      default: return "bg-gray-100 text-gray-800"
+      case "Todo": return "neutral"      // Gray - inactive
+      case "In Progress": return "info"  // Blue - active work
+      case "In Review": return "warning" // Yellow - attention needed
+      case "Done": return "success"      // Green - completed
+      default: return "neutral"
     }
   }
 
@@ -155,7 +157,7 @@ export function IssuesList({
             return (
               <Card 
                 key={issue.id} 
-                className="hover:shadow-lg transition-all duration-200 hover:scale-[1.01] cursor-pointer"
+                className="hover:shadow-lg transition-productive hover:scale-[1.01] cursor-pointer bg-surface-1 dark:bg-surface-1"
                 onClick={() => onViewDetails(issue.id)}
               >
                 <CardContent className="p-6">
@@ -212,10 +214,10 @@ export function IssuesList({
                     </div>
                   </div>
                   <div className="flex flex-wrap items-center gap-2">
-                    <Badge className={getPriorityColor(issue.priority)}>
+                    <Badge variant={getPriorityVariant(issue.priority) as any}>
                       {issue.priority}
                     </Badge>
-                    <Badge className={getStatusColor(issue.status)}>
+                    <Badge variant={getStatusVariant(issue.status) as any}>
                       {issue.status}
                     </Badge>
                     {sprint ? (
@@ -253,14 +255,14 @@ export function IssuesList({
             {filteredIssues.map((issue) => {
               const sprint = sprints.find(s => s.id === issue.sprintId)
               return (
-                <TableRow 
-                  key={issue.id}
-                  className={cn(
-                    "cursor-pointer hover:bg-muted/50 transition-colors duration-150",
-                    density === 'compact' && "text-sm"
-                  )}
-                  onClick={() => onViewDetails(issue.id)}
-                >
+                  <TableRow
+                    key={issue.id}
+                    className={cn(
+                      "cursor-pointer hover:bg-surface-2 dark:hover:bg-surface-2 transition-productive",
+                      density === 'compact' && "text-sm"
+                    )}
+                    onClick={() => onViewDetails(issue.id)}
+                  >
                   <TableCell className={cn(
                     "font-medium",
                     density === 'compact' && "py-2"
@@ -281,12 +283,12 @@ export function IssuesList({
                     )}
                   </TableCell>
                   <TableCell className={density === 'compact' ? "py-2" : ""}>
-                    <Badge className={getPriorityColor(issue.priority)}>
+                    <Badge variant={getPriorityVariant(issue.priority) as any}>
                       {issue.priority}
                     </Badge>
                   </TableCell>
                   <TableCell className={density === 'compact' ? "py-2" : ""}>
-                    <Badge className={getStatusColor(issue.status)}>
+                    <Badge variant={getStatusVariant(issue.status) as any}>
                       {issue.status}
                     </Badge>
                   </TableCell>

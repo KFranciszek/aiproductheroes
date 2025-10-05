@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+
+<html class="" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TaskFlow Dashboard</title>
+<link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
+<link as="style" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter%3Awght%40400%3B500%3B700%3B900&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900" onload="this.rel='stylesheet'" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>tailwind.config = {theme: {extend: {colors: {primary: "#1173d4", "background-dark": "#101922", "card-dark": "#283C4F", "text-light": "#E0E6EB", "text-muted": "#9BA3AF", "background-light": "#f6f7f8"}, fontFamily: {display: "Inter"}, borderRadius: {DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px"}}}};</script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<style type="text/tailwindcss">
+      body {
+        background-image: radial-gradient(at 15% 5%, #1c2734, #121921);
+      }
+    </style>
+</head>
+<body class="bg-background-dark font-display text-text-light">
+<div class="flex h-screen">
+<aside class="w-64 flex-shrink-0 bg-card-dark border-r border-white/10 flex flex-col">
+<div class="p-4 border-b border-white/10">
+<h1 class="text-xl font-bold">TaskFlow</h1>
+<p class="text-sm text-text-muted">IT Team</p>
+</div>
+<nav class="flex-grow p-4 space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/20 text-primary" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-sm font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-light hover:bg-primary/10 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">checklist</span>
+<span class="text-sm font-medium">Current Sprint</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-light hover:bg-primary/10 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">bug_report</span>
+<span class="text-sm font-medium">Issues</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-light hover:bg-primary/10 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">star</span>
+<span class="text-sm font-medium">Favorites</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-light hover:bg-primary/10 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">history</span>
+<span class="text-sm font-medium">Sprints</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-light hover:bg-primary/10 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">bar_chart</span>
+<span class="text-sm font-medium">Reports</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-light hover:bg-primary/10 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">timeline</span>
+<span class="text-sm font-medium">Activity</span>
+</a>
+</nav>
+</aside>
+<main class="flex-1 overflow-y-auto">
+<div class="p-8">
+<h1 class="text-3xl font-bold">Dashboard</h1>
+<section class="mt-8">
+<h2 class="text-xl font-bold">Overview</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
+<div class="p-6 bg-card-dark border border-white/10 rounded-lg">
+<p class="text-sm font-medium text-text-muted">Total Tasks</p>
+<p class="text-3xl font-bold mt-2">120</p>
+</div>
+<div class="p-6 bg-card-dark border border-white/10 rounded-lg">
+<p class="text-sm font-medium text-text-muted">Open Tasks</p>
+<p class="text-3xl font-bold mt-2">45</p>
+</div>
+<div class="p-6 bg-card-dark border border-white/10 rounded-lg">
+<p class="text-sm font-medium text-text-muted">Completed Tasks</p>
+<p class="text-3xl font-bold mt-2">75</p>
+</div>
+</div>
+</section>
+<section class="mt-8">
+<h2 class="text-xl font-bold">Projects</h2>
+<div class="mt-4 overflow-x-auto">
+<div class="border border-white/10 rounded-lg bg-card-dark">
+<table class="w-full text-left">
+<thead class="bg-white/5">
+<tr>
+<th class="p-4 text-sm font-medium text-text-muted">Project</th>
+<th class="p-4 text-sm font-medium text-text-muted">Status</th>
+<th class="p-4 text-sm font-medium text-text-muted">Progress</th>
+<th class="p-4 text-sm font-medium text-text-muted">Team</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-white/10">
+<tr>
+<td class="p-4 text-sm font-medium">Project Alpha</td>
+<td class="p-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/20 text-primary">In Progress</span>
+</td>
+<td class="p-4">
+<div class="flex items-center gap-3">
+<div class="w-full bg-white/10 rounded-full h-2">
+<div class="bg-primary h-2 rounded-full" style="width: 60%"></div>
+</div>
+<span class="text-sm font-medium text-text-muted">60%</span>
+</div>
+</td>
+<td class="p-4">
+<div class="flex -space-x-2 overflow-hidden">
+<img alt="" class="inline-block h-8 w-8 rounded-full ring-2 ring-card-dark" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGdH-Ob8xdwXKuFjBbim18K0sFX8LmLJmfDp7JGI9w9ih5RZteZ_FUb7L5nsugQHDOIXbRJiWWd3g73boZBWqGxQfNJgJYL-n67CtKfu_2AxGKztM5T_-kXpAONRA8qZwo6eGjSupy83u7n4yGIvulc9SsCXx9P9v6iUB7UdUhwUuacYZS9NhiGBUliZYnoPUgSuMPM2nj185IEkEXTBXIGSZEXyWTKe0S3G4J88Q7LsUzwBkgW2LuScMDVytdBRTZXiD8RqhmlGq3"/>
+</div>
+</td>
+</tr>
+<tr>
+<td class="p-4 text-sm font-medium">Project Beta</td>
+<td class="p-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-500/20 text-green-500">Completed</span>
+</td>
+<td class="p-4">
+<div class="flex items-center gap-3">
+<div class="w-full bg-white/10 rounded-full h-2">
+<div class="bg-primary h-2 rounded-full" style="width: 100%"></div>
+</div>
+<span class="text-sm font-medium text-text-muted">100%</span>
+</div>
+</td>
+<td class="p-4">
+<div class="flex -space-x-2 overflow-hidden">
+<img alt="" class="inline-block h-8 w-8 rounded-full ring-2 ring-card-dark" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCUFW_4zRLijhkpjOya4udg1eBotPcESc36Z9Kd53OxL-Gws04kDqyOR3y1L9HpmU7xRY-3OL21tRZG1HQY0k6xA6czRtrE5yLn-iP972tY-wTiW1XmmqPamvkh51AP65Y5ki_eMOk6xHe2ryhW-IlTOlmQQN3_YAM0f4LaXA40XcgJ4oV4BvjWcCwWo8BMT8__y4MDstkOSqFYwVhNQ_8r0XDUWdkfqLLMveHtTrdKqRvXH5fp6QLpHIzeLO2YbvT9totW9aDrX1D_"/>
+</div>
+</td>
+</tr>
+<tr>
+<td class="p-4 text-sm font-medium">Project Gamma</td>
+<td class="p-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-500/20 text-yellow-500">Planning</span>
+</td>
+<td class="p-4">
+<div class="flex items-center gap-3">
+<div class="w-full bg-white/10 rounded-full h-2">
+<div class="bg-primary h-2 rounded-full" style="width: 20%"></div>
+</div>
+<span class="text-sm font-medium text-text-muted">20%</span>
+</div>
+</td>
+<td class="p-4">
+<div class="flex -space-x-2 overflow-hidden">
+<img alt="" class="inline-block h-8 w-8 rounded-full ring-2 ring-card-dark" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB_I8Gv1aSeJ9hMMJkMPjQizuerdbllm3n34_gJUhaA6OU-Frik4qoDtB9hP9itAqirith-fbfFfikalfJmaiGNa3fwRJ76hXwZh4U2K-UtdTQxWc3mtoncleNheYw-MnHUs2IdgiacPAAPtQcP0IA19dPSfrKHLt-bS7JIet5pwaAwDEQuqH4PvIndyW3zasYk1ofMX5XWWaaG-lGz1MD81rSF2gRDOJxlIPmPqtWBgdClCu76V0Qb1oq8jGnVorGmfSZJOb_f_2W8"/>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section class="mt-8">
+<h2 class="text-xl font-bold">Team Progress</h2>
+<div class="mt-4 p-6 bg-card-dark border border-white/10 rounded-lg">
+<div class="flex justify-between items-start">
+<div>
+<p class="text-sm font-medium text-text-muted">Tasks Completed by Team</p>
+<p class="text-3xl font-bold mt-2">75</p>
+<div class="flex items-center mt-1">
+<p class="text-sm text-text-muted">Last 30 Days</p>
+<p class="text-sm font-medium text-green-500 ml-2">+15%</p>
+</div>
+</div>
+</div>
+<div class="mt-6 h-48">
+<div class="grid grid-cols-5 gap-4 h-full items-end">
+<div class="flex flex-col items-center">
+<div class="w-full bg-primary/20 rounded-t-lg" style="height: 40%"></div>
+<p class="text-xs font-medium text-text-muted mt-2">Alex</p>
+</div>
+<div class="flex flex-col items-center">
+<div class="w-full bg-primary/20 rounded-t-lg" style="height: 80%"></div>
+<p class="text-xs font-medium text-text-muted mt-2">Jordan</p>
+</div>
+<div class="flex flex-col items-center">
+<div class="w-full bg-primary/20 rounded-t-lg" style="height: 30%"></div>
+<p class="text-xs font-medium text-text-muted mt-2">Taylor</p>
+</div>
+<div class="flex flex-col items-center">
+<div class="w-full bg-primary/20 rounded-t-lg" style="height: 90%"></div>
+<p class="text-xs font-medium text-text-muted mt-2">Casey</p>
+</div>
+<div class="flex flex-col items-center">
+<div class="w-full bg-primary/20 rounded-t-lg" style="height: 10%"></div>
+<p class="text-xs font-medium text-text-muted mt-2">Morgan</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+</div>
+</body></html>

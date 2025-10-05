@@ -1,5 +1,5 @@
 // public/sw.js
-const CACHE_NAME = 'braintask-v1';
+const CACHE_NAME = 'syzio-v1';
 const urlsToCache = [
   '/',
   '/app/page.tsx',
@@ -42,5 +42,6 @@ async function syncIssuesWithServer() {
   // Symuluj pomyślną synchronizację
   return Promise.resolve();
 }
+
 
 

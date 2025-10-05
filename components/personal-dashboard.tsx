@@ -113,7 +113,11 @@ export function PersonalDashboard({
                       </p>
                     </div>
                     <Badge 
-                      variant="destructive"
+                      variant={
+                        issue.priority === "P0" ? "p0" :
+                        issue.priority === "P1" ? "p1" :
+                        "p2"
+                      }
                       className="ml-2 shrink-0"
                     >
                       {issue.priority}

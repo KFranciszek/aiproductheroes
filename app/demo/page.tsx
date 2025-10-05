@@ -1,0 +1,540 @@
+"use client"
+
+import { useState } from "react"
+import { SidebarNavigation } from "@/components/sidebar-navigation"
+import { IssuesList } from "@/components/issues-list"
+import { CurrentSprintView } from "@/components/current-sprint-view"
+import { SprintsView } from "@/components/sprints-view"
+import { ReportsView } from "@/components/reports-view"
+import { ActivityView } from "@/components/activity-view"
+import { KeyboardShortcutsHelp } from "@/components/keyboard-shortcuts-help"
+import { DataManager } from "@/components/data-manager"
+import { CommandPalette } from "@/components/command-palette"
+import { PersonalDashboard } from "@/components/personal-dashboard"
+import { SettingsView } from "@/components/settings-view"
+import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts"
+import { cn } from "@/lib/utils"
+import { initialIssues, initialSprints, initialActivityLogs, initialComments, initialAttachments, initialTemplates, generateTaskId, generateCommentId, generateAttachmentId } from "@/lib/data"
+import { mockData } from "@/lib/mock-data"
+import type { Issue, Sprint, ViewType, IssueStatus, ActivityLog, KeyboardShortcut, Comment, Attachment, TaskTemplate } from "@/types"
+import { IssueDetailView } from "@/components/issue-detail-view"
+import Link from "next/link"
+
+export default function SyzioDemo() {
+  const [currentView, setCurrentView] = useState<ViewType>("dashboard")
+  const [selectedIssueId, setSelectedIssueId] = useState<string | null>(null)
+  const [issues, setIssues] = useState<Issue[]>(mockData.issues)
+  const [sprints, setSprints] = useState<Sprint[]>(mockData.sprints)
+  const [activities, setActivities] = useState<ActivityLog[]>(mockData.activityLogs)
+  const [comments, setComments] = useState<Comment[]>(mockData.comments)
+  const [attachments, setAttachments] = useState<Attachment[]>(mockData.attachments)
+  const [templates, setTemplates] = useState<TaskTemplate[]>(mockData.taskTemplates)
+  const [selectedTemplate, setSelectedTemplate] = useState<TaskTemplate | null>(null)
+
+  // Definicja skrótów klawiaturowych
+  const keyboardShortcuts: KeyboardShortcut[] = [
+    {
+      key: 'n',
+      ctrl: true,
+      action: () => setCurrentView('issues'),
+      description: 'Nowe zadanie'
+    },
+    {
+      key: 'f',
+      ctrl: true,
+      action: () => setCurrentView('issues'),
+      description: 'Przejdź do zadań'
+    },
+    {
+      key: 's',
+      ctrl: true,
+      action: () => setCurrentView('sprints'),
+      description: 'Przejdź do sprintów'
+    },
+    {
+      key: 'r',
+      ctrl: true,
+      action: () => setCurrentView('reports'),
+      description: 'Przejdź do raportów'
+    },
+    {
+      key: '1',
+      alt: true,
+      action: () => setCurrentView('current-sprint'),
+      description: 'Przejdź do bieżącego sprintu'
+    },
+    {
+      key: '2',
+      alt: true,
+      action: () => setCurrentView('issues'),
+      description: 'Przejdź do zadań'
+    },
+    {
+      key: '3',
+      alt: true,
+      action: () => setCurrentView('favorites'),
+      description: 'Przejdź do ulubionych'
+    },
+    {
+      key: '4',
+      alt: true,
+      action: () => setCurrentView('sprints'),
+      description: 'Przejdź do sprintów'
+    },
+    {
+      key: '5',
+      alt: true,
+      action: () => setCurrentView('reports'),
+      description: 'Przejdź do raportów'
+    },
+    {
+      key: '6',
+      alt: true,
+      action: () => setCurrentView('activity'),
+      description: 'Przejdź do aktywności'
+    }
+  ]
+
+  useKeyboardShortcuts(keyboardShortcuts)
+
+  // Data management functions
+  const handleExportData = () => {
+    const exportData = {
+      version: '1.0.0',
+      exportDate: new Date(),
+      userId: 'current-user',
+      data: {
+        issues,
+        sprints,
+        activities,
+        comments,
+        attachments,
+        templates,
+      }
+    };
+    return JSON.stringify(exportData, null, 2);
+  };
+
+  const handleImportData = (data: any) => {
+    try {
+      // Walidacja wersji
+      if (!data.version || data.version !== '1.0.0') {
+        throw new Error('Nieobsługiwana wersja pliku eksportu');
+      }
+
+      // Import danych
+      if (data.data.issues) {
+        setIssues(data.data.issues);
+      }
+      if (data.data.sprints) {
+        setSprints(data.data.sprints);
+      }
+      if (data.data.activities) {
+        setActivities(data.data.activities);
+      }
+      if (data.data.comments) {
+        setComments(data.data.comments);
+      }
+      if (data.data.attachments) {
+        setAttachments(data.data.attachments);
+      }
+      if (data.data.templates) {
+        setTemplates(data.data.templates);
+      }
+    } catch (error) {
+      throw new Error('Nieprawidłowy format pliku eksportu');
+    }
+  };
+
+  const handleEditIssue = (updatedIssue: Issue) => {
+    setIssues(
+      issues.map((issue) =>
+        issue.id === updatedIssue.id
+          ? {
+              ...issue,
+              ...updatedIssue,
+              updatedAt: new Date(),
+            }
+          : issue,
+      ),
+    )
+  }
+
+  const handleDeleteIssue = (issueId: string) => {
+    setIssues(issues.filter((issue) => issue.id !== issueId))
+  }
+
+  const handleUpdateIssueStatus = (issueId: string, newStatus: IssueStatus) => {
+    setIssues(
+      issues.map((issue) =>
+        issue.id === issueId
+          ? {
+              ...issue,
+              status: newStatus,
+              updatedAt: new Date(),
+            }
+          : issue,
+      ),
+    )
+  }
+
+  const handleAssignToSprint = (issueId: string, sprintId: string | undefined) => {
+    setIssues(
+      issues.map((issue) =>
+        issue.id === issueId
+          ? {
+              ...issue,
+              sprintId,
+              updatedAt: new Date(),
+            }
+          : issue,
+      ),
+    )
+  }
+
+  const handleToggleFavorite = (issueId: string) => {
+    setIssues(
+      issues.map((issue) =>
+        issue.id === issueId
+          ? {
+              ...issue,
+              isFavorite: !issue.isFavorite,
+              favoritedBy: issue.isFavorite
+                ? issue.favoritedBy?.filter(user => user !== "CurrentUser") || []
+                : [...(issue.favoritedBy || []), "CurrentUser"],
+              updatedAt: new Date(),
+            }
+          : issue,
+      ),
+    )
+  }
+
+  const handleAddSubtask = (parentId: string) => {
+    setCurrentView('issues')
+  }
+
+  const handleUpdateSubtaskStatus = (subtaskId: string, status: IssueStatus) => {
+    setIssues(
+      issues.map((issue) =>
+        issue.id === subtaskId
+          ? {
+              ...issue,
+              status,
+              updatedAt: new Date(),
+            }
+          : issue,
+      ),
+    )
+  }
+
+  const handleAddComment = (issueId: string, content: string, parentId?: string) => {
+    const newComment: Comment = {
+      id: generateCommentId(comments),
+      issueId,
+      userId: "CurrentUser",
+      content,
+      parentCommentId: parentId,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }
+    setComments([...comments, newComment])
+
+    const newActivity: ActivityLog = {
+      id: `activity-${Date.now()}`,
+      issueId,
+      userId: "CurrentUser",
+      action: "comment_added",
+      newValue: content.substring(0, 50) + (content.length > 50 ? "..." : ""),
+      timestamp: new Date(),
+    }
+    setActivities([...activities, newActivity])
+  }
+
+  const handleFileUpload = async (issueId: string, files: File[]) => {
+    for (const file of files) {
+      const newAttachment: Attachment = {
+        id: generateAttachmentId(attachments),
+        issueId,
+        type: 'file',
+        name: file.name,
+        url: `/files/${file.name}`,
+        size: file.size,
+        mimeType: file.type,
+      }
+      setAttachments([...attachments, newAttachment])
+    }
+  }
+
+  const handleAddLink = (issueId: string, url: string, name: string) => {
+    const newAttachment: Attachment = {
+      id: generateAttachmentId(attachments),
+      issueId,
+      type: 'link',
+      name,
+      url,
+    }
+    setAttachments([...attachments, newAttachment])
+  }
+
+  const handleDeleteAttachment = (attachmentId: string) => {
+    setAttachments(attachments.filter(att => att.id !== attachmentId))
+  }
+
+  const handleTemplateSelect = (template: TaskTemplate) => {
+    setSelectedTemplate(template)
+  }
+
+  const handleCreateIssue = (issueData: Partial<Issue>) => {
+    const templateFields = selectedTemplate?.fields || {}
+    const newIssue: Issue = {
+      id: generateTaskId(issues),
+      title: issueData.title || templateFields.title || "",
+      description: issueData.description || templateFields.description || "",
+      priority: issueData.priority || templateFields.priority || "P3",
+      status: issueData.status || templateFields.status || "Todo",
+      assignee: issueData.assignee || templateFields.assignee || "",
+      sprintId: issueData.sprintId || templateFields.sprintId,
+      attachments: [],
+      isFavorite: false,
+      favoritedBy: [],
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }
+    setIssues([...issues, newIssue])
+    setSelectedTemplate(null)
+  }
+
+  const handleCreateSprint = (sprintData: Partial<Sprint>) => {
+    const newSprint: Sprint = {
+      id: `sprint-${Date.now()}`,
+      name: sprintData.name || "",
+      status: "Planned",
+      startDate: sprintData.startDate || new Date(),
+      endDate: sprintData.endDate || new Date(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }
+    setSprints([...sprints, newSprint])
+  }
+
+  const handleEditSprint = (updatedSprint: Sprint) => {
+    setSprints(
+      sprints.map((sprint) =>
+        sprint.id === updatedSprint.id
+          ? {
+              ...sprint,
+              ...updatedSprint,
+              updatedAt: new Date(),
+            }
+          : sprint,
+      ),
+    )
+  }
+
+  const handleStartSprint = (sprintId: string) => {
+    setSprints(
+      sprints.map((sprint) =>
+        sprint.id === sprintId
+          ? {
+              ...sprint,
+              status: "Active" as const,
+              updatedAt: new Date(),
+            }
+          : sprint,
+      ),
+    )
+  }
+
+  const handleEndSprint = (sprintId: string) => {
+    const unfinishedIssues = issues.filter((issue) => issue.sprintId === sprintId && issue.status !== "Done")
+
+    setIssues(
+      issues.map((issue) =>
+        unfinishedIssues.some((ui) => ui.id === issue.id)
+          ? {
+              ...issue,
+              sprintId: undefined,
+              updatedAt: new Date(),
+            }
+          : issue,
+      ),
+    )
+
+    setSprints(
+      sprints.map((sprint) =>
+        sprint.id === sprintId
+          ? {
+              ...sprint,
+              status: "Completed" as const,
+              updatedAt: new Date(),
+            }
+          : sprint,
+      ),
+    )
+  }
+
+  const activeSprint = sprints.find((sprint) => sprint.status === "Active")
+
+  const handleViewIssueDetails = (issueId: string) => {
+    setSelectedIssueId(issueId)
+  }
+
+  const handleBackFromDetails = () => {
+    setSelectedIssueId(null)
+  }
+
+  const renderCurrentView = () => {
+    switch (currentView) {
+      case "dashboard":
+        return (
+          <PersonalDashboard
+            issues={issues}
+            sprints={sprints}
+            onNavigate={setCurrentView}
+            onViewIssue={handleViewIssueDetails}
+          />
+        )
+      case "issues":
+        return (
+          <IssuesList
+            issues={issues}
+            sprints={sprints}
+            onCreateIssue={handleCreateIssue}
+            onEditIssue={handleEditIssue}
+            onDeleteIssue={handleDeleteIssue}
+            onAssignToSprint={handleAssignToSprint}
+            onToggleFavorite={handleToggleFavorite}
+            onViewDetails={handleViewIssueDetails}
+          />
+        )
+      case "current-sprint":
+        return (
+          <CurrentSprintView
+            sprint={activeSprint || null}
+            issues={issues}
+            onUpdateIssueStatus={handleUpdateIssueStatus}
+            onViewDetails={handleViewIssueDetails}
+          />
+        )
+      case "sprints":
+        return (
+          <SprintsView
+            sprints={sprints}
+            issues={issues}
+            onCreateSprint={handleCreateSprint}
+            onEditSprint={handleEditSprint}
+            onStartSprint={handleStartSprint}
+            onEndSprint={handleEndSprint}
+          />
+        )
+      case "reports":
+        return <ReportsView issues={issues} sprints={sprints} />
+      case "favorites":
+        return (
+          <IssuesList
+            issues={issues.filter(issue => issue.isFavorite)}
+            sprints={sprints}
+            onCreateIssue={handleCreateIssue}
+            onEditIssue={handleEditIssue}
+            onDeleteIssue={handleDeleteIssue}
+            onAssignToSprint={handleAssignToSprint}
+            onToggleFavorite={handleToggleFavorite}
+            onViewDetails={handleViewIssueDetails}
+          />
+        )
+      case "activity":
+        return <ActivityView activities={activities} />
+      case "settings":
+        return (
+          <SettingsView 
+            onExport={handleExportData} 
+            onImport={handleImportData} 
+          />
+        )
+      default:
+        return null
+    }
+  }
+
+  return (
+    <div className="flex flex-col h-screen">
+      {/* Demo Mode Header */}
+      <div className="bg-accent-blue text-white px-4 py-2 text-sm flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <span className="font-medium">Demo Mode</span>
+          <span className="text-blue-200">Explore all features freely</span>
+        </div>
+        <Link href="/" className="hover:underline">
+          ← Back to Home
+        </Link>
+      </div>
+
+      {/* Main App */}
+      <div className="flex flex-1 overflow-hidden">
+        <CommandPalette
+          issues={issues}
+          sprints={sprints}
+          onNavigate={setCurrentView}
+          onOpenIssue={handleViewIssueDetails}
+          onCreateIssue={() => setCurrentView('issues')}
+        />
+        <SidebarNavigation
+          currentView={currentView}
+          onViewChange={setCurrentView}
+          issues={issues}
+          sprints={sprints}
+          templates={templates}
+          onCreateIssue={handleCreateIssue}
+          onTemplateSelect={handleTemplateSelect}
+          selectedTemplate={selectedTemplate}
+        />
+        <div className="flex-1 overflow-hidden flex">
+          <div className={cn(
+            "transition-all duration-300 overflow-auto p-6",
+            selectedIssueId ? "w-3/5" : "w-full"
+          )}>
+            <div className="mx-auto max-w-full">
+              {renderCurrentView()}
+            </div>
+          </div>
+
+          {selectedIssueId && (
+            <div className="w-2/5 border-l border-border-light dark:border-border-dark overflow-auto bg-background animate-in slide-in-from-right duration-300">
+              {(() => {
+                const issue = issues.find(i => i.id === selectedIssueId)
+                if (!issue) {
+                  setSelectedIssueId(null)
+                  return null
+                }
+
+                return (
+                  <div className="relative h-full">
+                    <IssueDetailView
+                      issue={issue}
+                      sprints={sprints}
+                      allIssues={issues}
+                      comments={comments}
+                      attachments={attachments}
+                      activities={activities}
+                      onBack={handleBackFromDetails}
+                      onEdit={handleEditIssue}
+                      onDelete={handleDeleteIssue}
+                      onToggleFavorite={handleToggleFavorite}
+                      onAddComment={handleAddComment}
+                      onFileUpload={handleFileUpload}
+                      onAddLink={handleAddLink}
+                      onDeleteAttachment={handleDeleteAttachment}
+                      onTimeLogged={(entry) => {
+                        console.log('Time logged:', entry)
+                      }}
+                    />
+                  </div>
+                )
+              })()}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}

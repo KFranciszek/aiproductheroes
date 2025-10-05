@@ -3,15 +3,46 @@ import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
 
+/**
+ * Badge Component - Stitch Dashboard Style
+ * Minimalne użycie koloru, profesjonalny wygląd
+ * Status badges z subtelnymi kolorami
+ */
+
 const badgeVariants = cva(
-  "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+  "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium transition-fast",
   {
     variants: {
       variant: {
-        default: "border-transparent bg-primary text-primary-foreground hover:bg-primary/80",
-        secondary: "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        destructive: "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
-        outline: "text-foreground",
+        // Default - neutralny (Stitch style)
+        default: "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200",
+        
+        // Primary - niebieski akcent (jak w Stitch)
+        primary: "bg-primary/20 text-primary",
+        
+        // Destructive - czerwony (krytyczne błędy)
+        destructive: "bg-error/20 text-error",
+        
+        // Outline - ghost style
+        outline: "border border-gray-300 text-gray-700 dark:border-gray-600 dark:text-gray-300",
+        
+        // Secondary - subtle
+        secondary: "bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300",
+        
+        // Status badges - Linear style (mniej żywe kolory)
+        "in-progress": "bg-primary/10 text-primary",
+        "completed": "bg-green-600/15 text-green-600",
+        "planning": "bg-yellow-600/15 text-yellow-600",
+        
+        // Legacy compatibility
+        success: "bg-green-600/15 text-green-600",
+        info: "bg-primary/10 text-primary",
+        warning: "bg-yellow-600/15 text-yellow-600",
+        danger: "bg-error/20 text-error",
+        neutral: "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200",
+        p0: "bg-error/20 text-error",
+        p1: "bg-yellow-600/15 text-yellow-600",
+        p2: "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200",
       },
     },
     defaultVariants: {

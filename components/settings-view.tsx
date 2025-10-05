@@ -9,17 +9,13 @@ import { Button } from '@/components/ui/button'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Badge } from '@/components/ui/badge'
 import { DataManager } from './data-manager'
-import { ThemeSelector } from './theme-selector'
 import { 
   Settings, 
-  Palette, 
+  Palette,
   Bell, 
   Database, 
   Keyboard, 
-  Zap,
-  Moon,
-  Sun,
-  Monitor 
+  Zap
 } from 'lucide-react'
 
 interface SettingsViewProps {
@@ -35,7 +31,6 @@ export function SettingsView({ onExport, onImport }: SettingsViewProps) {
     sprintEnding: true,
   })
 
-  const [theme, setTheme] = useState<'light' | 'dark' | 'system'>('system')
   const [density, setDensity] = useState<'compact' | 'comfortable' | 'spacious'>('comfortable')
 
   const handleNotificationChange = (key: string, value: boolean) => {
@@ -129,68 +124,6 @@ export function SettingsView({ onExport, onImport }: SettingsViewProps) {
 
         {/* Appearance Tab */}
         <TabsContent value="appearance" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Motyw</CardTitle>
-              <CardDescription>
-                Wybierz styl interfejsu
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label>Tryb wyświetlania</Label>
-                <RadioGroup value={theme} onValueChange={(v: any) => setTheme(v)}>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="light" id="theme-light" />
-                    <Label htmlFor="theme-light" className="flex items-center gap-2">
-                      <Sun className="h-4 w-4" />
-                      Jasny
-                    </Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="dark" id="theme-dark" />
-                    <Label htmlFor="theme-dark" className="flex items-center gap-2">
-                      <Moon className="h-4 w-4" />
-                      Ciemny
-                    </Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="system" id="theme-system" />
-                    <Label htmlFor="theme-system" className="flex items-center gap-2">
-                      <Monitor className="h-4 w-4" />
-                      System
-                    </Label>
-                  </div>
-                </RadioGroup>
-              </div>
-
-              <div className="space-y-2">
-                <Label>Kolor akcentu</Label>
-                <div className="flex gap-2">
-                  <Button 
-                    variant="outline" 
-                    className="w-12 h-12 p-0 bg-[#84a98c] hover:bg-[#84a98c]/80"
-                    title="Szałwiowy (domyślny)"
-                  />
-                  <Button 
-                    variant="outline" 
-                    className="w-12 h-12 p-0 bg-blue-500 hover:bg-blue-600"
-                    title="Niebieski"
-                  />
-                  <Button 
-                    variant="outline" 
-                    className="w-12 h-12 p-0 bg-purple-500 hover:bg-purple-600"
-                    title="Fioletowy"
-                  />
-                  <Button 
-                    variant="outline" 
-                    className="w-12 h-12 p-0 bg-orange-500 hover:bg-orange-600"
-                    title="Pomarańczowy"
-                  />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
 
           <Card>
             <CardHeader>

@@ -59,11 +59,9 @@ export function KanbanBoard({
   onUpdateIssueStatus,
   onViewDetails,
 }: KanbanBoardProps) {
-  const [mounted, setMounted] = useState(false);
   const [sprintIssues, setSprintIssues] = useState<Issue[]>([]);
 
   useEffect(() => {
-    setMounted(true);
     setSprintIssues(issues.filter((issue) => issue.sprintId === sprint.id));
   }, [issues, sprint.id]);
 
@@ -84,10 +82,6 @@ export function KanbanBoard({
     const newStatus = destination.droppableId as IssueStatus;
     onUpdateIssueStatus(draggableId, newStatus);
   };
-
-  if (!mounted) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <div className="flex gap-4 pb-4 overflow-x-auto">
@@ -151,16 +145,13 @@ export function KanbanBoard({
                           >
                             <div className="flex justify-between items-start mb-2">
                               <p className="font-semibold text-sm">{issue.title}</p>
-                              <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${
-                                issue.priority === 'P0' ? 'bg-priority-p0/10 text-priority-p0 ring-priority-p0/20' :
-                                issue.priority === 'P1' ? 'bg-priority-p1/10 text-priority-p1 ring-priority-p1/20' :
-                                issue.priority === 'P2' ? 'bg-priority-p2/10 text-priority-p2 ring-priority-p2/20' :
-                                issue.priority === 'P3' ? 'bg-priority-p3/10 text-priority-p3 ring-priority-p3/20' :
-                                issue.priority === 'P4' ? 'bg-priority-p4/10 text-priority-p4 ring-priority-p4/20' :
-                                'bg-priority-p5/10 text-priority-p5 ring-priority-p5/20'
-                              }`}>
+                              <Badge variant={
+                                issue.priority === 'P0' ? 'p0' :
+                                issue.priority === 'P1' ? 'p1' :
+                                'p2'
+                              } className="text-xs">
                                 {issue.priority}
-                              </span>
+                              </Badge>
                             </div>
                             
                             {issue.description && (

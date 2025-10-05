@@ -1,8 +1,8 @@
-**BrainTask** — zarządzanie projektami w stylu Linear
+**Syzio** — zarządzanie projektami w stylu Linear
 
-# BrainTask - Aplikacja do zarządzania zadaniami
+# Syzio - Aplikacja do zarządzania zadaniami
 
-BrainTask to aplikacja do zarządzania projektami i zadaniami, zbudowana w Next.js z TypeScript. Oferuje narzędzia do sprintów, zadań i zespołów w stylu Linear/Jira.
+Syzio to aplikacja do zarządzania projektami i zadaniami, zbudowana w Next.js z TypeScript. Oferuje narzędzia do sprintów, zadań i zespołów w stylu Linear/Jira.
 
 ## Funkcjonalności
 
@@ -80,7 +80,7 @@ BrainTask to aplikacja do zarządzania projektami i zadaniami, zbudowana w Next.
 ## Struktura projektu
 
 ```
-braintask/
+syzio/
 ├── app/                    # Next.js App Router
 │   ├── globals.css        # Globalne style
 │   ├── layout.tsx         # Główny layout
@@ -110,8 +110,8 @@ braintask/
 ### Instalacja
 ```bash
 # Klonuj repozytorium
-git clone https://github.com/KFranciszek/aiproductheroes.git
-cd aiproductheroes
+git clone https://github.com/KFranciszek/syzio.git
+cd syzio
 
 # Zainstaluj zależności
 npm install

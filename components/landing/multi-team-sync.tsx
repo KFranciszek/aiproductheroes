@@ -1,0 +1,84 @@
+"use client"
+
+import { motion } from "framer-motion"
+
+export function MultiTeamSync() {
+  const teams = [
+    { name: "Frontend", color: "accent-blue", tasks: 12 },
+    { name: "Backend", color: "accent-purple", tasks: 15 },
+    { name: "DevOps", color: "accent-green", tasks: 8 },
+    { name: "Design", color: "accent-cyan", tasks: 10 }
+  ]
+
+  return (
+    <section className="py-24 bg-bg-primary px-6">
+      <div className="container mx-auto max-w-6xl">
+        <motion.h2
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-4xl md:text-5xl font-bold text-center mb-4"
+        >
+          One Project, Many Teams, Perfect Sync
+        </motion.h2>
+        
+        {/* Network diagram */}
+        <div className="max-w-4xl mx-auto my-16">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {teams.map((team, index) => (
+              <motion.div
+                key={team.name}
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+                className={`p-6 rounded-xl border border-${team.color}/30 bg-${team.color}/5 text-center`}
+              >
+                <div className={`w-12 h-12 rounded-full bg-${team.color}/20 mx-auto mb-4 flex items-center justify-center`}>
+                  <div className={`w-6 h-6 rounded-full bg-${team.color}`} />
+                </div>
+                <h3 className="font-bold mb-2">{team.name}</h3>
+                <p className="text-sm text-text-muted">{team.tasks} tasks</p>
+              </motion.div>
+            ))}
+          </div>
+          
+          {/* Connection visualization */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.5 }}
+            className="mt-8 text-center"
+          >
+            <div className="flex items-center justify-center gap-2 text-text-secondary text-sm flex-wrap">
+              <span>Frontend</span>
+              <span>←→</span>
+              <span>Backend</span>
+              <span>←→</span>
+              <span>DevOps</span>
+              <span>←→</span>
+              <span>Design</span>
+            </div>
+          </motion.div>
+        </div>
+        
+        {/* Features */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.6 }}
+          className="text-center space-y-2"
+        >
+          <p className="text-xl text-text-secondary">
+            Real-time visibility. Shared resources. Zero meetings.
+          </p>
+          <p className="text-sm text-text-muted">
+            Scales from 2 teams to 20+
+          </p>
+        </motion.div>
+      </div>
+    </section>
+  )
+}

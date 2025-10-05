@@ -3,7 +3,7 @@ import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { Suspense } from "react"
-import { ExtendedThemeProvider } from "@/components/extended-theme-provider"
+import { ThemeProvider } from "@/components/theme-provider"
 import "./globals.css"
 
 const inter = Inter({ 
@@ -13,7 +13,7 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: "BrainTask - Current Sprint",
+  title: "Syzio - Project Management",
   description: "A complete task management app with sprints, kanban boards, and issue tracking",
   generator: "v0.app",
 }
@@ -26,10 +26,10 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.variable} suppressHydrationWarning>
       <body className="font-display bg-background-light dark:bg-background-dark text-foreground-light dark:text-foreground-dark">
-        <ExtendedThemeProvider>
+        <ThemeProvider>
           <Suspense fallback={null}>{children}</Suspense>
           <Analytics />
-        </ExtendedThemeProvider>
+        </ThemeProvider>
       </body>
     </html>
   )

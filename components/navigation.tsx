@@ -83,7 +83,7 @@ export function Navigation({
             <circle cx="12" cy="12" r="1" fill="#22c55e"/>
             <path d="M8 8l2 2 4-4" stroke="#22c55e" strokeWidth="1.5" fill="none"/>
           </svg>
-          <h1 className="text-xl font-bold">BrainTask</h1>
+          <h1 className="text-xl font-bold">Syzio</h1>
         </div>
         
         {/* Mobile menu button */}

@@ -1,6 +1,6 @@
 // lib/storage-security.ts
 export class SecureStorage {
-  private static readonly ENCRYPTION_KEY = 'braintask_encryption_key';
+  private static readonly ENCRYPTION_KEY = 'syzio_encryption_key';
 
   static async setItem(key: string, value: any): Promise<void> {
     const data = JSON.stringify(value);
@@ -57,5 +57,6 @@ export function useSecureStorage() {
 
   return { setSecureItem, getSecureItem };
 }
+
 
 
