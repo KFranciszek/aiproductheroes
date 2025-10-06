@@ -119,21 +119,21 @@ export default function LandingPage() {
         <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-6 relative">
           <div className="absolute inset-0 bg-gradient-to-br from-[#3b82f6]/10 to-[#10b981]/10 rounded-xl transform -rotate-2 scale-105 opacity-50 z-0"></div>
           <div className="md:col-span-1 space-y-6 relative z-10">
-            <div className="flex items-start p-4 bg-muted rounded-lg shadow-md">
+            <div className="flex items-start p-4 bg-muted rounded-lg shadow-md border border-border/20">
               <span className="text-red-500 text-2xl mr-4">❌</span>
               <p className="text-foreground">Information scattered across 6 tools</p>
             </div>
-            <div className="flex items-start p-4 bg-muted rounded-lg shadow-md">
+            <div className="flex items-start p-4 bg-muted rounded-lg shadow-md border border-border/20">
               <span className="text-red-500 text-2xl mr-4">❌</span>
               <p className="text-foreground">Automations break silently</p>
             </div>
           </div>
           <div className="md:col-span-1 space-y-6 relative z-10 pt-8 md:pt-16">
-            <div className="flex items-start p-4 bg-muted rounded-lg shadow-md">
+            <div className="flex items-start p-4 bg-muted rounded-lg shadow-md border border-border/20">
               <span className="text-red-500 text-2xl mr-4">❌</span>
               <p className="text-foreground">2-hour manual reports every Friday</p>
             </div>
-            <div className="flex items-start p-4 bg-muted rounded-lg shadow-md">
+            <div className="flex items-start p-4 bg-muted rounded-lg shadow-md border border-border/20">
               <span className="text-red-500 text-2xl mr-4">❌</span>
               <p className="text-foreground">"Who's working on what?" meetings</p>
             </div>
@@ -190,7 +190,7 @@ export default function LandingPage() {
             AI That Prevents Conflicts,<br />Not Just Detects Them
           </h2>
         </div>
-        <div className="bg-muted rounded-xl p-8 md:p-12 relative overflow-hidden">
+        <div className="bg-muted rounded-xl p-8 md:p-12 relative overflow-hidden border border-border/20">
           <div className="absolute -top-10 -left-10 w-32 h-32 bg-[#06b6d4]/15 rounded-full blur-xl"></div>
           <div className="absolute -bottom-10 -right-10 w-48 h-48 bg-[#3b82f6]/15 rounded-full blur-xl"></div>
           <div className="relative z-10 grid md:grid-cols-2 gap-8 items-center mb-8">
@@ -291,17 +291,17 @@ export default function LandingPage() {
         </div>
         <div className="grid md:grid-cols-3 gap-8 text-sm relative">
           <div className="absolute inset-0 bg-gradient-to-br from-purple-400/10 to-blue-400/10 rounded-xl transform rotate-2 scale-105 opacity-50 z-0 hidden md:block"></div>
-          <div className="p-6 bg-muted rounded-lg shadow-md transform rotate-1 relative z-10">
+          <div className="p-6 bg-muted rounded-lg shadow-md transform rotate-1 relative z-10 border border-border/20">
             <p className="text-foreground mb-4 italic">"6 tools → 1 view. 30 min standups → 5 min."</p>
             <p className="font-medium text-foreground">Michał</p>
             <p className="text-muted-foreground">Engineering Lead</p>
           </div>
-          <div className="p-6 bg-muted rounded-lg shadow-md transform -rotate-1 md:translate-y-8 relative z-10">
+          <div className="p-6 bg-muted rounded-lg shadow-md transform -rotate-1 md:translate-y-8 relative z-10 border border-border/20">
             <p className="text-foreground mb-4 italic">"We went from chaos to perfect alignment in 2 weeks."</p>
             <p className="font-medium text-foreground">Anna</p>
             <p className="text-muted-foreground">Product Manager</p>
           </div>
-          <div className="p-6 bg-muted rounded-lg shadow-md transform rotate-2 relative z-10">
+          <div className="p-6 bg-muted rounded-lg shadow-md transform rotate-2 relative z-10 border border-border/20">
             <p className="text-foreground mb-4 italic">"Finally a tool that actually prevents problems."</p>
             <p className="font-medium text-foreground">Tom</p>
             <p className="text-muted-foreground">CTO</p>
