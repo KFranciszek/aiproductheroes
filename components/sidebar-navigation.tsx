@@ -12,6 +12,7 @@ import {
   Calendar,
   BarChart3,
   Activity,
+  Bot,
   Settings,
   Plus,
   ChevronLeft,
@@ -116,6 +117,12 @@ export function SidebarNavigation({
       label: "Activity",
       icon: Activity,
       active: currentView === "activity",
+    },
+    {
+      id: "ai-automation" as ViewType,
+      label: "AI & Automation",
+      icon: Bot,
+      active: currentView === "ai-automation",
     },
   ]
 

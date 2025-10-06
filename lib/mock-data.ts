@@ -11,6 +11,11 @@ import type {
   ActivityAction,
   UserRole,
   AttachmentType,
+  AutomationRule,
+  AutomationExecution,
+  AutomationTemplate,
+  AIInsight,
+  AutomationMetrics,
 } from "@/types"
 
 // --- Helper Functions ---
@@ -308,6 +313,392 @@ const taskTemplates = [
   },
 ];
 
+// --- Automation Rules ---
+const automationRules: AutomationRule[] = [
+  {
+    id: 'rule-1',
+    name: 'GitLab Sync - Status Update',
+    description: 'Automatycznie aktualizuje status zadania gdy PR jest zmergowany w GitLab',
+    category: 'sync',
+    trigger: {
+      type: 'pr_merged',
+      config: { source: 'gitlab' }
+    },
+    conditions: [
+      { field: 'status', operator: 'not_equals', value: 'Done' }
+    ],
+    actions: [
+      { type: 'move_status', config: { newStatus: 'Done' } },
+      { type: 'add_comment', config: { content: 'PR został zmergowany - zadanie zamknięte automatycznie' } }
+    ],
+    status: 'active',
+    successRate: 98.5,
+    lastRun: new Date(Date.now() - 2 * 60 * 1000), // 2 min ago
+    executionCount: 247,
+    failureCount: 4,
+    avgExecutionTime: 145,
+    createdBy: 'Adam Nowak',
+    createdAt: new Date('2024-01-15'),
+    updatedAt: new Date('2024-09-20'),
+  },
+  {
+    id: 'rule-2',
+    name: 'Auto-assign by Skills',
+    description: 'Przypisuje zadania do developerów na podstawie ich umiejętności',
+    category: 'assignment',
+    trigger: {
+      type: 'status_change',
+      config: { fromStatus: 'Todo', toStatus: 'In Progress' }
+    },
+    conditions: [
+      { field: 'assignee', operator: 'equals', value: null }
+    ],
+    actions: [
+      { type: 'assign_user', config: { strategy: 'by_skills' } }
+    ],
+    status: 'active',
+    successRate: 95.2,
+    lastRun: new Date(Date.now() - 5 * 60 * 1000),
+    executionCount: 189,
+    failureCount: 9,
+    avgExecutionTime: 98,
+    createdBy: 'Ewa Kowalska',
+    createdAt: new Date('2024-02-10'),
+    updatedAt: new Date('2024-10-01'),
+  },
+  {
+    id: 'rule-3',
+    name: 'Sprint Cleanup',
+    description: 'Przenosi niedokończone zadania do backlogu po zakończeniu sprintu',
+    category: 'sprint',
+    trigger: {
+      type: 'sprint_end',
+      config: {}
+    },
+    conditions: [
+      { field: 'status', operator: 'not_equals', value: 'Done' }
+    ],
+    actions: [
+      { type: 'move_to_sprint', config: { sprintId: null } },
+      { type: 'send_notification', config: { channel: 'slack', message: 'Task moved to backlog' } }
+    ],
+    status: 'active',
+    successRate: 89.1,
+    lastRun: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 days ago
+    executionCount: 45,
+    failureCount: 5,
+    avgExecutionTime: 234,
+    createdBy: 'Piotr Wiśniewski',
+    createdAt: new Date('2024-01-20'),
+    updatedAt: new Date('2024-09-28'),
+  },
+  {
+    id: 'rule-4',
+    name: 'Blocker Alert',
+    description: 'Wysyła powiadomienie gdy zadanie jest zablokowane przez więcej niż 24h',
+    category: 'notification',
+    trigger: {
+      type: 'time_based',
+      config: { interval: '1h' }
+    },
+    conditions: [
+      { field: 'status', operator: 'equals', value: 'In Progress' },
+      { field: 'blocked_duration', operator: 'greater_than', value: 24 }
+    ],
+    actions: [
+      { type: 'send_notification', config: { channel: 'slack', target: 'team_lead' } }
+    ],
+    status: 'paused',
+    successRate: 100,
+    lastRun: new Date(Date.now() - 48 * 60 * 60 * 1000),
+    executionCount: 12,
+    failureCount: 0,
+    avgExecutionTime: 56,
+    createdBy: 'Anna Dąbrowska',
+    createdAt: new Date('2024-03-05'),
+    updatedAt: new Date('2024-10-03'),
+  },
+  {
+    id: 'rule-5',
+    name: 'Friday Report Generator',
+    description: 'Generuje automatyczny raport tygodniowy w każdy piątek o 16:00',
+    category: 'notification',
+    trigger: {
+      type: 'time_based',
+      config: { schedule: 'friday-16:00' }
+    },
+    conditions: [],
+    actions: [
+      { type: 'send_notification', config: { type: 'weekly_report', recipients: 'stakeholders' } }
+    ],
+    status: 'active',
+    successRate: 94.7,
+    lastRun: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+    executionCount: 19,
+    failureCount: 1,
+    avgExecutionTime: 1245,
+    createdBy: 'Jan Lewandowski',
+    createdAt: new Date('2024-02-28'),
+    updatedAt: new Date('2024-09-27'),
+  },
+];
+
+// --- Automation Executions ---
+const automationExecutions: AutomationExecution[] = [
+  {
+    id: 'exec-1',
+    ruleId: 'rule-1',
+    ruleName: 'GitLab Sync - Status Update',
+    status: 'success',
+    timestamp: new Date(Date.now() - 2 * 60 * 1000),
+    duration: 134,
+    triggerData: { prId: '!456', taskId: 'TASK-123' },
+    result: { statusChanged: true, commentAdded: true },
+    affectedIssues: ['TASK-123'],
+  },
+  {
+    id: 'exec-2',
+    ruleId: 'rule-2',
+    ruleName: 'Auto-assign by Skills',
+    status: 'success',
+    timestamp: new Date(Date.now() - 5 * 60 * 1000),
+    duration: 98,
+    triggerData: { taskId: 'TASK-124', requiredSkills: ['React', 'TypeScript'] },
+    result: { assignedTo: 'Michał Nowak' },
+    affectedIssues: ['TASK-124'],
+  },
+  {
+    id: 'exec-3',
+    ruleId: 'rule-1',
+    ruleName: 'GitLab Sync - Status Update',
+    status: 'success',
+    timestamp: new Date(Date.now() - 15 * 60 * 1000),
+    duration: 156,
+    triggerData: { prId: '!455', taskId: 'TASK-122' },
+    result: { statusChanged: true, commentAdded: true },
+    affectedIssues: ['TASK-122'],
+  },
+  {
+    id: 'exec-4',
+    ruleId: 'rule-5',
+    ruleName: 'Friday Report Generator',
+    status: 'failed',
+    timestamp: new Date(Date.now() - 3 * 60 * 60 * 1000),
+    duration: 245,
+    triggerData: { reportType: 'weekly' },
+    error: 'Slack API rate limit exceeded',
+    affectedIssues: [],
+  },
+  {
+    id: 'exec-5',
+    ruleId: 'rule-3',
+    ruleName: 'Sprint Cleanup',
+    status: 'warning',
+    timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+    duration: 289,
+    triggerData: { sprintId: 'sprint-3' },
+    result: { movedTasks: 7, failedTasks: 1 },
+    affectedIssues: ['TASK-110', 'TASK-111', 'TASK-112', 'TASK-113', 'TASK-114', 'TASK-115', 'TASK-116'],
+  },
+  {
+    id: 'exec-6',
+    ruleId: 'rule-2',
+    ruleName: 'Auto-assign by Skills',
+    status: 'success',
+    timestamp: new Date(Date.now() - 45 * 60 * 1000),
+    duration: 102,
+    triggerData: { taskId: 'TASK-125', requiredSkills: ['Python', 'API'] },
+    result: { assignedTo: 'Paweł Zieliński' },
+    affectedIssues: ['TASK-125'],
+  },
+];
+
+// --- Automation Templates ---
+const automationTemplates: AutomationTemplate[] = [
+  {
+    id: 'template-1',
+    name: 'GitLab → Jira Sync',
+    description: 'Dwukierunkowa synchronizacja statusów między GitLab a Jira',
+    category: 'sync',
+    icon: '🔄',
+    popularity: 95,
+    rule: {
+      name: 'GitLab ↔ Jira Status Sync',
+      description: 'Synchronizuje statusy zadań między GitLab i Jira',
+      category: 'sync',
+      trigger: { type: 'pr_merged', config: { source: 'gitlab' } },
+      conditions: [],
+      actions: [
+        { type: 'move_status', config: { newStatus: 'Done' } },
+        { type: 'add_comment', config: { content: 'Synced from GitLab' } }
+      ],
+      status: 'draft',
+      successRate: 0,
+      avgExecutionTime: 0,
+    },
+  },
+  {
+    id: 'template-2',
+    name: 'Sprint Auto-cleanup',
+    description: 'Automatyczne przenoszenie niedokończonych zadań po zakończeniu sprintu',
+    category: 'sprint',
+    icon: '🧹',
+    popularity: 88,
+    rule: {
+      name: 'Sprint Cleanup Rule',
+      description: 'Przenosi niedokończone zadania do backlogu',
+      category: 'sprint',
+      trigger: { type: 'sprint_end', config: {} },
+      conditions: [{ field: 'status', operator: 'not_equals', value: 'Done' }],
+      actions: [{ type: 'move_to_sprint', config: { sprintId: null } }],
+      status: 'draft',
+      successRate: 0,
+      avgExecutionTime: 0,
+    },
+  },
+  {
+    id: 'template-3',
+    name: 'Blocker Alert System',
+    description: 'Automatyczne powiadomienia o zablokowanych zadaniach',
+    category: 'notification',
+    icon: '🚨',
+    popularity: 76,
+    rule: {
+      name: 'Blocker Notification',
+      description: 'Wysyła alert gdy zadanie jest zablokowane',
+      category: 'notification',
+      trigger: { type: 'time_based', config: { interval: '2h' } },
+      conditions: [{ field: 'status', operator: 'equals', value: 'In Progress' }],
+      actions: [{ type: 'send_notification', config: { channel: 'slack' } }],
+      status: 'draft',
+      successRate: 0,
+      avgExecutionTime: 0,
+    },
+  },
+  {
+    id: 'template-4',
+    name: 'Weekly Report Generator',
+    description: 'Automatyczny raport tygodniowy w każdy piątek',
+    category: 'notification',
+    icon: '📊',
+    popularity: 92,
+    rule: {
+      name: 'Friday Report',
+      description: 'Generuje raport tygodniowy',
+      category: 'notification',
+      trigger: { type: 'time_based', config: { schedule: 'friday-16:00' } },
+      conditions: [],
+      actions: [{ type: 'send_notification', config: { type: 'report' } }],
+      status: 'draft',
+      successRate: 0,
+      avgExecutionTime: 0,
+    },
+  },
+  {
+    id: 'template-5',
+    name: 'Smart Task Assignment',
+    description: 'Inteligentne przypisywanie zadań na podstawie umiejętności',
+    category: 'assignment',
+    icon: '🎯',
+    popularity: 84,
+    rule: {
+      name: 'Skill-based Assignment',
+      description: 'Przypisuje zadania według umiejętności',
+      category: 'assignment',
+      trigger: { type: 'status_change', config: {} },
+      conditions: [{ field: 'assignee', operator: 'equals', value: null }],
+      actions: [{ type: 'assign_user', config: { strategy: 'by_skills' } }],
+      status: 'draft',
+      successRate: 0,
+      avgExecutionTime: 0,
+    },
+  },
+];
+
+// --- AI Insights ---
+const aiInsights: AIInsight[] = [
+  {
+    id: 'insight-1',
+    type: 'risk',
+    title: 'Sprint velocity spadło o 30%',
+    description: 'Obecny sprint ma znacznie niższą velocity niż poprzednie. Zalecane przepriorytetyzowanie zadań lub przeniesienie części do następnego sprintu.',
+    severity: 'high',
+    actionable: true,
+    action: {
+      label: 'Podejrzyj szczegóły sprintu',
+    },
+    relatedSprints: ['sprint-4'],
+    createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000),
+    dismissed: false,
+  },
+  {
+    id: 'insight-2',
+    type: 'suggestion',
+    title: 'Nieprzypisane zadania w sprincie',
+    description: '5 zadań w aktywnym sprincie nie ma przypisanego developera. Rozważ użycie automatycznego przypisywania.',
+    severity: 'medium',
+    actionable: true,
+    action: {
+      label: 'Włącz auto-assignment',
+      ruleTemplate: automationTemplates[4],
+    },
+    relatedIssues: ['TASK-120', 'TASK-121', 'TASK-122', 'TASK-123', 'TASK-124'],
+    createdAt: new Date(Date.now() - 12 * 60 * 60 * 1000),
+    dismissed: false,
+  },
+  {
+    id: 'insight-3',
+    type: 'pattern',
+    title: 'Powtarzający się wzorzec: Zadania czekają na review',
+    description: 'Wykryto wzorzec - 80% zadań spędza więcej niż 2 dni w statusie "In Review". Rozważ automatyzację przypominania o code review.',
+    severity: 'medium',
+    actionable: true,
+    action: {
+      label: 'Utwórz przypomnienia',
+      ruleTemplate: automationTemplates[2],
+    },
+    createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
+    dismissed: false,
+  },
+  {
+    id: 'insight-4',
+    type: 'optimization',
+    title: 'Możesz zaoszczędzić 5h/tydzień',
+    description: 'Ręcznie przenosisz zadania między sprintami. Automatyzacja tego procesu zaoszczędzi około 5 godzin tygodniowo.',
+    severity: 'low',
+    actionable: true,
+    action: {
+      label: 'Włącz automatyzację',
+      ruleTemplate: automationTemplates[1],
+    },
+    createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+    dismissed: false,
+  },
+  {
+    id: 'insight-5',
+    type: 'risk',
+    title: 'Potencjalne opóźnienie w deadline',
+    description: 'Na podstawie obecnej velocity, sprint może nie zostać ukończony na czas. 3 zadania wysokiego priorytetu są zagrożone.',
+    severity: 'high',
+    actionable: true,
+    relatedIssues: ['TASK-101', 'TASK-102', 'TASK-103'],
+    relatedSprints: ['sprint-4'],
+    createdAt: new Date(Date.now() - 6 * 60 * 60 * 1000),
+    dismissed: false,
+  },
+];
+
+// --- Automation Metrics ---
+const automationMetrics: AutomationMetrics = {
+  healthScore: 94,
+  activeRules: 4,
+  totalExecutions: 1247,
+  successRate: 98.2,
+  timeSavedHours: 12.5,
+  failureRate: 1.8,
+  avgResponseTime: 145,
+};
+
 export const mockData = {
   users,
   sprints,
@@ -317,4 +708,9 @@ export const mockData = {
   activityLogs,
   timeEntries,
   taskTemplates,
+  automationRules,
+  automationExecutions,
+  automationTemplates,
+  aiInsights,
+  automationMetrics,
 };

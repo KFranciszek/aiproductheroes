@@ -12,6 +12,7 @@ import { DataManager } from "@/components/data-manager"
 import { CommandPalette } from "@/components/command-palette"
 import { PersonalDashboard } from "@/components/personal-dashboard"
 import { SettingsView } from "@/components/settings-view"
+import { AIAutomationView } from "@/components/ai-automation-view"
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts"
 import { cn } from "@/lib/utils"
 import { initialIssues, initialSprints, initialActivityLogs, initialComments, initialAttachments, initialTemplates, generateTaskId, generateCommentId, generateAttachmentId } from "@/lib/data"
@@ -444,6 +445,16 @@ export default function SyzioDemo() {
         )
       case "activity":
         return <ActivityView activities={activities} />
+      case "ai-automation":
+        return (
+          <AIAutomationView
+            rules={mockData.automationRules}
+            executions={mockData.automationExecutions}
+            templates={mockData.automationTemplates}
+            insights={mockData.aiInsights}
+            metrics={mockData.automationMetrics}
+          />
+        )
       case "settings":
         return (
           <SettingsView 
