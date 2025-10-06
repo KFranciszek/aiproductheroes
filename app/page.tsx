@@ -1,46 +1,368 @@
-import { Navigation } from "@/components/landing/navigation"
-import { HeroSection } from "@/components/landing/hero-section"
-import { ProblemSection } from "@/components/landing/problem-section"
-import { ThreePillars } from "@/components/landing/three-pillars"
-import { AIFeatures } from "@/components/landing/ai-features"
-import { MultiTeamSync } from "@/components/landing/multi-team-sync"
-import { OriginStory } from "@/components/landing/origin-story"
-import { SocialProof } from "@/components/landing/social-proof"
-import { FinalCTA } from "@/components/landing/final-cta"
-import { Footer } from "@/components/landing/footer"
+"use client"
+
+import Link from "next/link"
+import { useState, useEffect } from "react"
 
 export default function LandingPage() {
+  const [isDark, setIsDark] = useState(true) // Dark mode domyślnie
+  const [mounted, setMounted] = useState(false)
+
+  // Pierwszy useEffect - sprawdź czy komponent jest zamontowany
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  // Drugi useEffect - ustaw motyw po zamontowaniu
+  useEffect(() => {
+    if (!mounted) return
+
+    const savedTheme = localStorage.getItem("landing-theme")
+    
+    if (savedTheme === "light") {
+      setIsDark(false)
+      document.documentElement.classList.remove("dark")
+    } else {
+      // Domyślnie dark mode
+      setIsDark(true)
+      document.documentElement.classList.add("dark")
+      if (!savedTheme) {
+        localStorage.setItem("landing-theme", "dark")
+      }
+    }
+  }, [mounted])
+
+  const toggleTheme = () => {
+    if (!mounted) return
+    
+    const newIsDark = !isDark
+    setIsDark(newIsDark)
+    
+    if (newIsDark) {
+      document.documentElement.classList.add("dark")
+      localStorage.setItem("landing-theme", "dark")
+    } else {
+      document.documentElement.classList.remove("dark")
+      localStorage.setItem("landing-theme", "light")
+    }
+  }
+
+  // Zapobiegaj flashowi podczas ładowania
+  if (!mounted) {
+    return null
+  }
+
   return (
-    <div className="min-h-screen bg-bg-primary text-text-primary">
-      {/* Navigation */}
-      <Navigation />
+    <div className="min-h-screen bg-white dark:bg-[#0a0e1a] text-black dark:text-white transition-colors duration-300 font-[family-name:var(--font-inter)]">
+      {/* Sticky Header */}
+      <header className="sticky top-0 z-50 bg-white/80 dark:bg-[#0a0e1a]/80 backdrop-blur-sm border-b border-gray-200 dark:border-gray-800">
+        <div className="container mx-auto px-6 py-4 flex justify-between items-center">
+          {/* Logo - Three celestial bodies in alignment (Syzygy) */}
+          <div className="flex items-center gap-2">
+            <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="6" cy="12" r="3" fill="#3b82f6" opacity="0.8"/>
+              <circle cx="12" cy="12" r="3" fill="#8b5cf6" opacity="0.9"/>
+              <circle cx="18" cy="12" r="3" fill="#10b981" opacity="0.8"/>
+              <line x1="3" y1="12" x2="21" y2="12" stroke="currentColor" strokeWidth="0.5" opacity="0.3"/>
+            </svg>
+            <h1 className="text-lg font-bold">Syzio</h1>
+          </div>
+
+          {/* Right side - Theme Toggle + Demo Button */}
+          <div className="flex items-center space-x-4">
+            {/* Theme Toggle */}
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-full bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors"
+              aria-label="Toggle theme"
+            >
+              {isDark ? (
+                <svg className="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clipRule="evenodd" />
+                </svg>
+              ) : (
+                <svg className="w-5 h-5 text-gray-700" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+                </svg>
+              )}
+            </button>
+
+            {/* Demo Button */}
+            <Link 
+              href="/demo" 
+              className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-[#667eea] to-[#764ba2] rounded-lg hover:opacity-90 transition-opacity"
+            >
+              Demo
+            </Link>
+          </div>
+        </div>
+      </header>
 
       {/* Hero Section */}
-      <HeroSection />
+      <section className="py-20 md:py-32 relative overflow-hidden container mx-auto px-6">
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <div className="w-96 h-96 rounded-full bg-[#3b82f6]/10 absolute top-10 -left-24 animate-pulse"></div>
+          <div className="w-80 h-80 rounded-full bg-[#8b5cf6]/10 absolute bottom-0 -right-20 animate-pulse" style={{ animationDelay: "200ms" }}></div>
+          <div className="w-72 h-72 rounded-full bg-[#10b981]/10 absolute top-1/3 left-1/4 -translate-x-1/2 animate-pulse" style={{ animationDelay: "400ms" }}></div>
+        </div>
+        <div className="relative z-10 grid md:grid-cols-2 gap-16 items-center">
+          <div className="md:col-span-1 text-center md:text-left">
+            <h1 className="text-5xl md:text-7xl font-extrabold mb-4 leading-tight">
+              When teams, tasks, and<br />tools align perfectly
+            </h1>
+            <p className="text-lg md:text-xl text-gray-600 dark:text-[#a0aec0] mb-8 max-w-2xl mx-auto md:mx-0">
+              Stop juggling 6 tools. Achieve syzio.
+            </p>
+            <div className="flex flex-col sm:flex-row justify-center md:justify-start items-center space-y-4 sm:space-y-0 sm:space-x-4 mb-10">
+              <Link href="/demo" className="px-6 py-3 font-medium text-white bg-gradient-to-r from-[#667eea] to-[#764ba2] rounded-lg hover:opacity-90 transition-opacity w-full sm:w-auto text-center">
+                Try Demo
+              </Link>
+              <a href="#features" className="px-6 py-3 font-medium text-gray-700 dark:text-[#a0aec0] border border-gray-300 dark:border-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-[#151b2e] transition-colors w-full sm:w-auto text-center">
+                See How It Works ↓
+              </a>
+            </div>
+            <p className="text-sm text-gray-500 dark:text-gray-400 italic">
+              "From 6 tools and 30 min standups to 1 view" <br />— Michał, Engineering Lead
+            </p>
+          </div>
+          <div className="md:col-span-1 flex justify-center md:justify-end relative">
+            <div className="w-full max-w-md aspect-video bg-gray-200 dark:bg-[#151b2e] rounded-xl shadow-lg flex items-center justify-center overflow-hidden">
+              <div className="w-full h-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white text-3xl font-bold">
+                Video Placeholder
+              </div>
+            </div>
+            <div className="absolute -bottom-8 -left-8 bg-white dark:bg-[#0a0e1a] p-4 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 transform rotate-3 z-10 hidden md:block">
+              <p className="text-sm font-medium text-gray-800 dark:text-white">"Streamlined our workflow!"</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">— Sarah, Marketing Lead</p>
+            </div>
+            <div className="absolute -top-8 -right-8 bg-white dark:bg-[#0a0e1a] p-4 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 transform -rotate-2 z-10 hidden md:block">
+              <p className="text-sm font-medium text-gray-800 dark:text-white">"Amazing visibility into projects."</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">— David, Project Manager</p>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Problem Section */}
-      <ProblemSection />
+      <section id="features" className="py-20 md:py-24 relative overflow-hidden container mx-auto px-6">
+        <div className="relative z-10 text-center mb-12">
+          <h2 className="text-4xl md:text-5xl font-bold">Your team is out of alignment</h2>
+        </div>
+        <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-6 relative">
+          <div className="absolute inset-0 bg-gradient-to-br from-[#3b82f6]/10 to-[#10b981]/10 rounded-xl transform -rotate-2 scale-105 opacity-50 z-0"></div>
+          <div className="md:col-span-1 space-y-6 relative z-10">
+            <div className="flex items-start p-4 bg-gray-100 dark:bg-[#151b2e] rounded-lg shadow-md">
+              <span className="text-red-500 text-2xl mr-4">❌</span>
+              <p className="text-gray-800 dark:text-white">Information scattered across 6 tools</p>
+            </div>
+            <div className="flex items-start p-4 bg-gray-100 dark:bg-[#151b2e] rounded-lg shadow-md">
+              <span className="text-red-500 text-2xl mr-4">❌</span>
+              <p className="text-gray-800 dark:text-white">Automations break silently</p>
+            </div>
+          </div>
+          <div className="md:col-span-1 space-y-6 relative z-10 pt-8 md:pt-16">
+            <div className="flex items-start p-4 bg-gray-100 dark:bg-[#151b2e] rounded-lg shadow-md">
+              <span className="text-red-500 text-2xl mr-4">❌</span>
+              <p className="text-gray-800 dark:text-white">2-hour manual reports every Friday</p>
+            </div>
+            <div className="flex items-start p-4 bg-gray-100 dark:bg-[#151b2e] rounded-lg shadow-md">
+              <span className="text-red-500 text-2xl mr-4">❌</span>
+              <p className="text-gray-800 dark:text-white">"Who's working on what?" meetings</p>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Three Pillars Section */}
-      <ThreePillars />
+      <section className="py-20 md:py-24 relative container mx-auto px-6">
+        <div className="relative z-10 text-center mb-16">
+          <h2 className="text-4xl md:text-5xl font-bold">Three forces, one syzio</h2>
+        </div>
+        <div className="grid md:grid-cols-3 gap-8 relative z-10">
+          <div className="p-8 border border-gray-200 dark:border-gray-800 rounded-xl hover:shadow-xl hover:border-[#3b82f6] dark:hover:border-[#3b82f6] transition-all duration-300 transform hover:-translate-y-2 relative overflow-hidden">
+            <div className="absolute -top-4 -right-4 w-16 h-16 bg-[#3b82f6]/20 rounded-full blur-xl"></div>
+            <h3 className="text-2xl font-bold mb-4 flex items-center">
+              <span className="w-3 h-3 rounded-full bg-[#3b82f6] mr-3"></span>Team Syzio
+            </h3>
+            <ul className="space-y-2 text-gray-600 dark:text-[#a0aec0]">
+              <li>Everyone sees the same state</li>
+              <li>Real-time dependencies</li>
+              <li>No human middleware</li>
+            </ul>
+          </div>
+          <div className="p-8 border border-gray-200 dark:border-gray-800 rounded-xl hover:shadow-xl hover:border-[#8b5cf6] dark:hover:border-[#8b5cf6] transition-all duration-300 transform hover:-translate-y-2 relative overflow-hidden md:mt-16">
+            <div className="absolute -top-4 -right-4 w-16 h-16 bg-[#8b5cf6]/20 rounded-full blur-xl"></div>
+            <h3 className="text-2xl font-bold mb-4 flex items-center">
+              <span className="w-3 h-3 rounded-full bg-[#8b5cf6] mr-3"></span>Tool Syzio
+            </h3>
+            <ul className="space-y-2 text-gray-600 dark:text-[#a0aec0]">
+              <li>Automations self-heal</li>
+              <li>Health Score monitoring</li>
+              <li>Semantic IDs (never break)</li>
+            </ul>
+          </div>
+          <div className="p-8 border border-gray-200 dark:border-gray-800 rounded-xl hover:shadow-xl hover:border-[#10b981] dark:hover:border-[#10b981] transition-all duration-300 transform hover:-translate-y-2 relative overflow-hidden">
+            <div className="absolute -top-4 -right-4 w-16 h-16 bg-[#10b981]/20 rounded-full blur-xl"></div>
+            <h3 className="text-2xl font-bold mb-4 flex items-center">
+              <span className="w-3 h-3 rounded-full bg-[#10b981] mr-3"></span>Sprint Syzio
+            </h3>
+            <ul className="space-y-2 text-gray-600 dark:text-[#a0aec0]">
+              <li>Plan = Reality</li>
+              <li>Auto drift detection</li>
+              <li>One-click reporting</li>
+            </ul>
+          </div>
+        </div>
+      </section>
 
       {/* AI Features Section */}
-      <AIFeatures />
+      <section className="py-20 md:py-24 container mx-auto px-6">
+        <div className="text-center mb-12">
+          <h2 className="text-4xl md:text-5xl font-bold">
+            AI That Prevents Conflicts,<br />Not Just Detects Them
+          </h2>
+        </div>
+        <div className="bg-gray-100 dark:bg-[#151b2e] rounded-xl p-8 md:p-12 relative overflow-hidden">
+          <div className="absolute -top-10 -left-10 w-32 h-32 bg-[#06b6d4]/15 rounded-full blur-xl"></div>
+          <div className="absolute -bottom-10 -right-10 w-48 h-48 bg-[#3b82f6]/15 rounded-full blur-xl"></div>
+          <div className="relative z-10 grid md:grid-cols-2 gap-8 items-center mb-8">
+            <div className="p-4 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-[#0a0e1a] shadow-md">
+              <p className="font-mono text-sm text-gray-500">Story A</p>
+              <p className="font-medium text-gray-900 dark:text-white">Redesign user authentication</p>
+              <span className="text-xs text-blue-500 bg-blue-100 dark:bg-blue-900/50 rounded-full px-2 py-0.5">In Sprint</span>
+            </div>
+            <div className="p-4 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-[#0a0e1a] shadow-md transform translate-x-4 md:translate-x-12">
+              <p className="font-mono text-sm text-gray-500">Story B</p>
+              <p className="font-medium text-gray-900 dark:text-white">Remove old login system</p>
+              <span className="text-xs text-gray-500 bg-gray-200 dark:bg-gray-700 rounded-full px-2 py-0.5">Backlog</span>
+            </div>
+          </div>
+          <div className="text-center bg-yellow-100 dark:bg-yellow-900/30 border border-yellow-300 dark:border-yellow-500/50 rounded-lg p-6 mb-12 relative z-10 transform rotate-1">
+            <p className="text-yellow-600 dark:text-yellow-300 text-2xl mb-2">⚠️</p>
+            <p className="font-medium text-yellow-800 dark:text-yellow-200">Conflict detected: Story B depends on Story A</p>
+          </div>
+          <div className="relative z-10 grid md:grid-cols-3 gap-6 text-center">
+            <div className="p-4 bg-white dark:bg-[#0a0e1a] rounded-lg shadow-sm transform -rotate-1">
+              <p className="text-2xl mb-2">✨</p>
+              <p className="text-gray-700 dark:text-[#a0aec0]">Auto-generate stories from docs</p>
+            </div>
+            <div className="p-4 bg-white dark:bg-[#0a0e1a] rounded-lg shadow-sm transform rotate-2">
+              <p className="text-2xl mb-2">✨</p>
+              <p className="text-gray-700 dark:text-[#a0aec0]">AI suggests tasks based on context</p>
+            </div>
+            <div className="p-4 bg-white dark:bg-[#0a0e1a] rounded-lg shadow-sm transform -rotate-1">
+              <p className="text-2xl mb-2">✨</p>
+              <p className="text-gray-700 dark:text-[#a0aec0]">Stories "argue" - AI mediates</p>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Multi-Team Sync Section */}
-      <MultiTeamSync />
+      <section className="py-20 md:py-24 text-center relative overflow-hidden container mx-auto px-6">
+        <h2 className="text-4xl md:text-5xl font-bold mb-4 relative z-10">One Project, Many Teams, Perfect Sync</h2>
+        <div className="flex flex-wrap justify-center items-center gap-4 md:gap-6 my-10 font-mono text-sm relative z-10">
+          <div className="p-3 md:p-4 border border-gray-200 dark:border-gray-800 rounded-lg transform rotate-2 shadow-sm">
+            Frontend <span className="text-[#3b82f6]">●</span>
+          </div>
+          <span className="text-gray-400 dark:text-gray-600 text-lg">←→</span>
+          <div className="p-3 md:p-4 border border-gray-200 dark:border-gray-800 rounded-lg transform -rotate-1 shadow-sm">
+            Backend <span className="text-[#8b5cf6]">●</span>
+          </div>
+          <span className="text-gray-400 dark:text-gray-600 text-lg">←→</span>
+          <div className="p-3 md:p-4 border border-gray-200 dark:border-gray-800 rounded-lg transform rotate-3 shadow-sm">
+            DevOps <span className="text-[#10b981]">●</span>
+          </div>
+          <span className="text-gray-400 dark:text-gray-600 text-lg">←→</span>
+          <div className="p-3 md:p-4 border border-gray-200 dark:border-gray-800 rounded-lg transform -rotate-2 shadow-sm">
+            Design <span className="text-[#06b6d4]">●</span>
+          </div>
+        </div>
+        <p className="text-lg text-gray-600 dark:text-[#a0aec0] max-w-3xl mx-auto relative z-10">
+          Real-time visibility. Shared resources. Zero meetings.<br />Scales from 2 teams to 20+.
+        </p>
+      </section>
 
       {/* Origin Story Section */}
-      <OriginStory />
+      <section className="py-20 md:py-24 relative overflow-hidden container mx-auto px-6">
+        <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-12 items-center relative z-10">
+          <div className="md:col-span-1 text-center md:text-left">
+            <p className="text-lg md:text-xl text-gray-600 dark:text-[#a0aec0] mb-6 leading-relaxed">
+              In astronomy, <strong className="text-black dark:text-white">syzygy</strong> is when 3 celestial bodies align perfectly - a rare moment of cosmic harmony.
+            </p>
+            <p className="text-lg md:text-xl text-gray-600 dark:text-[#a0aec0] mb-10 leading-relaxed">
+              In project management, perfect alignment is just as rare. <br />
+              <strong className="text-black dark:text-white">Syzio brings back that perfect alignment.</strong>
+            </p>
+            <a href="#cta" className="px-6 py-3 font-medium text-white bg-gradient-to-r from-[#667eea] to-[#764ba2] rounded-lg hover:opacity-90 transition-opacity inline-block">
+              Achieve Your First Syzio
+            </a>
+          </div>
+          <div className="md:col-span-1 flex justify-center md:justify-end relative">
+            <div className="w-full max-w-sm h-64 bg-gray-200 dark:bg-[#151b2e] rounded-xl shadow-lg flex items-center justify-center overflow-hidden transform rotate-3">
+              <div className="w-full h-full bg-gradient-to-tr from-green-400 to-cyan-500 flex items-center justify-center text-white text-3xl font-bold">
+                Illustration Placeholder
+              </div>
+            </div>
+            <div className="absolute -bottom-8 -left-8 bg-white dark:bg-[#0a0e1a] p-4 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 transform -rotate-2 z-10 hidden md:block">
+              <p className="text-sm font-medium text-gray-800 dark:text-white">"Cosmic harmony, indeed!"</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">— Alex, CEO</p>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Social Proof Section */}
-      <SocialProof />
+      <section className="py-20 md:py-24 container mx-auto px-6">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-5xl font-bold">Teams Achieving Syzio</h2>
+        </div>
+        <div className="grid md:grid-cols-3 gap-8 text-sm relative">
+          <div className="absolute inset-0 bg-gradient-to-br from-purple-400/10 to-blue-400/10 rounded-xl transform rotate-2 scale-105 opacity-50 z-0 hidden md:block"></div>
+          <div className="p-6 bg-gray-100 dark:bg-[#151b2e] rounded-lg shadow-md transform rotate-1 relative z-10">
+            <p className="text-gray-800 dark:text-white mb-4 italic">"6 tools → 1 view. 30 min standups → 5 min."</p>
+            <p className="font-medium">Michał</p>
+            <p className="text-gray-500 dark:text-gray-400">Engineering Lead</p>
+          </div>
+          <div className="p-6 bg-gray-100 dark:bg-[#151b2e] rounded-lg shadow-md transform -rotate-1 md:translate-y-8 relative z-10">
+            <p className="text-gray-800 dark:text-white mb-4 italic">"We went from chaos to perfect alignment in 2 weeks."</p>
+            <p className="font-medium">Anna</p>
+            <p className="text-gray-500 dark:text-gray-400">Product Manager</p>
+          </div>
+          <div className="p-6 bg-gray-100 dark:bg-[#151b2e] rounded-lg shadow-md transform rotate-2 relative z-10">
+            <p className="text-gray-800 dark:text-white mb-4 italic">"Finally a tool that actually prevents problems."</p>
+            <p className="font-medium">Tom</p>
+            <p className="text-gray-500 dark:text-gray-400">CTO</p>
+          </div>
+        </div>
+        <div className="flex justify-center flex-wrap gap-2 mt-12 relative z-10">
+          <span className="text-xs font-mono text-gray-500 dark:text-gray-400 bg-gray-200 dark:bg-[#151b2e] px-3 py-1 rounded-full shadow-sm transform -rotate-1">#SyzioAchieved</span>
+          <span className="text-xs font-mono text-gray-500 dark:text-gray-400 bg-gray-200 dark:bg-[#151b2e] px-3 py-1 rounded-full shadow-sm transform rotate-2">#TeamSyzio</span>
+          <span className="text-xs font-mono text-gray-500 dark:text-gray-400 bg-gray-200 dark:bg-[#151b2e] px-3 py-1 rounded-full shadow-sm transform -rotate-1">#PerfectAlignment</span>
+        </div>
+      </section>
 
       {/* Final CTA Section */}
-      <FinalCTA />
-
-      {/* Footer */}
-      <Footer />
+      <section id="cta" className="text-center py-20 md:py-32 relative overflow-hidden container mx-auto px-6">
+        <h2 className="text-4xl md:text-5xl font-bold mb-4 relative z-10">Ready to achieve perfect alignment?</h2>
+        <div className="flex justify-center my-8 relative z-10">
+          <Link href="/demo" className="px-8 py-4 font-bold text-lg text-white bg-gradient-to-r from-[#667eea] to-[#764ba2] rounded-lg hover:opacity-90 transition-opacity">
+            Try Demo - It's Free
+          </Link>
+        </div>
+        <div className="mt-8 text-center relative z-10">
+          <p className="text-sm text-gray-600 dark:text-[#a0aec0] mb-4">Or get early access:</p>
+          <form className="flex justify-center items-center max-w-md mx-auto">
+            <input
+              className="w-full px-4 py-2 text-gray-800 dark:text-white bg-white dark:bg-[#151b2e] border border-gray-300 dark:border-gray-700 rounded-l-lg focus:ring-[#06b6d4] focus:border-[#06b6d4]"
+              placeholder="your@email.com"
+              type="email"
+            />
+            <button className="px-6 py-2 font-medium text-white bg-[#06b6d4] rounded-r-lg hover:bg-[#06b6d4]/90 transition-colors" type="submit">
+              Sign Up
+            </button>
+          </form>
+        </div>
+      </section>
     </div>
   )
 }
