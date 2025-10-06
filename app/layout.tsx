@@ -43,7 +43,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="font-display bg-background-light dark:bg-background-dark text-foreground-light dark:text-foreground-dark">
+      <body className="font-display bg-background text-foreground">
         <ThemeProvider>
           <Suspense fallback={null}>{children}</Suspense>
           <Analytics />
