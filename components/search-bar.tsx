@@ -57,7 +57,7 @@ export function SearchBar({
 
       // Filtrowanie po assignee
       if (activeFilters.assignee && activeFilters.assignee.length > 0) {
-        if (!issue.assignee || !activeFilters.assignee.includes(issue.assignee)) {
+        if (!issue.assignee || !activeFilters.assignee.includes(issue.assignee.id)) {
           return false;
         }
       }

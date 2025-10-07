@@ -184,7 +184,7 @@ export function IssueCard({
               </Badge>
             )}
           </div>
-          <span className="text-xs text-muted-foreground">{issue.assignee}</span>
+          <span className="text-xs text-muted-foreground">{issue.assignee?.name || 'Unassigned'}</span>
         </div>
       </CardContent>
     </Card>

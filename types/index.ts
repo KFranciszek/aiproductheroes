@@ -14,7 +14,14 @@ export interface Issue {
   status: IssueStatus
   storyPoints?: number // Story Points dla zadania
   type?: 'Bug' | 'Feature' | 'Chore' // Typ zadania
-  assignee?: string
+  assignee?: {
+    id: string
+    name: string
+    avatar?: string
+    role: UserRole
+    skills: string[]
+    capacity: number
+  }
   sprintId?: string
   parentId?: string // Dla hierarchii zadań
   progress?: number // Automatycznie obliczane (0-100)
@@ -22,6 +29,12 @@ export interface Issue {
   isFavorite?: boolean // Ulubione zadanie
   favoritedBy?: string[] // Lista użytkowników, którzy dodali do ulubionych
   statusHistory?: { status: IssueStatus; date: Date }[] // Historia zmian statusu
+  dependencies?: {
+    blocks: string[] // task IDs that this blocks
+    blockedBy: string[] // task IDs that block this
+  }
+  estimatedHours?: number
+  actualHours?: number
   createdAt: Date
   updatedAt: Date
 }
@@ -33,9 +46,37 @@ export interface Sprint {
   startDate: Date
   endDate: Date
   velocity?: number
-  capacity?: number
+  capacity?: number // Deprecated - use teamCapacity instead
+  // Team assignments
+  teamId?: string; // Single team assignment (backward compatibility)
+  teamCapacity?: {
+    teamId: string;
+    allocatedCapacity: number; // SP allocated to this team
+    memberIds: string[]; // Members participating in this sprint
+  }[]; // Multi-team sprint support
+  // Cross-team coordination
+  dependencies?: {
+    sprintId: string; // Other sprint
+    teamId: string; // Dependent team
+    description: string;
+  }[];
   createdAt: Date
   updatedAt: Date
+}
+
+export interface SprintMetrics {
+  activeSprint?: Sprint
+  totalTasks: number
+  completedTasks: number
+  progressPercentage: number
+  totalStoryPoints: number
+  wipLimits: Record<string, number>
+  teamLoad: Array<{
+    user: User
+    taskCount: number
+    storyPoints: number
+    loadPercentage: number
+  }>
 }
 
 export interface Comment {
@@ -119,7 +160,7 @@ export interface KeyboardShortcut {
   description: string
 }
 
-export type ViewType = "dashboard" | "issues" | "current-sprint" | "sprints" | "reports" | "favorites" | "activity" | "ai-automation" | "settings"
+export type ViewType = "dashboard" | "issues" | "current-sprint" | "sprints" | "teams" | "reports" | "favorites" | "activity" | "ai-automation" | "settings"
 
 // From etap_2.5.md
 export type UserRole = 'Admin' | 'Developer' | 'Designer' | 'Product Owner' | 'Viewer';
@@ -135,6 +176,63 @@ export interface User {
   isActive: boolean;
   joinedAt: Date;
   lastSeen?: Date;
+  // Team assignments
+  teamIds: string[]; // Użytkownik może być w wielu zespołach
+  primaryTeamId?: string; // Główny zespół dla raportów
+  isTeamLead: boolean; // Czy jest leadem któregoś zespołu
+}
+
+export interface Team {
+  id: string;
+  name: string;
+  description?: string;
+  avatar?: string; // Logo zespołu
+  color: string; // Kolor identyfikacyjny
+  
+  // Członkowie
+  memberIds: string[]; // Referencje do User.id
+  leadId?: string; // Team Lead
+  
+  // Organizacja
+  departmentId?: string; // Dla większych struktur
+  parentTeamId?: string; // Dla hierarchii zespołów
+  
+  // Metryki
+  defaultCapacity: number; // Domyślna capacity dla sprintów (w SP)
+  timezone?: string; // Strefa czasowa zespołu
+  
+  // Status
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface TeamMetrics {
+  teamId: string;
+  period: {
+    startDate: Date;
+    endDate: Date;
+  };
+  
+  // Velocity
+  averageVelocity: number;
+  velocityTrend: 'increasing' | 'decreasing' | 'stable';
+  
+  // Completion
+  completionRate: number; // %
+  onTimeDelivery: number; // %
+  
+  // Quality
+  bugRate: number; // bugs per sprint
+  reworkRate: number; // %
+  
+  // Collaboration
+  crossTeamDependencies: number;
+  blockedTasksCount: number;
+  
+  // Load
+  avgWorkloadPerMember: number; // SP per person
+  capacityUtilization: number; // %
 }
 
 export interface Permission {

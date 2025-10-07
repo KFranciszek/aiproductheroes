@@ -17,7 +17,8 @@ import {
   Plus,
   ChevronLeft,
   ChevronRight,
-  HelpCircle
+  HelpCircle,
+  Users
 } from "lucide-react"
 import { useState, useMemo } from "react"
 import type { ViewType, Issue, Sprint, TaskTemplate } from "@/types"
@@ -105,6 +106,12 @@ export function SidebarNavigation({
       label: "Sprints",
       icon: Calendar,
       active: currentView === "sprints",
+    },
+    {
+      id: "teams" as ViewType,
+      label: "Teams",
+      icon: Users,
+      active: currentView === "teams",
     },
     {
       id: "reports" as ViewType,

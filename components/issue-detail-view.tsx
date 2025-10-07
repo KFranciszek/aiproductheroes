@@ -314,7 +314,7 @@ export function IssueDetailView({
                 <div className="flex items-center gap-2 text-sm">
                   <User className="h-4 w-4 text-muted-foreground" />
                   <span className="text-muted-foreground">Przypisany:</span>
-                  <span className="font-medium">{issue.assignee || "Brak"}</span>
+                  <span className="font-medium">{issue.assignee?.name || "Brak"}</span>
                 </div>
 
                 <div className="flex items-center gap-2 text-sm">

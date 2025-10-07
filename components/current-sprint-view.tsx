@@ -1,164 +1,253 @@
 "use client"
 
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Calendar, Users, Target, MoreHorizontal, AlertTriangle, TrendingUp, Clock } from "lucide-react"
-import { KanbanBoard } from "./kanban-board"
-import type { Issue, Sprint, IssueStatus } from "@/types"
+import { Progress } from "@/components/ui/progress"
+import { AlertTriangle, CheckCircle2, Clock, Users, Zap } from "lucide-react"
+import type { Sprint, Issue, IssueStatus } from "@/types"
+import { formatDistanceToNow } from "date-fns"
+import { pl } from "date-fns/locale"
 
 interface CurrentSprintViewProps {
   sprint: Sprint | null
   issues: Issue[]
   onUpdateIssueStatus: (issueId: string, newStatus: IssueStatus) => void
-  onViewDetails?: (issueId: string) => void
+  onViewDetails: (issueId: string) => void
 }
 
-export function CurrentSprintView({ sprint, issues, onUpdateIssueStatus, onViewDetails }: CurrentSprintViewProps) {
+export function CurrentSprintView({
+  sprint,
+  issues,
+  onUpdateIssueStatus,
+  onViewDetails
+}: CurrentSprintViewProps) {
   if (!sprint) {
     return (
-      <div className="space-y-6">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-bold">No Active Sprint</h1>
-            <p className="text-muted-light dark:text-muted-dark">Start a sprint from the Sprints view to see the kanban board here.</p>
-          </div>
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-muted-foreground mb-2">Brak aktywnego sprintu</h2>
+          <p className="text-muted-foreground">Utwórz nowy sprint aby rozpocząć pracę</p>
         </div>
       </div>
     )
   }
 
-  const sprintIssues = issues.filter((issue) => issue.sprintId === sprint.id)
-  const completedIssues = sprintIssues.filter((issue) => issue.status === "Done")
-  const inProgressIssues = sprintIssues.filter((issue) => issue.status === "In Progress")
-  const inReviewIssues = sprintIssues.filter((issue) => issue.status === "In Review")
-  const todoIssues = sprintIssues.filter((issue) => issue.status === "Todo")
+  const sprintIssues = issues.filter(issue => issue.sprintId === sprint.id)
+  const completedTasks = sprintIssues.filter(issue => issue.status === 'Done').length
+  const totalTasks = sprintIssues.length
+  const progressPercentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0
+  const totalStoryPoints = sprintIssues.reduce((sum, issue) => sum + (issue.storyPoints || 0), 0)
 
-  const formatDate = (date: Date) => {
-    return date.toLocaleDateString("en-US", {
-      month: "long",
-      day: "numeric",
-      year: "numeric",
-    })
+  // WIP Limits
+  const wipLimits = {
+    'In Progress': 5,
+    'In Review': 3
   }
 
-  const getDaysRemaining = () => {
-    // Use a fixed date for consistent server/client rendering
-    const today = new Date('2024-01-20T12:00:00Z')
-    const endDate = new Date(sprint.endDate)
-    const diffTime = endDate.getTime() - today.getTime()
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-    return diffDays
+  const statusCounts = sprintIssues.reduce((acc, issue) => {
+    acc[issue.status] = (acc[issue.status] || 0) + 1
+    return acc
+  }, {} as Record<string, number>)
+
+  // Find blocked tasks
+  const blockedTasks = sprintIssues.filter(issue => 
+    issue.dependencies?.blockedBy && issue.dependencies.blockedBy.length > 0
+  )
+
+  const getPriorityColor = (priority: string) => {
+    switch (priority) {
+      case 'P0': return 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300'
+      case 'P1': return 'bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300'
+      case 'P2': return 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300'
+      case 'P3': return 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
+      case 'P4': return 'bg-gray-100 text-gray-700 dark:bg-gray-900 dark:text-gray-300'
+      default: return 'bg-gray-100 text-gray-700 dark:bg-gray-900 dark:text-gray-300'
+    }
   }
 
-  const daysRemaining = getDaysRemaining()
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'Todo': return 'bg-gray-100 text-gray-700 dark:bg-gray-900 dark:text-gray-300'
+      case 'In Progress': return 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
+      case 'In Review': return 'bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300'
+      case 'Done': return 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300'
+      default: return 'bg-gray-100 text-gray-700 dark:bg-gray-900 dark:text-gray-300'
+    }
+  }
 
-  // AI Insights - Smart suggestions
-  const blockedIssues = sprintIssues.filter(i => i.parentId && i.status !== "Done").length
-  const openIssues = sprintIssues.filter(i => i.status !== "Done").length
-  const progressPercentage = sprintIssues.length > 0 ? (completedIssues.length / sprintIssues.length) * 100 : 0
-  
-  const aiInsights = [
-    blockedIssues > 0 && {
-      icon: AlertTriangle,
-      message: `${blockedIssues} ${blockedIssues === 1 ? 'zadanie jest zablokowane' : 'zadania są zablokowane'}`,
-      type: 'warning' as const
-    },
-    daysRemaining < 3 && openIssues > 5 && {
-      icon: Clock,
-      message: `Ryzyko niedokończenia sprintu - ${openIssues} otwartych zadań, ${daysRemaining} dni pozostało`,
-      type: 'error' as const
-    },
-    progressPercentage > 80 && {
-      icon: TrendingUp,
-      message: `Świetny postęp! Sprint jest na dobrej drodze do zakończenia`,
-      type: 'success' as const
-    },
-  ].filter(Boolean)
+  const getWipStatus = (status: string, current: number, limit: number) => {
+    if (current > limit) {
+      return { color: 'text-red-600', icon: '🔸', warning: true }
+    } else if (current === limit) {
+      return { color: 'text-yellow-600', icon: '⚠️', warning: false }
+    } else {
+      return { color: 'text-green-600', icon: '✅', warning: false }
+    }
+  }
+
+  const columns = [
+    { status: 'Todo' as IssueStatus, title: 'To Do', limit: 10 },
+    { status: 'In Progress' as IssueStatus, title: 'In Progress', limit: 5 },
+    { status: 'In Review' as IssueStatus, title: 'In Review', limit: 3 },
+    { status: 'Done' as IssueStatus, title: 'Done', limit: null }
+  ]
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-4">
+      {/* Sprint Header */}
+      <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">{sprint.name}</h1>
-          <p className="text-muted-light dark:text-muted-dark">
-            {formatDate(sprint.startDate)} - {formatDate(sprint.endDate)} ({daysRemaining} days remaining)
+          <p className="text-muted-foreground mt-1">
+            {formatDistanceToNow(sprint.startDate, { addSuffix: false, locale: pl })} - {formatDistanceToNow(sprint.endDate, { addSuffix: false, locale: pl })} 
+            ({Math.ceil((sprint.endDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))} dni pozostało)
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <Button 
-            variant="outline" 
-            className="rounded-lg px-3 py-1.5 text-sm font-semibold bg-background-light dark:bg-surface-dark border border-border-light dark:border-border-dark hover:bg-border-light/50 dark:hover:bg-border-dark/50"
-          >
-            Complete Sprint
-          </Button>
-          <Button variant="ghost" size="icon" className="text-muted-light dark:text-muted-dark hover:text-primary">
-            <MoreHorizontal className="h-6 w-6" />
+        <div className="flex gap-2">
+          <Button variant="outline">Complete Sprint</Button>
+          <Button variant="outline" size="icon">
+            <span className="sr-only">More options</span>
+            ⋯
           </Button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="rounded-xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark p-4">
-          <h3 className="font-semibold text-muted-light dark:text-muted-dark mb-1">Total Tasks</h3>
-          <p className="text-2xl font-bold">{sprintIssues.length}</p>
-        </div>
-        
-        <div className="rounded-xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark p-4">
-          <h3 className="font-semibold text-muted-light dark:text-muted-dark mb-1">Story Points</h3>
-          <p className="text-2xl font-bold">124</p>
-        </div>
-        
-        <div className="rounded-xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark p-4 col-span-1 md:col-span-2">
-          <h3 className="font-semibold text-muted-light dark:text-muted-dark mb-1">Progress</h3>
-          <div className="flex items-center gap-4">
-            <div className="w-full bg-background-light dark:bg-surface-dark/50 rounded-full h-2.5">
-              <div 
-                className="bg-primary h-2.5 rounded-full" 
-                style={{width: `${sprintIssues.length > 0 ? (completedIssues.length / sprintIssues.length) * 100 : 0}%`}}
-              />
-            </div>
-            <span className="text-sm font-semibold">
-              {sprintIssues.length > 0 ? Math.round((completedIssues.length / sprintIssues.length) * 100) : 0}%
-            </span>
-          </div>
-          <div className="flex justify-between text-xs text-muted-light dark:text-muted-dark mt-1">
-            <span>{completedIssues.length} Tasks Done</span>
-            <span>{sprintIssues.length} Total Tasks</span>
-          </div>
-        </div>
+      {/* Sprint Metrics */}
+      <div className="grid gap-4 md:grid-cols-3">
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium">Total Tasks</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{totalTasks}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium">Story Points</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{totalStoryPoints}</div>
+            <p className="text-xs text-muted-foreground">
+              Średnio: {totalTasks > 0 ? Math.round(totalStoryPoints / totalTasks) : 0} SP/zadanie
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium">Progress</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{progressPercentage}%</div>
+            <Progress value={progressPercentage} className="mt-2" />
+            <p className="text-xs text-muted-foreground mt-1">
+              {completedTasks} Tasks Done / {totalTasks} Total Tasks
+            </p>
+          </CardContent>
+        </Card>
       </div>
 
       {/* AI Insights */}
-      {aiInsights.length > 0 && (
-        <Card className="border-yellow-200 dark:border-yellow-800 bg-yellow-50 dark:bg-yellow-950/20">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base flex items-center gap-2">
-              💡 AI Insights
+      {blockedTasks.length > 0 && (
+        <Card className="border-yellow-200 dark:border-yellow-900">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-yellow-800 dark:text-yellow-200">
+              <AlertTriangle className="h-5 w-5" />
+              AI Insights
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <ul className="space-y-2">
-              {aiInsights.map((insight: any, index) => {
-                const Icon = insight.icon
-                const colorClass = 
-                  insight.type === 'error' ? 'text-red-600 dark:text-red-400' :
-                  insight.type === 'warning' ? 'text-yellow-600 dark:text-yellow-400' :
-                  'text-green-600 dark:text-green-400'
-                
-                return (
-                  <li key={index} className="flex items-start gap-2">
-                    <Icon className={`h-4 w-4 mt-0.5 ${colorClass}`} />
-                    <span className="text-sm">{insight.message}</span>
-                  </li>
-                )
-              })}
-            </ul>
+            <div className="flex items-center gap-2 p-3 bg-yellow-50 dark:bg-yellow-950 rounded-lg">
+              <AlertTriangle className="h-5 w-5 text-yellow-600" />
+              <div>
+                <p className="font-semibold text-yellow-800 dark:text-yellow-200">
+                  ⚠️ {blockedTasks.length} zadań są zablokowane
+                </p>
+                <p className="text-sm text-yellow-700 dark:text-yellow-300">
+                  Sprawdź zależności i rozważ przepriorytetyzowanie
+                </p>
+              </div>
+            </div>
           </CardContent>
         </Card>
       )}
 
-      <KanbanBoard sprint={sprint} issues={issues} onUpdateIssueStatus={onUpdateIssueStatus} onViewDetails={onViewDetails} />
+      {/* Kanban Board */}
+      <div className="grid gap-6 md:grid-cols-4">
+        {columns.map(column => {
+          const columnIssues = sprintIssues.filter(issue => issue.status === column.status)
+          const current = columnIssues.length
+          const limit = column.limit
+          const wipStatus = limit ? getWipStatus(column.status, current, limit) : null
+
+          return (
+            <div key={column.status} className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="font-semibold">{column.title}</h3>
+                <div className="flex items-center gap-2">
+                  {wipStatus && (
+                    <span className={`text-sm ${wipStatus.color}`}>
+                      {wipStatus.icon} {current}/{limit}
+                    </span>
+                  )}
+                  <Badge variant="outline">{current}</Badge>
+                </div>
+              </div>
+
+              <div className="space-y-3 min-h-[400px]">
+                {columnIssues.map(issue => (
+                  <Card 
+                    key={issue.id} 
+                    className="cursor-pointer hover:shadow-md transition-shadow"
+                    onClick={() => onViewDetails(issue.id)}
+                  >
+                    <CardHeader className="pb-3">
+                      <div className="flex items-start justify-between">
+                        <CardTitle className="text-sm line-clamp-2">{issue.title}</CardTitle>
+                        <Badge className={getPriorityColor(issue.priority)}>
+                          {issue.priority}
+                        </Badge>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="pt-0">
+                      <p className="text-xs text-muted-foreground line-clamp-3 mb-3">
+                        {issue.description}
+                      </p>
+                      
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          {issue.assignee && (
+                            <div className="flex items-center gap-1">
+                              <div className="w-6 h-6 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-xs font-medium">
+                                {issue.assignee.name.split(' ').map(n => n[0]).join('')}
+                              </div>
+                              <span className="text-xs text-muted-foreground">
+                                {issue.assignee.name}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                        
+                        <div className="flex items-center gap-2">
+                          {issue.dependencies?.blockedBy && issue.dependencies.blockedBy.length > 0 && (
+                            <span className="text-xs text-red-600" title="Zablokowane">
+                              🔗
+                            </span>
+                          )}
+                          <span className="text-xs text-muted-foreground">
+                            {issue.id}
+                          </span>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          )
+        })}
+      </div>
     </div>
   )
 }

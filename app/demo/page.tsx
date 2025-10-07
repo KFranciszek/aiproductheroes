@@ -5,6 +5,8 @@ import { SidebarNavigation } from "@/components/sidebar-navigation"
 import { IssuesList } from "@/components/issues-list"
 import { CurrentSprintView } from "@/components/current-sprint-view"
 import { SprintsView } from "@/components/sprints-view"
+import { TeamsView } from "@/components/teams-view"
+import { TeamDetailView } from "@/components/team-detail-view"
 import { ReportsView } from "@/components/reports-view"
 import { ActivityView } from "@/components/activity-view"
 import { KeyboardShortcutsHelp } from "@/components/keyboard-shortcuts-help"
@@ -17,15 +19,17 @@ import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts"
 import { cn } from "@/lib/utils"
 import { initialIssues, initialSprints, initialActivityLogs, initialComments, initialAttachments, initialTemplates, generateTaskId, generateCommentId, generateAttachmentId } from "@/lib/data"
 import { mockData } from "@/lib/mock-data"
-import type { Issue, Sprint, ViewType, IssueStatus, ActivityLog, KeyboardShortcut, Comment, Attachment, TaskTemplate } from "@/types"
+import type { Issue, Sprint, Team, ViewType, IssueStatus, ActivityLog, KeyboardShortcut, Comment, Attachment, TaskTemplate } from "@/types"
 import { IssueDetailView } from "@/components/issue-detail-view"
 import Link from "next/link"
 
 export default function SyzioDemo() {
   const [currentView, setCurrentView] = useState<ViewType>("dashboard")
   const [selectedIssueId, setSelectedIssueId] = useState<string | null>(null)
+  const [selectedTeamId, setSelectedTeamId] = useState<string | null>(null)
   const [issues, setIssues] = useState<Issue[]>(mockData.issues)
   const [sprints, setSprints] = useState<Sprint[]>(mockData.sprints)
+  const [teams, setTeams] = useState<Team[]>(mockData.teams)
   const [activities, setActivities] = useState<ActivityLog[]>(mockData.activityLogs)
   const [comments, setComments] = useState<Comment[]>(mockData.comments)
   const [attachments, setAttachments] = useState<Attachment[]>(mockData.attachments)
@@ -428,8 +432,43 @@ export default function SyzioDemo() {
             onEndSprint={handleEndSprint}
           />
         )
+      case "teams":
+        if (selectedTeamId) {
+          const selectedTeam = teams.find(team => team.id === selectedTeamId);
+          const teamMembers = mockData.users.filter(user => selectedTeam?.memberIds.includes(user.id));
+          return (
+            <TeamDetailView
+              team={selectedTeam!}
+              members={teamMembers}
+              issues={issues}
+              activeSprint={activeSprint}
+              onBack={() => setSelectedTeamId(null)}
+              onViewIssue={handleViewIssueDetails}
+            />
+          );
+        }
+        return (
+          <TeamsView
+            teams={teams}
+            users={mockData.users}
+            issues={issues}
+            activeSprint={activeSprint}
+            onViewTeamDetails={setSelectedTeamId}
+          />
+        )
       case "reports":
-        return <ReportsView issues={issues} sprints={sprints} />
+        return (
+          <ReportsView 
+            issues={issues} 
+            sprints={sprints} 
+            activeSprint={activeSprint}
+            users={mockData.users}
+            teams={teams}
+            automationMetrics={mockData.automationMetrics}
+            aiInsights={mockData.aiInsights}
+            timeEntries={mockData.timeEntries}
+          />
+        )
       case "favorites":
         return (
           <IssuesList

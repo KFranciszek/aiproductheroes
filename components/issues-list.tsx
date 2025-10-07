@@ -225,7 +225,9 @@ export function IssuesList({
                     ) : (
                       <Badge variant="outline">Backlog</Badge>
                     )}
-                    <span className="text-sm text-muted-foreground">{issue.assignee}</span>
+                    <span className="text-sm text-muted-foreground">
+                      {issue.assignee ? issue.assignee.name : 'Unassigned'}
+                    </span>
                     <span className="text-sm text-muted-foreground ml-auto">
                       {issue.storyPoints} SP
                     </span>
@@ -293,7 +295,16 @@ export function IssuesList({
                     </Badge>
                   </TableCell>
                   <TableCell className={density === 'compact' ? "py-2" : ""}>
-                    {issue.assignee}
+                    {issue.assignee ? (
+                      <div className="flex items-center gap-2">
+                        <div className="w-6 h-6 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-xs font-medium">
+                          {issue.assignee.name.split(' ').map(n => n[0]).join('')}
+                        </div>
+                        <span className="text-sm">{issue.assignee.name}</span>
+                      </div>
+                    ) : (
+                      <span className="text-sm text-muted-foreground">Unassigned</span>
+                    )}
                   </TableCell>
                   <TableCell className={density === 'compact' ? "py-2" : ""}>
                     {sprint ? (

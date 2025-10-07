@@ -1,5 +1,6 @@
 import type {
   User,
+  Team,
   Sprint,
   Issue,
   Comment,
@@ -16,6 +17,7 @@ import type {
   AutomationTemplate,
   AIInsight,
   AutomationMetrics,
+  SprintMetrics,
 } from "@/types"
 
 // --- Helper Functions ---
@@ -66,12 +68,69 @@ const linkNames = ["Dokumentacja Google", "Repozytorium GitHub", "Projekt w Figm
 
 // --- Data Generation ---
 
-// 1. Generate Users
+// 1. Generate Teams (przed użytkownikami, żeby móc je użyć)
+const teams: Team[] = [
+  {
+    id: 'team-1',
+    name: 'Frontend Squad',
+    description: 'Zespół odpowiedzialny za UI/UX i frontend development',
+    color: '#3B82F6', // Niebieski
+    memberIds: [
+      'user-2', 'user-8', 'user-10', 'user-16', 'user-19', // Frontend devs
+      'user-3', 'user-13', // Designers
+    ],
+    leadId: 'user-2', // Ewa Kowalska jako lead
+    defaultCapacity: 80, // 7 osób * ~11 SP/osoba
+    isActive: true,
+    createdAt: new Date(2022, 0, 15),
+    updatedAt: new Date(),
+  },
+  
+  {
+    id: 'team-2',
+    name: 'Backend Core',
+    description: 'API, bazy danych, mikrousługi i infrastruktura',
+    color: '#10B981', // Zielony
+    memberIds: [
+      'user-1', 'user-4', 'user-7', 'user-11', 'user-14', 'user-15', 'user-18', // Backend devs
+      'user-12', // DevOps
+    ],
+    leadId: 'user-1', // Adam Nowak jako lead
+    defaultCapacity: 95, // 8 osób * ~12 SP/osoba
+    isActive: true,
+    createdAt: new Date(2022, 0, 10),
+    updatedAt: new Date(),
+  },
+  
+  {
+    id: 'team-3',
+    name: 'Mobile & Platform',
+    description: 'React Native, iOS, Android i platformy mobilne',
+    color: '#8B5CF6', // Fioletowy
+    memberIds: [
+      'user-6', 'user-13', 'user-17', // Mobile devs
+      'user-9', 'user-23', // Full-stack (mobile support)
+    ],
+    leadId: 'user-13', // Michał Mazur jako lead
+    defaultCapacity: 55, // 5 osób * ~11 SP/osoba
+    isActive: true,
+    createdAt: new Date(2022, 1, 1),
+    updatedAt: new Date(),
+  },
+];
+
+// 2. Generate Users
 const users: User[] = Array.from({ length: 25 }, (_, i) => {
   const firstName = getRandomElement(firstNames);
   const lastName = getRandomElement(lastNames);
+  const userId = `user-${i + 1}`;
+  
+  // Znajdź zespół dla tego użytkownika
+  const userTeam = teams.find(team => team.memberIds.includes(userId));
+  const isLead = userTeam?.leadId === userId;
+  
   return {
-    id: `user-${i + 1}`,
+    id: userId,
     name: `${firstName} ${lastName}`,
     email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}@example.com`,
     avatar: `https://i.pravatar.cc/150?u=user-${i + 1}`,
@@ -90,41 +149,446 @@ const users: User[] = Array.from({ length: 25 }, (_, i) => {
     isActive: Math.random() > 0.1,
     joinedAt: getRandomDate(new Date(2022, 0, 1), new Date()),
     lastSeen: getRandomDate(new Date(), new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000)),
+    // Team assignments
+    teamIds: userTeam ? [userTeam.id] : [],
+    primaryTeamId: userTeam?.id,
+    isTeamLead: isLead,
   };
 });
 
-// 2. Generate Sprints
+// 3. Generate Sprints with correct dates
 const sprints: Sprint[] = Array.from({ length: 60 }, (_, i) => {
-  const startDate = new Date();
-  startDate.setDate(startDate.getDate() - (60 - i) * 14); // Sprints every 2 weeks for the last year
-
-  const endDate = new Date(startDate);
+  const today = new Date();
+  const sprintNumber = i + 1;
+  
+  let startDate: Date;
+  let endDate: Date;
+  let status: SprintStatus;
+  
+  if (sprintNumber === 59) {
+    // Active sprint - rozpoczął się 7 dni temu, kończy się za 7 dni
+    startDate = new Date(today);
+    startDate.setDate(today.getDate() - 7);
+    endDate = new Date(today);
+    endDate.setDate(today.getDate() + 7);
+    status = "Active";
+  } else if (sprintNumber === 60) {
+    // Planned sprint - zaczyna się za 7 dni
+    startDate = new Date(today);
+    startDate.setDate(today.getDate() + 7);
+    endDate = new Date(startDate);
+    endDate.setDate(startDate.getDate() + 13);
+    status = "Planned";
+  } else {
+    // Completed sprints - każdy 2 tygodnie wstecz
+    const weeksBack = 59 - sprintNumber;
+    startDate = new Date(today);
+    startDate.setDate(today.getDate() - (weeksBack * 14) - 7);
+    endDate = new Date(startDate);
   endDate.setDate(startDate.getDate() + 13);
-
-  let status: SprintStatus = "Completed";
-  if (i === 58) status = "Active";
-  if (i > 58) status = "Planned";
+    status = "Completed";
+  }
 
   return {
-    id: `sprint-${i + 1}`,
-    name: `Sprint ${i + 1} - ${getRandomElement(issueNouns)} ${getRandomElement(issueActions)}`,
+    id: `sprint-${sprintNumber}`,
+    name: `Sprint ${sprintNumber} - ${getRandomElement(issueNouns)} ${getRandomElement(issueActions)}`,
     status,
     startDate,
     endDate,
+    velocity: status === "Completed" ? getRandomNumber(15, 25) : undefined,
+    capacity: 40, // Deprecated - use teamCapacity instead
+    // Team assignments
+    teamId: sprintNumber === 59 ? 'team-1' : undefined, // Backward compatibility
+    teamCapacity: sprintNumber === 59 ? [
+      {
+        teamId: 'team-1',
+        allocatedCapacity: 30, // Frontend Squad
+        memberIds: teams.find(t => t.id === 'team-1')?.memberIds || []
+      },
+      {
+        teamId: 'team-2', 
+        allocatedCapacity: 35, // Backend Core
+        memberIds: teams.find(t => t.id === 'team-2')?.memberIds || []
+      },
+      {
+        teamId: 'team-3',
+        allocatedCapacity: 20, // Mobile & Platform  
+        memberIds: teams.find(t => t.id === 'team-3')?.memberIds || []
+      }
+    ] : undefined,
     createdAt: startDate,
-    updatedAt: endDate,
+    updatedAt: new Date(),
   };
 });
 
-// 3. Generate Issues
-const issues: Issue[] = [];
-let issueCounter = 1;
+// 3. Generate Predefined Tasks for Active Sprint (Sprint 59)
+const activeSprint = sprints.find(s => s.id === 'sprint-59');
+
+const predefinedTasks = [
+  {
+    id: 'TSK-1490',
+    title: 'Refaktoryzacja API',
+    priority: 'P1' as Priority,
+    status: 'Todo' as IssueStatus,
+    assigneeId: 'user-1', // Adam Nowak - Backend Developer
+    storyPoints: 8,
+    estimatedHours: 16,
+    teamId: 'team-2', // Backend Core
+    blocks: ['TSK-1495', 'TSK-1498'] // Blokuje rejestrację
+  },
+  {
+    id: 'TSK-1495', 
+    title: 'Walidacja rejestracji',
+    priority: 'P0' as Priority,
+    status: 'Todo' as IssueStatus,
+    assigneeId: 'user-2', // Ewa Kowalska - Frontend Developer
+    storyPoints: 5,
+    estimatedHours: 10,
+    teamId: 'team-1', // Frontend Squad
+    blockedBy: ['TSK-1490'] // Zablokowane przez API
+  },
+  {
+    id: 'TSK-1498',
+    title: 'Integracja rejestracji', 
+    priority: 'P1' as Priority,
+    status: 'Todo' as IssueStatus,
+    assigneeId: 'user-3', // Piotr Wiśniewski - Full-stack
+    storyPoints: 5,
+    estimatedHours: 12,
+    teamId: 'team-1', // Frontend Squad (Piotr Wiśniewski jest w Frontend Squad)
+    blockedBy: ['TSK-1490', 'TSK-1495'] // Zablokowane przez API i walidację
+  },
+  {
+    id: 'TSK-1503',
+    title: 'Błąd logowania',
+    priority: 'P1' as Priority,
+    status: 'Todo' as IssueStatus,
+    assigneeId: 'user-4', // Anna Dąbrowska - Backend Developer
+    storyPoints: 3,
+    estimatedHours: 6,
+    teamId: 'team-2', // Backend Core
+    blockedBy: ['TSK-1490'] // Zablokowane przez API
+  },
+  {
+    id: 'TSK-1508',
+    title: 'Test eksportu',
+    priority: 'P2' as Priority,
+    status: 'Todo' as IssueStatus,
+    assigneeId: 'user-5', // Jan Lewandowski - QA
+    storyPoints: 2,
+    estimatedHours: 4,
+    teamId: 'team-2', // Backend Core (QA może być w Backend Core)
+    blockedBy: [] // Nie zablokowane
+  },
+  // In Progress tasks (8 tasks - over WIP limit of 5)
+  {
+    id: 'TSK-1492',
+    title: 'Dokumentacja eksportu',
+    priority: 'P3' as Priority,
+    status: 'In Progress' as IssueStatus,
+    assigneeId: 'user-6', // Katarzyna Wójcik - Technical Writer
+    storyPoints: 3,
+    estimatedHours: 6,
+    teamId: 'team-3', // Mobile & Platform (Technical Writer)
+    blockedBy: []
+  },
+  {
+    id: 'TSK-1494',
+    title: 'Usprawnienie API',
+    priority: 'P3' as Priority,
+    status: 'In Progress' as IssueStatus,
+    assigneeId: 'user-1', // Adam Nowak
+    storyPoints: 5,
+    estimatedHours: 10,
+    teamId: 'team-2', // Backend Core
+    blockedBy: []
+  },
+  {
+    id: 'TSK-1496',
+    title: 'Problem eksportu',
+    priority: 'P2' as Priority,
+    status: 'In Progress' as IssueStatus,
+    assigneeId: 'user-7', // Marek Kamiński - Backend Developer
+    storyPoints: 3,
+    estimatedHours: 6,
+    teamId: 'team-2', // Backend Core
+    blockedBy: []
+  },
+  {
+    id: 'TSK-1499',
+    title: 'Optymalizacja wyszukiwania',
+    priority: 'P3' as Priority,
+    status: 'In Progress' as IssueStatus,
+    assigneeId: 'user-8', // Zofia Zieliński - Frontend Developer
+    storyPoints: 5,
+    estimatedHours: 10,
+    teamId: 'team-1', // Frontend Squad
+    blockedBy: []
+  },
+  {
+    id: 'TSK-1504',
+    title: 'Walidacja synchronizacji',
+    priority: 'P2' as Priority,
+    status: 'In Progress' as IssueStatus,
+    assigneeId: 'user-9', // Tomasz Szymański - Full-stack
+    storyPoints: 3,
+    estimatedHours: 6,
+    teamId: 'team-3', // Mobile & Platform (Full-stack)
+    blockedBy: []
+  },
+  {
+    id: 'TSK-1514',
+    title: 'Implementacja wyszukiwania',
+    priority: 'P2' as Priority,
+    status: 'In Progress' as IssueStatus,
+    assigneeId: 'user-10', // Magdalena Woźniak - Frontend Developer
+    storyPoints: 5,
+    estimatedHours: 10,
+    teamId: 'team-1', // Frontend Squad
+    blockedBy: []
+  },
+  {
+    id: 'TSK-1515',
+    title: 'Debugging API',
+    priority: 'P1' as Priority,
+    status: 'In Progress' as IssueStatus,
+    assigneeId: 'user-11', // Paweł Kozłowski - Backend Developer
+    storyPoints: 3,
+    estimatedHours: 6,
+    teamId: 'team-2', // Backend Core
+    blockedBy: []
+  },
+  {
+    id: 'TSK-1516',
+    title: 'Performance tuning',
+    priority: 'P2' as Priority,
+    status: 'In Progress' as IssueStatus,
+    assigneeId: 'user-12', // Joanna Jankowski - DevOps
+    storyPoints: 8,
+    estimatedHours: 16,
+    teamId: 'team-2', // Backend Core (DevOps)
+    blockedBy: []
+  },
+  // In Review tasks (9 tasks - over WIP limit of 3)
+  {
+    id: 'TSK-1491',
+    title: 'Błąd mobilnego',
+    priority: 'P4' as Priority,
+    status: 'In Review' as IssueStatus,
+    assigneeId: 'user-13', // Michał Mazur - Mobile Developer
+    storyPoints: 2,
+    estimatedHours: 4,
+    teamId: 'team-3', // Mobile & Platform
+    blockedBy: []
+  },
+  {
+    id: 'TSK-1493',
+    title: 'Wdrożenie raportowania',
+    priority: 'P4' as Priority,
+    status: 'In Review' as IssueStatus,
+    assigneeId: 'user-14', // Agnieszka Krawczyk - Backend Developer
+    storyPoints: 3,
+    estimatedHours: 6,
+    teamId: 'team-2', // Backend Core
+    blockedBy: []
+  },
+  {
+    id: 'TSK-1497',
+    title: 'Test rejestracji',
+    priority: 'P4' as Priority,
+    status: 'In Review' as IssueStatus,
+    assigneeId: 'user-5', // Jan Lewandowski - QA
+    storyPoints: 2,
+    estimatedHours: 4,
+    teamId: 'team-2', // Backend Core (QA)
+    blockedBy: []
+  },
+  {
+    id: 'TSK-1505',
+    title: 'Zadanie API',
+    priority: 'P3' as Priority,
+    status: 'In Review' as IssueStatus,
+    assigneeId: 'user-15', // Łukasz Piotrowski - Backend Developer
+    storyPoints: 3,
+    estimatedHours: 6,
+    teamId: 'team-2', // Backend Core
+    blockedBy: []
+  },
+  {
+    id: 'TSK-1506',
+    title: 'Optymalizacja raportowania',
+    priority: 'P4' as Priority,
+    status: 'In Review' as IssueStatus,
+    assigneeId: 'user-16', // Monika Grabowskiego - Frontend Developer
+    storyPoints: 2,
+    estimatedHours: 4,
+    teamId: 'team-1', // Frontend Squad
+    blockedBy: []
+  },
+  {
+    id: 'TSK-1510',
+    title: 'Implementacja mobilnego',
+    priority: 'P2' as Priority,
+    status: 'In Review' as IssueStatus,
+    assigneeId: 'user-17', // Krzysztof Nowakowski - Mobile Developer
+    storyPoints: 5,
+    estimatedHours: 10,
+    teamId: 'team-3', // Mobile & Platform
+    blockedBy: []
+  },
+  {
+    id: 'TSK-1511',
+    title: 'Usprawnienie importu',
+    priority: 'P1' as Priority,
+    status: 'In Review' as IssueStatus,
+    assigneeId: 'user-18', // Karolina Pawłowski - Backend Developer
+    storyPoints: 3,
+    estimatedHours: 6,
+    teamId: 'team-2', // Backend Core
+    blockedBy: []
+  },
+  {
+    id: 'TSK-1512',
+    title: 'Zadanie rejestracji',
+    priority: 'P4' as Priority,
+    status: 'In Review' as IssueStatus,
+    assigneeId: 'user-19', // Rafał Michalski - Frontend Developer
+    storyPoints: 2,
+    estimatedHours: 4,
+    teamId: 'team-1', // Frontend Squad
+    blockedBy: []
+  },
+  {
+    id: 'TSK-1513',
+    title: 'Code review',
+    priority: 'P3' as Priority,
+    status: 'In Review' as IssueStatus,
+    assigneeId: 'user-20', // Natalia Król - Senior Developer
+    storyPoints: 1,
+    estimatedHours: 2,
+    teamId: 'team-2', // Backend Core (Senior Developer)
+    blockedBy: []
+  },
+  // Done tasks (6 tasks)
+  {
+    id: 'TSK-1500',
+    title: 'Optymalizacja logowania',
+    priority: 'P4' as Priority,
+    status: 'Done' as IssueStatus,
+    assigneeId: 'user-21', // Adam Nowakowski - Backend Developer
+    storyPoints: 2,
+    estimatedHours: 4,
+    teamId: 'team-2', // Backend Core
+    blockedBy: []
+  },
+  {
+    id: 'TSK-1501',
+    title: 'Refaktoryzacja wyszukiwania',
+    priority: 'P3' as Priority,
+    status: 'Done' as IssueStatus,
+    assigneeId: 'user-22', // Ewa Pawłowski - Frontend Developer
+    storyPoints: 3,
+    estimatedHours: 6,
+    teamId: 'team-1', // Frontend Squad
+    blockedBy: []
+  },
+  {
+    id: 'TSK-1502',
+    title: 'Zadanie logowania',
+    priority: 'P2' as Priority,
+    status: 'Done' as IssueStatus,
+    assigneeId: 'user-23', // Piotr Michalski - Full-stack
+    storyPoints: 2,
+    estimatedHours: 4,
+    teamId: 'team-3', // Mobile & Platform (Full-stack)
+    blockedBy: []
+  },
+  {
+    id: 'TSK-1507',
+    title: 'Walidacja wyszukiwania',
+    priority: 'P3' as Priority,
+    status: 'Done' as IssueStatus,
+    assigneeId: 'user-24', // Anna Król - QA
+    storyPoints: 2,
+    estimatedHours: 4,
+    teamId: 'team-2', // Backend Core (QA)
+    blockedBy: []
+  },
+  {
+    id: 'TSK-1509',
+    title: 'Analiza zabezpieczeń',
+    priority: 'P2' as Priority,
+    status: 'Done' as IssueStatus,
+    assigneeId: 'user-25', // Jan Nowak - Security Engineer
+    storyPoints: 5,
+    estimatedHours: 10,
+    teamId: 'team-2', // Backend Core (Security Engineer)
+    blockedBy: []
+  },
+  {
+    id: 'TSK-1517',
+    title: 'Funkcja bazy danych',
+    priority: 'P3' as Priority,
+    status: 'Done' as IssueStatus,
+    assigneeId: 'user-1', // Adam Nowak - Backend Developer
+    storyPoints: 3,
+    estimatedHours: 6,
+    teamId: 'team-2', // Backend Core
+    blockedBy: []
+  }
+];
+
+// Generate issues with full assignee data
+const activeSprintIssues: Issue[] = predefinedTasks.map(taskData => {
+  const assignee = users.find(u => u.id === taskData.assigneeId);
+  
+  return {
+    id: taskData.id,
+    title: taskData.title,
+    description: `Szczegółowy opis dla zadania ${taskData.id}. Należy zaimplementować wymaganą funkcjonalność zgodnie ze specyfikacją. To zadanie wymaga uwagi i dokładnego podejścia.`,
+    priority: taskData.priority,
+    status: taskData.status,
+    storyPoints: taskData.storyPoints,
+    type: 'Feature',
+    assignee: assignee ? {
+      id: assignee.id,
+      name: assignee.name,
+      avatar: assignee.avatar,
+      role: assignee.role,
+      skills: assignee.skills,
+      capacity: assignee.capacity
+    } : undefined,
+    sprintId: activeSprint?.id,
+    teamId: taskData.teamId, // Dodaj teamId z predefiniowanych zadań
+    dependencies: {
+      blocks: taskData.blocks || [],
+      blockedBy: taskData.blockedBy || []
+    },
+    estimatedHours: taskData.estimatedHours,
+    actualHours: taskData.status === 'Done' ? taskData.estimatedHours : Math.floor(taskData.estimatedHours * 0.3),
+    attachments: [],
+    isFavorite: Math.random() > 0.8,
+    favoritedBy: [],
+    statusHistory: [
+      { status: "Todo", date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) },
+      { status: "In Progress", date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000) },
+    ],
+    createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+    updatedAt: new Date(),
+  };
+});
+
+// Generate additional issues for other sprints
+const issues: Issue[] = [...activeSprintIssues];
+let issueCounter = 1518; // Start from next number
 
 sprints.forEach(sprint => {
+  if (sprint.id === 'sprint-59') return; // Skip active sprint, already handled
+  
   const issuesInSprint = getRandomNumber(15, 35);
   for (let i = 0; i < issuesInSprint; i++) {
     const creationDate = getRandomDate(sprint.startDate, sprint.endDate);
-    const hasParent = issueCounter > 20 && Math.random() > 0.7; // 30% chance of being a sub-task
+    const assignee = getRandomElement(users);
 
     issues.push({
       id: `TSK-${String(issueCounter).padStart(3, "0")}`,
@@ -134,10 +598,23 @@ sprints.forEach(sprint => {
       status: sprint.status === "Completed" ? "Done" : getRandomElement<IssueStatus>(["Todo", "In Progress", "In Review", "Done"]),
       storyPoints: getRandomElement([1, 2, 3, 5, 8, 13]),
       type: getRandomElement(["Bug", "Feature", "Chore"]),
-      assignee: getRandomElement(users).id,
+      assignee: {
+        id: assignee.id,
+        name: assignee.name,
+        avatar: assignee.avatar,
+        role: assignee.role,
+        skills: assignee.skills,
+        capacity: assignee.capacity
+      },
       sprintId: sprint.id,
-      parentId: hasParent ? `TSK-${String(getRandomNumber(1, issueCounter - 1)).padStart(3, "0")}` : undefined,
-      attachments: [], // Will be populated later
+      teamId: assignee.primaryTeamId, // Przypisz zadanie do zespołu użytkownika
+      dependencies: {
+        blocks: [],
+        blockedBy: []
+      },
+      estimatedHours: getRandomNumber(2, 16),
+      actualHours: 0,
+      attachments: [],
       isFavorite: Math.random() > 0.8,
       favoritedBy: [],
       statusHistory: [
@@ -158,73 +635,116 @@ const activityLogs: ActivityLog[] = [];
 
 let commentCounter = 1;
 let attachmentCounter = 1;
-let activityLogCounter = 1;
+let activityCounter = 1;
 
+// Generate activity logs for issues
 issues.forEach(issue => {
-  // Generate Activity Log for creation
+  // Issue creation
   activityLogs.push({
-    id: `log-${activityLogCounter++}`,
+    id: `activity-${activityCounter++}`,
     issueId: issue.id,
-    userId: issue.assignee || getRandomElement(users).id,
+    userId: issue.assignee?.id || 'system',
     action: 'created',
-    newValue: issue.title,
     timestamp: issue.createdAt,
+    metadata: { title: issue.title }
   });
 
-  // Generate a few status changes
-  for (let i = 0; i < getRandomNumber(1, 5); i++) {
-    activityLogs.push({
-      id: `log-${activityLogCounter++}`,
-      issueId: issue.id,
-      userId: getRandomElement(users).id,
-      action: 'status_changed',
-      oldValue: getRandomElement<IssueStatus>(["Todo", "In Progress"]),
-      newValue: getRandomElement<IssueStatus>(["In Progress", "In Review", "Done"]),
-      timestamp: getRandomDate(issue.createdAt, new Date()),
+  // Status changes
+  if (issue.statusHistory) {
+    issue.statusHistory.forEach((statusChange, index) => {
+      if (index > 0) {
+        const prevStatus = issue.statusHistory![index - 1].status;
+        activityLogs.push({
+          id: `activity-${activityCounter++}`,
+          issueId: issue.id,
+          userId: issue.assignee?.id || 'system',
+          action: 'status_changed',
+          oldValue: prevStatus,
+          newValue: statusChange.status,
+          field: 'status',
+          timestamp: statusChange.date
+        });
+      }
     });
   }
 
-  // Generate assignee changes
-  if (Math.random() > 0.6) {
+  // Assignee changes (if different from creator)
+  if (issue.assignee && issue.assignee.id !== 'system') {
     activityLogs.push({
-      id: `log-${activityLogCounter++}`,
+      id: `activity-${activityCounter++}`,
       issueId: issue.id,
-      userId: getRandomElement(users).id,
+      userId: issue.assignee.id,
       action: 'assignee_changed',
-      oldValue: getRandomElement(users).id,
-      newValue: getRandomElement(users).id,
-      timestamp: getRandomDate(issue.createdAt, new Date()),
+      oldValue: 'Unassigned',
+      newValue: issue.assignee.name,
+      field: 'assignee',
+      timestamp: new Date(issue.createdAt.getTime() + 24 * 60 * 60 * 1000) // 1 day later
     });
   }
 
-  // Generate comments
-  const numComments = getRandomNumber(0, 12);
+  // Favorite toggles
+  if (issue.isFavorite) {
+    activityLogs.push({
+      id: `activity-${activityCounter++}`,
+      issueId: issue.id,
+      userId: issue.assignee?.id || 'system',
+      action: 'favorite_added',
+      timestamp: new Date(issue.createdAt.getTime() + 2 * 24 * 60 * 60 * 1000) // 2 days later
+    });
+  }
+
+  // Sprint assignment
+  if (issue.sprintId) {
+    const sprint = sprints.find(s => s.id === issue.sprintId);
+    activityLogs.push({
+      id: `activity-${activityCounter++}`,
+      issueId: issue.id,
+      userId: issue.assignee?.id || 'system',
+      action: 'updated',
+      oldValue: 'Backlog',
+      newValue: sprint?.name || 'Sprint',
+      field: 'sprint',
+      timestamp: new Date(issue.createdAt.getTime() + 3 * 24 * 60 * 60 * 1000) // 3 days later
+    });
+  }
+});
+
+// Generate some comments
+issues.slice(0, 20).forEach(issue => {
+  const numComments = getRandomNumber(1, 3);
   for (let i = 0; i < numComments; i++) {
+    const commentDate = getRandomDate(issue.createdAt, new Date());
     comments.push({
-      id: `comment-${String(commentCounter++).padStart(3, "0")}`,
+      id: `comment-${commentCounter++}`,
       issueId: issue.id,
-      userId: getRandomElement(users).id,
-      content: getRandomElement(commentContents),
-      createdAt: getRandomDate(issue.createdAt, new Date()),
-      updatedAt: new Date(),
+      userId: issue.assignee?.id || getRandomElement(users).id,
+      content: `Komentarz do zadania ${issue.id}. ${getRandomElement([
+        'Sprawdzam implementację.',
+        'Potrzebuję więcej informacji.',
+        'Gotowe do review.',
+        'Wymaga poprawek.',
+        'Dobra robota!'
+      ])}`,
+      createdAt: commentDate,
+      updatedAt: commentDate,
     });
   }
+});
 
-  // Generate attachments
-  const numAttachments = getRandomNumber(0, 4);
+// Generate some attachments
+issues.slice(0, 10).forEach(issue => {
+  const numAttachments = getRandomNumber(0, 2);
   for (let i = 0; i < numAttachments; i++) {
-    const isLink = Math.random() > 0.5;
-    const attachment: Attachment = {
-      id: `attachment-${String(attachmentCounter++).padStart(3, "0")}`,
+    attachments.push({
+      id: `attachment-${attachmentCounter++}`,
       issueId: issue.id,
-      type: isLink ? 'link' : 'file',
-      name: isLink ? getRandomElement(linkNames) : getRandomElement(fileNames),
-      url: isLink ? 'https://example.com' : `/uploads/${getRandomElement(fileNames)}`,
-      size: isLink ? undefined : getRandomNumber(10, 10000) * 1024,
-      mimeType: isLink ? undefined : 'application/octet-stream',
-    };
-    attachments.push(attachment);
-    issue.attachments.push(attachment); // Add to issue as well
+      name: `${getRandomElement(['design', 'mockup', 'spec', 'test'])}-${issue.id}.${getRandomElement(['pdf', 'png', 'docx', 'zip'])}`,
+      url: `/attachments/${issue.id}/file-${i + 1}`,
+      size: getRandomNumber(1024, 1024 * 1024 * 5), // 1KB to 5MB
+      mimeType: getRandomElement(['application/pdf', 'image/png', 'application/zip', 'text/plain']),
+      uploadedBy: issue.assignee?.id || getRandomElement(users).id,
+      uploadedAt: getRandomDate(issue.createdAt, new Date()),
+    });
   }
 });
 
@@ -615,78 +1135,177 @@ const automationTemplates: AutomationTemplate[] = [
   },
 ];
 
-// --- AI Insights ---
-const aiInsights: AIInsight[] = [
-  {
-    id: 'insight-1',
-    type: 'risk',
-    title: 'Sprint velocity spadło o 30%',
-    description: 'Obecny sprint ma znacznie niższą velocity niż poprzednie. Zalecane przepriorytetyzowanie zadań lub przeniesienie części do następnego sprintu.',
-    severity: 'high',
-    actionable: true,
-    action: {
-      label: 'Podejrzyj szczegóły sprintu',
-    },
-    relatedSprints: ['sprint-4'],
-    createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000),
-    dismissed: false,
-  },
-  {
-    id: 'insight-2',
-    type: 'suggestion',
-    title: 'Nieprzypisane zadania w sprincie',
-    description: '5 zadań w aktywnym sprincie nie ma przypisanego developera. Rozważ użycie automatycznego przypisywania.',
-    severity: 'medium',
-    actionable: true,
-    action: {
-      label: 'Włącz auto-assignment',
-      ruleTemplate: automationTemplates[4],
-    },
-    relatedIssues: ['TASK-120', 'TASK-121', 'TASK-122', 'TASK-123', 'TASK-124'],
-    createdAt: new Date(Date.now() - 12 * 60 * 60 * 1000),
-    dismissed: false,
-  },
-  {
-    id: 'insight-3',
-    type: 'pattern',
-    title: 'Powtarzający się wzorzec: Zadania czekają na review',
-    description: 'Wykryto wzorzec - 80% zadań spędza więcej niż 2 dni w statusie "In Review". Rozważ automatyzację przypominania o code review.',
-    severity: 'medium',
-    actionable: true,
-    action: {
-      label: 'Utwórz przypomnienia',
-      ruleTemplate: automationTemplates[2],
-    },
-    createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
-    dismissed: false,
-  },
-  {
-    id: 'insight-4',
-    type: 'optimization',
-    title: 'Możesz zaoszczędzić 5h/tydzień',
-    description: 'Ręcznie przenosisz zadania między sprintami. Automatyzacja tego procesu zaoszczędzi około 5 godzin tygodniowo.',
-    severity: 'low',
-    actionable: true,
-    action: {
-      label: 'Włącz automatyzację',
-      ruleTemplate: automationTemplates[1],
-    },
-    createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
-    dismissed: false,
-  },
-  {
-    id: 'insight-5',
-    type: 'risk',
-    title: 'Potencjalne opóźnienie w deadline',
-    description: 'Na podstawie obecnej velocity, sprint może nie zostać ukończony na czas. 3 zadania wysokiego priorytetu są zagrożone.',
-    severity: 'high',
-    actionable: true,
-    relatedIssues: ['TASK-101', 'TASK-102', 'TASK-103'],
-    relatedSprints: ['sprint-4'],
-    createdAt: new Date(Date.now() - 6 * 60 * 60 * 1000),
-    dismissed: false,
-  },
-];
+// --- Dynamic AI Insights Generation ---
+const generateAIInsights = (issues: Issue[], users: User[]): AIInsight[] => {
+  const insights: AIInsight[] = [];
+  
+  // 1. Find blocked tasks
+  const blockedTasks = issues.filter(issue => 
+    issue.dependencies?.blockedBy && issue.dependencies.blockedBy.length > 0
+  );
+  
+  if (blockedTasks.length > 0) {
+    insights.push({
+      id: 'insight-blocked-tasks',
+      type: 'risk',
+      title: `${blockedTasks.length} zadań są zablokowane`,
+      description: `System wykrył zadania zależne, które mogą opóźnić sprint. Sprawdź zależności i rozważ przepriorytetyzowanie.`,
+      severity: 'high',
+      actionable: true,
+      action: {
+        label: 'Pokaż zależności',
+      },
+      relatedIssues: blockedTasks.map(t => t.id),
+      relatedSprints: ['sprint-59'],
+      createdAt: new Date(),
+      dismissed: false,
+    });
+  }
+  
+  // 2. Check WIP limits
+  const statusCounts = issues.reduce((acc, issue) => {
+    acc[issue.status] = (acc[issue.status] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+  
+  const wipLimits = {
+    'In Progress': 5,
+    'In Review': 3
+  };
+  
+  Object.entries(wipLimits).forEach(([status, limit]) => {
+    const current = statusCounts[status] || 0;
+    if (current > limit) {
+      insights.push({
+        id: `insight-wip-${status.toLowerCase().replace(' ', '-')}`,
+        type: 'warning',
+        title: `Przekroczony WIP limit w ${status}`,
+        description: `${status}: ${current}/${limit} - za dużo zadań w tym statusie`,
+        severity: 'medium',
+        actionable: true,
+        action: {
+          label: 'Zbalansuj WIP',
+        },
+        createdAt: new Date(),
+        dismissed: false,
+      });
+    }
+  });
+  
+  // 3. Check team load
+  const teamLoad = users.map(user => {
+    const userTasks = issues.filter(issue => issue.assignee?.id === user.id);
+    const totalStoryPoints = userTasks.reduce((sum, task) => sum + (task.storyPoints || 0), 0);
+    return {
+      user,
+      taskCount: userTasks.length,
+      storyPoints: totalStoryPoints,
+      loadPercentage: (totalStoryPoints / 20) * 100 // Assuming 20 SP capacity
+    };
+  });
+  
+  const overloadedUsers = teamLoad.filter(load => load.loadPercentage > 100);
+  if (overloadedUsers.length > 0) {
+    insights.push({
+      id: 'insight-team-overload',
+      type: 'risk',
+      title: `${overloadedUsers.length} członków zespołu przeciążonych`,
+      description: `Niektórzy członkowie zespołu mają za dużo zadań. Rozważ redystrybucję obciążenia.`,
+      severity: 'high',
+      actionable: true,
+      action: {
+        label: 'Zbalansuj zespół',
+      },
+      createdAt: new Date(),
+      dismissed: false,
+    });
+  }
+  
+  // 4. High priority tasks in review
+  const highPriorityInReview = issues.filter(issue => 
+    issue.status === 'In Review' && (issue.priority === 'P0' || issue.priority === 'P1')
+  );
+  
+  if (highPriorityInReview.length > 0) {
+    insights.push({
+      id: 'insight-high-priority-review',
+      type: 'warning',
+      title: `${highPriorityInReview.length} zadań wysokiego priorytetu w review`,
+      description: `Zadania P0/P1 czekają na review. Rozważ przyspieszenie procesu lub przypisanie dodatkowego reviewera.`,
+      severity: 'medium',
+      actionable: true,
+      action: {
+        label: 'Przyspiesz review',
+      },
+      relatedIssues: highPriorityInReview.map(t => t.id),
+      createdAt: new Date(),
+      dismissed: false,
+    });
+  }
+  
+  // 5. Sprint progress analysis
+  const completedTasks = issues.filter(issue => issue.status === 'Done').length;
+  const totalTasks = issues.length;
+  const progressPercentage = Math.round((completedTasks / totalTasks) * 100);
+  
+  if (progressPercentage < 30) {
+    insights.push({
+      id: 'insight-sprint-progress',
+      type: 'risk',
+      title: 'Niska velocity sprintu',
+      description: `Tylko ${progressPercentage}% zadań ukończonych. Sprint może nie zostać ukończony w terminie.`,
+      severity: 'high',
+      actionable: true,
+      action: {
+        label: 'Przepriorytetyzuj zadania',
+      },
+      relatedSprints: ['sprint-59'],
+      createdAt: new Date(),
+      dismissed: false,
+    });
+  }
+  
+  return insights;
+};
+
+const aiInsights = generateAIInsights(activeSprintIssues, users);
+
+// --- Sprint Metrics ---
+const generateSprintMetrics = (issues: Issue[], users: User[], activeSprint: Sprint | undefined): SprintMetrics => {
+  const totalTasks = issues.length;
+  const completedTasks = issues.filter(issue => issue.status === 'Done').length;
+  const progressPercentage = Math.round((completedTasks / totalTasks) * 100);
+  const totalStoryPoints = issues.reduce((sum, task) => sum + (task.storyPoints || 0), 0);
+  
+  const wipLimits = {
+    'In Progress': 5,
+    'In Review': 3,
+    'Todo': 10
+  };
+  
+  const teamLoad = users.map(user => {
+    const userTasks = issues.filter(issue => issue.assignee?.id === user.id);
+    const totalStoryPoints = userTasks.reduce((sum, task) => sum + (task.storyPoints || 0), 0);
+    return {
+      user,
+      taskCount: userTasks.length,
+      storyPoints: totalStoryPoints,
+      loadPercentage: (totalStoryPoints / 20) * 100 // Assuming 20 SP capacity
+    };
+  });
+  
+  return {
+    activeSprint,
+    totalTasks,
+    completedTasks,
+    progressPercentage,
+    totalStoryPoints,
+    wipLimits,
+    teamLoad
+  };
+};
+
+const sprintMetrics = generateSprintMetrics(activeSprintIssues, users, activeSprint);
 
 // --- Automation Metrics ---
 const automationMetrics: AutomationMetrics = {
@@ -701,6 +1320,7 @@ const automationMetrics: AutomationMetrics = {
 
 export const mockData = {
   users,
+  teams,
   sprints,
   issues,
   comments,
@@ -713,4 +1333,5 @@ export const mockData = {
   automationTemplates,
   aiInsights,
   automationMetrics,
+  sprintMetrics,
 };

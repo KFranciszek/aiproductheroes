@@ -76,7 +76,7 @@ export function CommandPalette({
   }, [issues, search])
 
   // Quick filters
-  const myIssues = issues.filter((issue) => issue.assignee === "current-user").length
+  const myIssues = issues.filter((issue) => issue.assignee?.id === "current-user").length
   const urgentIssues = issues.filter((issue) => issue.priority === "P0" || issue.priority === "P1").length
   const blockedIssues = issues.filter((issue) => issue.status === "Todo" && issue.parentId).length
 

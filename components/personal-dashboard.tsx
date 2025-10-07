@@ -33,7 +33,7 @@ export function PersonalDashboard({
   const activeSprint = sprints.find((s) => s.status === "Active")
   
   // Filter issues for current user
-  const myIssues = issues.filter((issue) => issue.assignee === currentUser)
+  const myIssues = issues.filter((issue) => issue.assignee?.id === currentUser)
   const myTodo = myIssues.filter((i) => i.status === "Todo")
   const myInProgress = myIssues.filter((i) => i.status === "In Progress")
   const myInReview = myIssues.filter((i) => i.status === "In Review")

@@ -48,7 +48,7 @@ export function ActivityFeed({ activities, currentUserId }: ActivityFeedProps) {
             <div className="flex items-start gap-3">
               <Avatar className="h-6 w-6">
                 <AvatarFallback className="text-xs">
-                  {activity.userId[0].toUpperCase()}
+                  {activity.userId ? activity.userId[0].toUpperCase() : '?'}
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1">
@@ -61,7 +61,7 @@ export function ActivityFeed({ activities, currentUserId }: ActivityFeedProps) {
                   </span>
                 </div>
                 <p className="text-sm">
-                  <span className="font-medium">{activity.userId}</span> {getActionDescription(activity)}
+                  <span className="font-medium">{activity.userId || 'System'}</span> {getActionDescription(activity)}
                 </p>
                 {activity.oldValue && activity.newValue && (
                   <p className="text-xs text-muted-foreground mt-1">
