@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="pl"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Syzio Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<script>tailwind.config = {darkMode: "class", theme: {extend: {colors: {primary: "#3c83f6", "background-light": "#f5f7f8", "background-dark": "#101722", "card-light": "#ffffff", "card-dark": "#1e293b", "text-light": "#0f172a", "text-dark": "#e2e8f0", "text-secondary-light": "#64748b", "text-secondary-dark": "#94a3b8", "border-light": "#e2e8f0", "border-dark": "#334155", urgent: "#ef4444", tasks: "#3b82f6", sprint: "#10b981", tool: "#8b5cf6"}, fontFamily: {display: "Inter"}, borderRadius: {DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px"}}}};</script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark font-display">
+<div class="flex h-screen">
+<aside class="w-64 bg-card-light dark:bg-card-dark flex flex-col border-r border-border-light dark:border-border-dark">
+<div class="p-4 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-full flex items-center justify-center bg-primary/20">
+<span class="material-icons-outlined text-primary">layers</span>
+</div>
+<span class="font-bold text-lg">Syzio</span>
+</div>
+<button class="p-1 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700">
+<span class="material-icons-outlined text-text-secondary-light dark:text-text-secondary-dark text-xl">chevron_left</span>
+</button>
+</div>
+<div class="p-2">
+<a class="text-xs text-primary" href="#">Explore all features freely</a>
+</div>
+<nav class="flex-1 px-2 py-4 space-y-2">
+<a class="flex items-center gap-3 px-4 py-2 rounded-md bg-primary/10 dark:bg-primary/20 text-primary font-semibold" href="#">
+<span class="material-icons-outlined">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 text-text-secondary-light dark:text-text-dark" href="#">
+<span class="material-icons-outlined">trending_up</span>
+<span>Current Sprint</span>
+</a>
+<a class="flex items-center justify-between gap-3 px-4 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 text-text-secondary-light dark:text-text-dark" href="#">
+<div class="flex items-center gap-3">
+<span class="material-icons-outlined">list_alt</span>
+<span>Issues</span>
+</div>
+<span class="text-xs font-semibold px-2 py-0.5 bg-gray-200 dark:bg-gray-600 rounded-full">45</span>
+</a>
+<a class="flex items-center justify-between gap-3 px-4 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 text-text-secondary-light dark:text-text-dark" href="#">
+<div class="flex items-center gap-3">
+<span class="material-icons-outlined text-urgent">bolt</span>
+<span>Favorites</span>
+</div>
+<span class="text-xs font-semibold px-2 py-0.5 bg-gray-200 dark:bg-gray-600 rounded-full">297</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 text-text-secondary-light dark:text-text-dark" href="#">
+<span class="material-icons-outlined">event</span>
+<span>Sprints</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 text-text-secondary-light dark:text-text-dark" href="#">
+<span class="material-icons-outlined">group</span>
+<span>Teams</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 text-text-secondary-light dark:text-text-dark" href="#">
+<span class="material-icons-outlined">bar_chart</span>
+<span>Reports</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 text-text-secondary-light dark:text-text-dark" href="#">
+<span class="material-icons-outlined">show_chart</span>
+<span>Activity</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 text-text-secondary-light dark:text-text-dark" href="#">
+<span class="material-icons-outlined">smart_toy</span>
+<span>AI &amp; Automation</span>
+</a>
+</nav>
+<div class="px-4 py-2">
+<button class="w-full flex items-center justify-center gap-2 bg-primary text-white font-semibold py-2.5 rounded-md hover:bg-primary/90 transition-all">
+<span class="material-icons-outlined text-xl">add</span>
+<span>New Task</span>
+</button>
+</div>
+<div class="p-2 border-t border-border-light dark:border-border-dark mt-auto">
+<a class="flex items-center gap-3 px-4 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 text-text-secondary-light dark:text-text-dark" href="#">
+<span class="material-icons-outlined">contrast</span>
+<span>Theme</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 text-text-secondary-light dark:text-text-dark" href="#">
+<span class="material-icons-outlined">settings</span>
+<span>Settings</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 text-text-secondary-light dark:text-text-dark" href="#">
+<span class="material-icons-outlined">history</span>
+</a>
+</div>
+</aside>
+<main class="flex-1 p-8 overflow-y-auto">
+<header class="mb-8">
+<h1 class="text-3xl font-bold flex items-center gap-3">
+<span class="text-2xl">🏠</span> Twój Dzień
+                </h1>
+<p class="text-text-secondary-light dark:text-text-secondary-dark mt-1">środa, 8 października 2025</p>
+</header>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+<div class="bg-card-light dark:bg-card-dark p-6 rounded-lg shadow-sm border-l-4 border-urgent hover:shadow-lg hover:scale-[1.02] transition-all">
+<h2 class="text-lg font-semibold flex items-center gap-2 mb-4">
+<span class="material-icons-outlined text-urgent">bolt</span>
+                        Pilne (0)
+                    </h2>
+<p class="text-text-secondary-light dark:text-text-secondary-dark">Brak pilnych zadań</p>
+</div>
+<div class="bg-card-light dark:bg-card-dark p-6 rounded-lg shadow-sm border-l-4 border-tasks hover:shadow-lg hover:scale-[1.02] transition-all">
+<h2 class="text-lg font-semibold flex items-center gap-2 mb-4">
+<span class="material-icons-outlined text-tasks">list_alt</span>
+                        Twoje zadania (0)
+                    </h2>
+<div class="space-y-2 mb-4">
+<div class="flex justify-between items-center text-text-secondary-light dark:text-text-secondary-dark">
+<span>Todo</span>
+<span class="text-sm font-medium px-2 py-0.5 border border-border-light dark:border-border-dark rounded-full">0</span>
+</div>
+<div class="flex justify-between items-center text-text-secondary-light dark:text-text-secondary-dark">
+<span>In Progress</span>
+<span class="text-sm font-medium px-2 py-0.5 bg-gray-200 dark:bg-gray-600 rounded-full">0</span>
+</div>
+<div class="flex justify-between items-center text-text-secondary-light dark:text-text-secondary-dark">
+<span>In Review</span>
+<span class="text-sm font-medium px-2 py-0.5 bg-gray-200 dark:bg-gray-600 rounded-full">0</span>
+</div>
+</div>
+<button class="w-full mt-4 py-2.5 border border-border-light dark:border-border-dark rounded-md text-text-secondary-light dark:text-text-secondary-dark font-semibold hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                        Zobacz wszystkie
+                    </button>
+</div>
+</div>
+<div class="bg-card-light dark:bg-card-dark p-6 rounded-lg shadow-sm mb-6 hover:shadow-lg hover:scale-[1.01] transition-all">
+<div class="flex justify-between items-center mb-4">
+<h2 class="text-lg font-semibold flex items-center gap-2">
+<span class="material-icons-outlined text-green-500">track_changes</span>
+                        Sprint 59 - Błąd eksportu
+                    </h2>
+<button class="px-4 py-2 border border-border-light dark:border-border-dark rounded-md font-semibold text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                        Zobacz Kanban
+                    </button>
+</div>
+<div>
+<div class="flex justify-between items-center mb-1">
+<span class="text-sm font-medium">Postęp</span>
+<span class="text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark">21%</span>
+</div>
+<div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
+<div class="bg-blue-500 h-2.5 rounded-full" style="width: 21%"></div>
+</div>
+<div class="flex justify-between items-center mt-1 text-sm text-text-secondary-light dark:text-text-secondary-dark">
+<span>6 z 28 zadań</span>
+<span>634 dni pozostało</span>
+</div>
+</div>
+</div>
+<div>
+<h2 class="text-lg font-semibold flex items-center gap-2 mb-4">
+<span class="material-icons-outlined">grid_view</span>
+                    Szybki Widok
+                </h2>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+<button class="bg-card-light dark:bg-card-dark p-6 rounded-lg shadow-sm flex flex-col items-center justify-center gap-3 hover:shadow-lg hover:scale-105 transition-all">
+<div class="w-12 h-12 rounded-full flex items-center justify-center bg-green-100 dark:bg-green-900/50">
+<span class="material-icons-outlined text-sprint text-2xl">track_changes</span>
+</div>
+<span class="font-semibold">Kanban</span>
+</button>
+<button class="bg-card-light dark:bg-card-dark p-6 rounded-lg shadow-sm flex flex-col items-center justify-center gap-3 hover:shadow-lg hover:scale-105 transition-all">
+<div class="w-12 h-12 rounded-full flex items-center justify-center bg-blue-100 dark:bg-blue-900/50">
+<span class="material-icons-outlined text-tasks text-2xl">list_alt</span>
+</div>
+<span class="font-semibold">Wszystkie</span>
+</button>
+<button class="bg-card-light dark:bg-card-dark p-6 rounded-lg shadow-sm flex flex-col items-center justify-center gap-3 hover:shadow-lg hover:scale-105 transition-all">
+<div class="w-12 h-12 rounded-full flex items-center justify-center bg-red-100 dark:bg-red-900/50">
+<span class="material-icons-outlined text-urgent text-2xl">bolt</span>
+</div>
+<span class="font-semibold">Ulubione</span>
+</button>
+<button class="bg-card-light dark:bg-card-dark p-6 rounded-lg shadow-sm flex flex-col items-center justify-center gap-3 hover:shadow-lg hover:scale-105 transition-all">
+<div class="w-12 h-12 rounded-full flex items-center justify-center bg-purple-100 dark:bg-purple-900/50">
+<span class="material-icons-outlined text-tool text-2xl">event</span>
+</div>
+<span class="font-semibold">Sprinty</span>
+</button>
+</div>
+</div>
+</main>
+</div>
+</body></html>

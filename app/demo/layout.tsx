@@ -1,7 +1,13 @@
-"use client"
-
-import { ThemeProvider } from "@/components/theme-provider"
+import { DemoThemeProvider } from "@/components/demo/theme-provider"
 import type React from "react"
+import type { Metadata } from "next"
+import "./demo.css"
+
+export const metadata: Metadata = {
+  title: "Demo - Syzio",
+  description: "Interactive demo of Syzio project management platform. Explore all features freely.",
+  robots: "noindex, nofollow",
+}
 
 export default function DemoLayout({
   children,
@@ -9,14 +15,8 @@ export default function DemoLayout({
   children: React.ReactNode
 }) {
   return (
-    <ThemeProvider
-      attribute="class"
-      defaultTheme="system"
-      enableSystem
-      disableTransitionOnChange
-      storageKey="demo-theme" // Używamy innego klucza niż na stronie głównej
-    >
+    <DemoThemeProvider>
       {children}
-    </ThemeProvider>
+    </DemoThemeProvider>
   )
 }

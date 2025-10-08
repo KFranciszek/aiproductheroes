@@ -1,0 +1,106 @@
+/**
+ * Landing Page Styles - Space/Cosmic Theme
+ * Style specyficzne dla landing page Syzio
+ */
+
+:root {
+  /* Landing Page - Cosmic Gradients */
+  --gradient-cosmic: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --gradient-hero: linear-gradient(180deg, #0a0e1a 0%, #1e2538 100%);
+  
+  /* Light Mode */
+  --background: #ffffff;
+  --foreground: #000000;
+  --muted: #f6f7f8;
+  --muted-foreground: rgba(0, 0, 0, 0.6);
+  --border: rgba(0, 0, 0, 0.1);
+  --card: #ffffff;
+  --card-foreground: #000000;
+  
+  /* Primary Colors */
+  --primary: #667eea;
+  --primary-foreground: #ffffff;
+  --accent: #667eea;
+  --accent-foreground: #ffffff;
+  
+  /* Status */
+  --success: #10b981;
+  --warning: #f59e0b;
+  --error: #ef4444;
+}
+
+.dark {
+  /* Dark Mode - Cosmic/Space Theme */
+  --background: #0a0e1a;
+  --foreground: #E0E6EB;
+  --muted: #1e2538;
+  --muted-foreground: #9BA3AF;
+  --border: rgba(255, 255, 255, 0.1);
+  --card: #1e2538;
+  --card-foreground: #E0E6EB;
+  --primary: #667eea;
+  --accent: #667eea;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+/* Landing Page Animations */
+@keyframes blob {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+}
+
+.animate-blob {
+  animation: blob 7s infinite;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
+}
+
+.animation-delay-6000 {
+  animation-delay: 6s;
+}
+
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 20s linear infinite;
+}
+
+.animation-delay-3000 {
+  animation-delay: 3s;
+}
+
+/* Landing specific utilities */
+.hero-gradient {
+  background: var(--gradient-hero);
+}
+
+.cosmic-gradient {
+  background: var(--gradient-cosmic);
+}
+

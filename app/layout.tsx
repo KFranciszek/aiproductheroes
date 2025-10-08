@@ -12,9 +12,19 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: "Syzio - Project Management",
-  description: "A complete task management app with sprints, kanban boards, and issue tracking",
+  title: {
+    default: "Syzio - Perfect Team Alignment",
+    template: "%s | Syzio"
+  },
+  description: "When teams, tasks, and tools align perfectly. Stop juggling 6 tools. Achieve syzio.",
+  keywords: ["project management", "team collaboration", "task management", "agile", "scrum", "kanban", "sprints"],
+  authors: [{ name: "Syzio Team" }],
   generator: "v0.app",
+  openGraph: {
+    title: "Syzio - Perfect Team Alignment",
+    description: "When teams, tasks, and tools align perfectly",
+    type: "website",
+  },
 }
 
 export default function RootLayout({

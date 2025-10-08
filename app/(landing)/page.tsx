@@ -269,7 +269,7 @@ export default function LandingPage() {
           <div className="md:col-span-1 flex justify-center md:justify-end relative">
             <div className="w-full max-w-sm h-64 bg-muted rounded-xl shadow-lg overflow-hidden transform rotate-3 relative">
               <Image
-                src="/syzio-illustration.jpg"
+                src="/landing/syzio-illustration.jpg"
                 alt="Syzio - Perfect alignment visualization"
                 fill
                 className="object-cover"

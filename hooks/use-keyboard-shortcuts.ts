@@ -1,25 +1,7 @@
-import { useEffect } from 'react';
-import { KeyboardShortcut } from '@/types';
+/**
+ * Keyboard Shortcuts Hook - Backward Compatibility
+ * Re-eksportuje z hooks/demo/
+ */
 
-export function useKeyboardShortcuts(shortcuts: KeyboardShortcut[]) {
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      const matchingShortcut = shortcuts.find(shortcut => {
-        const keyMatches = shortcut.key.toLowerCase() === event.key.toLowerCase();
-        const ctrlMatches = !!shortcut.ctrl === event.ctrlKey;
-        const shiftMatches = !!shortcut.shift === event.shiftKey;
-        const altMatches = !!shortcut.alt === event.altKey;
+export * from './demo/use-keyboard-shortcuts'
 
-        return keyMatches && ctrlMatches && shiftMatches && altMatches;
-      });
-
-      if (matchingShortcut) {
-        event.preventDefault();
-        matchingShortcut.action();
-      }
-    };
-
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [shortcuts]);
-}
