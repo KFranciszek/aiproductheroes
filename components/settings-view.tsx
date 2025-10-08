@@ -15,12 +15,40 @@ import {
   Bell, 
   Database, 
   Keyboard, 
-  Zap
+  Zap,
+  Moon,
+  Sun
 } from 'lucide-react'
+import { useTheme } from "next-themes"
 
 interface SettingsViewProps {
   onExport: () => void
   onImport: (data: any) => void
+}
+
+const ThemeToggle = () => {
+  const { theme, setTheme } = useTheme()
+
+  return (
+    <div className="flex items-center justify-between">
+      <div className="space-y-0.5">
+        <Label>Motyw</Label>
+        <p className="text-sm text-muted-foreground">
+          Wybierz jasny lub ciemny motyw interfejsu
+        </p>
+      </div>
+      <Button
+        variant="outline"
+        size="icon"
+        onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+        aria-label="Toggle theme"
+      >
+        <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+        <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+        <span className="sr-only">Toggle theme</span>
+      </Button>
+    </div>
+  )
 }
 
 export function SettingsView({ onExport, onImport }: SettingsViewProps) {
@@ -124,6 +152,17 @@ export function SettingsView({ onExport, onImport }: SettingsViewProps) {
 
         {/* Appearance Tab */}
         <TabsContent value="appearance" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Motyw</CardTitle>
+              <CardDescription>
+                Dostosuj wygląd interfejsu do swoich preferencji
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ThemeToggle />
+            </CardContent>
+          </Card>
 
           <Card>
             <CardHeader>

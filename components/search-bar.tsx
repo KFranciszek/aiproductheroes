@@ -172,16 +172,19 @@ export function SearchBar({
               <label className="text-sm font-medium mb-2 block">Przypisane do</label>
               <div className="space-y-2 max-h-32 overflow-y-auto">
                 {/* Pobierz unikalnych assignee */}
-                {Array.from(new Set(issues.map(i => i.assignee).filter(Boolean))).map(assignee => (
-                  <label key={assignee} className="flex items-center gap-2 text-sm">
-                    <input
-                      type="checkbox"
-                      checked={activeFilters.assignee?.includes(assignee!) || false}
-                      onChange={() => toggleFilter('assignee', assignee!)}
-                    />
-                    {assignee}
-                  </label>
-                ))}
+                {Array.from(new Set(issues.map(i => i.assignee?.id).filter(Boolean))).map(assigneeId => {
+                  const assignee = issues.find(i => i.assignee?.id === assigneeId)?.assignee;
+                  return (
+                    <label key={assigneeId} className="flex items-center gap-2 text-sm">
+                      <input
+                        type="checkbox"
+                        checked={activeFilters.assignee?.includes(assigneeId!) || false}
+                        onChange={() => toggleFilter('assignee', assigneeId!)}
+                      />
+                      {assignee?.name}
+                    </label>
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -219,12 +222,15 @@ export function SearchBar({
               <X className="h-3 w-3 ml-1 cursor-pointer" onClick={() => toggleFilter('status', s)} />
             </Badge>
           ))}
-          {activeFilters.assignee?.map(a => (
-            <Badge key={a} variant="secondary">
-              {a}
-              <X className="h-3 w-3 ml-1 cursor-pointer" onClick={() => toggleFilter('assignee', a)} />
-            </Badge>
-          ))}
+          {activeFilters.assignee?.map(a => {
+            const assigneeName = issues.find(i => i.assignee?.id === a)?.assignee?.name || a;
+            return (
+              <Badge key={a} variant="secondary">
+                {assigneeName}
+                <X className="h-3 w-3 ml-1 cursor-pointer" onClick={() => toggleFilter('assignee', a)} />
+              </Badge>
+            );
+          })}
         </div>
       )}
 

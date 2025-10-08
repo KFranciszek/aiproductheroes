@@ -18,8 +18,11 @@ import {
   ChevronLeft,
   ChevronRight,
   HelpCircle,
-  Users
+  Users,
+  Moon,
+  Sun
 } from "lucide-react"
+import { useTheme } from "next-themes"
 import { useState, useMemo } from "react"
 import type { ViewType, Issue, Sprint, TaskTemplate } from "@/types"
 
@@ -44,6 +47,7 @@ export function SidebarNavigation({
   onTemplateSelect,
   selectedTemplate
 }: SidebarNavigationProps) {
+  const { theme, setTheme } = useTheme()
   const [isCollapsed, setIsCollapsed] = useState(() => {
     // Load from localStorage
     if (typeof window !== 'undefined') {
@@ -232,6 +236,21 @@ export function SidebarNavigation({
             }
           />
         )}
+
+        {/* Theme Toggle */}
+        <Button
+          variant="ghost"
+          className={cn(
+            "w-full justify-start gap-3",
+            isCollapsed && "justify-center"
+          )}
+          onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+          title={isCollapsed ? "Toggle theme" : undefined}
+        >
+          <Sun className="h-5 w-5 shrink-0 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+          <Moon className="absolute h-5 w-5 shrink-0 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+          {!isCollapsed && <span className="flex-1 text-left">Theme</span>}
+        </Button>
 
         {/* Settings */}
         <Button
