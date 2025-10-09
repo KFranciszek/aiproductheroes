@@ -53,10 +53,10 @@ export default function LandingPage() {
 
             {/* Demo Button */}
             <Link 
-              href="/demo" 
+              href="/demo-selector" 
               className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-[#667eea] to-[#764ba2] rounded-lg hover:opacity-90 transition-opacity"
             >
-              Demo
+              Try Demo
             </Link>
           </div>
         </div>
@@ -78,7 +78,7 @@ export default function LandingPage() {
               Stop juggling 6 tools. Achieve syzio.
             </p>
             <div className="flex flex-col sm:flex-row justify-center md:justify-start items-center space-y-4 sm:space-y-0 sm:space-x-4 mb-10">
-              <Link href="/demo" className="px-6 py-3 font-medium text-white bg-gradient-to-r from-[#667eea] to-[#764ba2] rounded-lg hover:opacity-90 transition-opacity w-full sm:w-auto text-center">
+              <Link href="/demo-selector" className="px-6 py-3 font-medium text-white bg-gradient-to-r from-[#667eea] to-[#764ba2] rounded-lg hover:opacity-90 transition-opacity w-full sm:w-auto text-center">
                 Try Demo
               </Link>
               <a href="#features" className="px-6 py-3 font-medium text-muted-foreground border border-border rounded-lg hover:bg-muted transition-colors w-full sm:w-auto text-center">
@@ -318,7 +318,7 @@ export default function LandingPage() {
       <section id="cta" className="text-center py-20 md:py-32 relative overflow-hidden container mx-auto px-6">
         <h2 className="text-4xl md:text-5xl font-bold mb-4 relative z-10 text-foreground">Ready to achieve perfect alignment?</h2>
         <div className="flex justify-center my-8 relative z-10">
-          <Link href="/demo" className="px-8 py-4 font-bold text-lg text-white bg-gradient-to-r from-[#667eea] to-[#764ba2] rounded-lg hover:opacity-90 transition-opacity">
+          <Link href="/demo-selector" className="px-8 py-4 font-bold text-lg text-white bg-gradient-to-r from-[#667eea] to-[#764ba2] rounded-lg hover:opacity-90 transition-opacity">
             Try Demo - It's Free
           </Link>
         </div>
