@@ -17,6 +17,7 @@ import {
   Brain,
   Zap
 } from "lucide-react"
+import { useDemo2Classes } from "./theme-provider"
 import {
   DndContext,
   DragEndEvent,
@@ -78,12 +79,12 @@ function DraggableIssue({ issue, onViewDetails }: DraggableIssueProps) {
     transition,
   }
 
-  const getPriorityColor = (priority: string) => {
+  const getPriorityBorderColor = (priority: string) => {
     switch (priority) {
-      case "P0": return "border-l-red-500 bg-red-50 dark:bg-red-900/20"
-      case "P1": return "border-l-orange-500 bg-orange-50 dark:bg-orange-900/20"
-      case "P2": return "border-l-blue-500 bg-blue-50 dark:bg-blue-900/20"
-      case "P3": return "border-l-gray-500 bg-gray-50 dark:bg-gray-900/20"
+      case "P0": return "border-l-red-500"
+      case "P1": return "border-l-orange-500"
+      case "P2": return "border-l-blue-500"
+      case "P3": return "border-l-gray-500"
       default: return "border-l-gray-300"
     }
   }
@@ -97,7 +98,7 @@ function DraggableIssue({ issue, onViewDetails }: DraggableIssueProps) {
       className={`cursor-grab active:cursor-grabbing ${isDragging ? 'opacity-50' : ''}`}
     >
       <Card 
-        className={`mb-3 hover:shadow-md transition-shadow border-l-4 ${getPriorityColor(issue.priority)}`}
+        className={`mb-3 hover:shadow-md transition-shadow border-l-4 ${getPriorityBorderColor(issue.priority)} ${classes.surface}`}
         onClick={() => onViewDetails(issue.id)}
       >
         <CardContent className="p-3">
@@ -199,6 +200,7 @@ function DroppableColumn({ column, issues, onViewDetails }: DroppableColumnProps
 
 export function CurrentSprintView({ issues, sprints, onUpdateIssues, onViewDetails }: CurrentSprintViewProps) {
   const [activeId, setActiveId] = useState<string | null>(null)
+  const classes = useDemo2Classes()
   
   const activeSprint = sprints.find(sprint => sprint.status === "active")
   const sprintIssues = activeSprint ? 

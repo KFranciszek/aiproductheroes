@@ -4,7 +4,7 @@ import Link from "next/link"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { ArrowLeft, Sparkles, Layout, Grid3x3 } from "lucide-react"
+import { ArrowLeft, Sparkles, Layout, Grid3x3, Zap } from "lucide-react"
 
 export default function DemoSelector() {
   const demos = [
@@ -43,6 +43,25 @@ export default function DemoSelector() {
       ],
       status: "W budowie",
       href: "/demo2",
+      isNew: true
+    },
+    {
+      id: "demo3",
+      title: "Demo 3 - Modern UI",
+      tagline: "Next-Gen Interface & Full Stack",
+      description: "Nowoczesny interfejs z pełną funkcjonalnością i zaawansowanymi komponentami",
+      color: "green",
+      icon: Zap,
+      features: [
+        "Nowoczesny design system z Tailwind CSS 4",
+        "Kompletny zestaw komponentów UI",
+        "Dark/Light mode z preferencjami użytkownika",
+        "Responsywny design z różnymi gęstościami",
+        "Command Palette i skróty klawiszowe",
+        "Zaawansowane zarządzanie stanem"
+      ],
+      status: "Nowe",
+      href: "/demo3",
       isNew: true
     }
   ]

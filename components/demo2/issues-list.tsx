@@ -27,6 +27,7 @@ import {
 import type { Issue, Sprint } from "@/types/demo2"
 import { IssueCardSkeleton, TableSkeleton } from "./skeletons"
 import { NoIssuesEmpty, SearchEmpty, FilterEmpty } from "./empty-states"
+import { useDemo2Classes } from "./theme-provider"
 
 interface IssuesListProps {
   issues: Issue[]
@@ -35,26 +36,7 @@ interface IssuesListProps {
   onViewDetails: (issueId: string) => void
 }
 
-const getStatusColor = (status: string) => {
-  switch (status) {
-    case "todo": return "bg-gray-100 text-gray-800 border-gray-200"
-    case "in_progress": return "bg-blue-100 text-blue-800 border-blue-200"
-    case "in_review": return "bg-yellow-100 text-yellow-800 border-yellow-200"
-    case "blocked": return "bg-red-100 text-red-800 border-red-200"
-    case "done": return "bg-green-100 text-green-800 border-green-200"
-    default: return "bg-gray-100 text-gray-800 border-gray-200"
-  }
-}
-
-const getPriorityColor = (priority: string) => {
-  switch (priority) {
-    case "P0": return "bg-red-500 text-white"
-    case "P1": return "bg-orange-500 text-white"
-    case "P2": return "bg-blue-500 text-white"
-    case "P3": return "bg-gray-500 text-white"
-    default: return "bg-gray-500 text-white"
-  }
-}
+// These functions will be replaced by useDemo2Classes hooks in components
 
 export function IssuesList({ issues, sprints, onUpdateIssues, onViewDetails }: IssuesListProps) {
   const [searchTerm, setSearchTerm] = useState("")
@@ -63,6 +45,7 @@ export function IssuesList({ issues, sprints, onUpdateIssues, onViewDetails }: I
   const [viewMode, setViewMode] = useState<"cards" | "table">("cards")
   const [selectedIssues, setSelectedIssues] = useState<string[]>([])
   const [isLoading, setIsLoading] = useState(false)
+  const classes = useDemo2Classes()
 
   const filteredIssues = issues.filter(issue => {
     const matchesSearch = issue.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -96,13 +79,13 @@ export function IssuesList({ issues, sprints, onUpdateIssues, onViewDetails }: I
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold">Issues</h1>
-          <p className="text-muted-foreground">
+          <p className={classes.textMuted}>
             Zarządzaj wszystkimi zadaniami w projekcie
           </p>
         </div>
-        
+
         <div className="flex items-center gap-2">
-          <div className="flex items-center border rounded-lg p-1">
+          <div className={`flex items-center ${classes.border} rounded-lg p-1`}>
             <Button
               variant={viewMode === "cards" ? "secondary" : "ghost"}
               size="sm"
@@ -118,11 +101,11 @@ export function IssuesList({ issues, sprints, onUpdateIssues, onViewDetails }: I
               <List className="w-4 h-4" />
             </Button>
           </div>
-          
-          <Button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">
+
+          <button className={classes.btnPrimary}>
             <Plus className="w-4 h-4 mr-2" />
             Nowe Issue
-          </Button>
+          </button>
         </div>
       </div>
 
@@ -220,9 +203,9 @@ export function IssuesList({ issues, sprints, onUpdateIssues, onViewDetails }: I
                         <Badge variant="outline" className="text-xs font-mono">
                           {issue.key}
                         </Badge>
-                        <Badge className={getPriorityColor(issue.priority)}>
+                        <span className={classes.getPriorityClass(issue.priority)}>
                           {issue.priority}
-                        </Badge>
+                        </span>
                       </div>
                       <CardTitle className="text-base line-clamp-2">
                         {issue.title}
@@ -260,9 +243,9 @@ export function IssuesList({ issues, sprints, onUpdateIssues, onViewDetails }: I
                   )}
 
                   <div className="flex items-center justify-between">
-                    <Badge className={getStatusColor(issue.status)}>
+                    <span className={classes.getStatusClass(issue.status)}>
                       {issue.status.replace("_", " ")}
-                    </Badge>
+                    </span>
                     {issue.storyPoints && (
                       <Badge variant="outline" className="text-xs">
                         {issue.storyPoints} SP
@@ -362,14 +345,14 @@ export function IssuesList({ issues, sprints, onUpdateIssues, onViewDetails }: I
                       )}
                     </TableCell>
                     <TableCell>
-                      <Badge className={getPriorityColor(issue.priority)}>
+                      <span className={classes.getPriorityClass(issue.priority)}>
                         {issue.priority}
-                      </Badge>
+                      </span>
                     </TableCell>
                     <TableCell>
-                      <Badge className={getStatusColor(issue.status)}>
+                      <span className={classes.getStatusClass(issue.status)}>
                         {issue.status.replace("_", " ")}
-                      </Badge>
+                      </span>
                     </TableCell>
                     <TableCell>
                       {issue.assignee ? (

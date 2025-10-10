@@ -9,6 +9,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { SprintForm } from "./sprint-form"
 import { BacklogDock } from "./backlog-dock"
 import { EndSprintModal } from "./end-sprint-modal"
+import { useDemo2Classes } from "./theme-provider"
 import { 
   Plus, 
   Play, 
@@ -37,6 +38,7 @@ export function SprintsView({ sprints, issues, onUpdateSprints, onUpdateIssues, 
   const [editingSprint, setEditingSprint] = useState<Sprint | undefined>()
   const [endingSprint, setEndingSprint] = useState<Sprint | undefined>()
   const [isEndSprintModalOpen, setIsEndSprintModalOpen] = useState(false)
+  const classes = useDemo2Classes()
   
   const activeSprints = sprints.filter(sprint => sprint.status === "active")
   const plannedSprints = sprints.filter(sprint => sprint.status === "planned")
@@ -204,13 +206,13 @@ export function SprintsView({ sprints, issues, onUpdateSprints, onUpdateIssues, 
     const daysRemaining = Math.ceil((sprint.endDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
 
     return (
-      <Card className="hover:shadow-lg transition-shadow">
-        <CardHeader>
+      <div className={classes.card}>
+        <div className="pb-4">
           <div className="flex items-start justify-between">
             <div className="space-y-2 flex-1">
-              <CardTitle className="text-lg line-clamp-2">{sprint.name}</CardTitle>
+              <h3 className="text-lg font-semibold line-clamp-2">{sprint.name}</h3>
               {sprint.goal && (
-                <p className="text-sm text-muted-foreground line-clamp-2">
+                <p className={`text-sm ${classes.textMuted} line-clamp-2`}>
                   {sprint.goal}
                 </p>
               )}
@@ -252,24 +254,24 @@ export function SprintsView({ sprints, issues, onUpdateSprints, onUpdateIssues, 
               </DropdownMenu>
             )}
           </div>
-        </CardHeader>
+        </div>
 
-        <CardContent className="space-y-4">
+        <div className="space-y-4">
           {/* Status Badge */}
           <div className="flex items-center justify-between">
-            <Badge 
+            <span 
               className={
-                sprint.status === "active" ? "bg-green-100 text-green-800 border-green-200" :
-                sprint.status === "planned" ? "bg-blue-100 text-blue-800 border-blue-200" :
-                "bg-gray-100 text-gray-800 border-gray-200"
+                sprint.status === "active" ? classes.badgeSuccess :
+                sprint.status === "planned" ? classes.badgeInfo :
+                classes.badgeSecondary
               }
             >
               {sprint.status === "active" ? "Aktywny" :
                sprint.status === "planned" ? "Planowany" : "Ukończony"}
-            </Badge>
+            </span>
             
             {sprint.status === "active" && daysRemaining >= 0 && (
-              <div className="text-sm text-muted-foreground flex items-center gap-1">
+              <div className={`text-sm ${classes.textMuted} flex items-center gap-1`}>
                 <Calendar className="w-4 h-4" />
                 {daysRemaining} dni pozostało
               </div>
@@ -291,16 +293,16 @@ export function SprintsView({ sprints, issues, onUpdateSprints, onUpdateIssues, 
           <div className="grid grid-cols-2 gap-4 text-center">
             <div className="space-y-1">
               <div className="text-lg font-bold">{stats.completedIssues}/{stats.totalIssues}</div>
-              <div className="text-xs text-muted-foreground">Zadania</div>
+              <div className={`text-xs ${classes.textMuted}`}>Zadania</div>
             </div>
             <div className="space-y-1">
               <div className="text-lg font-bold">{stats.completedStoryPoints}/{stats.totalStoryPoints}</div>
-              <div className="text-xs text-muted-foreground">Story Points</div>
+              <div className={`text-xs ${classes.textMuted}`}>Story Points</div>
             </div>
           </div>
 
           {/* Dates */}
-          <div className="text-xs text-muted-foreground space-y-1">
+          <div className={`text-xs ${classes.textMuted} space-y-1`}>
             <div className="flex items-center gap-1">
               <Calendar className="w-3 h-3" />
               {sprint.startDate.toLocaleDateString()} - {sprint.endDate.toLocaleDateString()}
@@ -311,33 +313,29 @@ export function SprintsView({ sprints, issues, onUpdateSprints, onUpdateIssues, 
           {showActions && (
             <div className="flex gap-2 pt-2">
               {sprint.status === "planned" && (
-                <Button size="sm" className="flex-1 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800">
+                <button className={`${classes.btnSuccess} flex-1 text-sm`} onClick={() => handleStartSprint(sprint)}>
                   <Play className="w-4 h-4 mr-1" />
                   Rozpocznij
-                </Button>
+                </button>
               )}
               
               {sprint.status === "active" && (
-                <Button size="sm" variant="outline" className="flex-1">
+                <button className={`${classes.btnSecondary} flex-1 text-sm`} onClick={() => handleEndSprint(sprint)}>
                   <Square className="w-4 h-4 mr-1" />
                   Zakończ
-                </Button>
+                </button>
               )}
               
               {sprint.status === "completed" && (
-                <Button size="sm" variant="outline" className="flex-1">
+                <button className={`${classes.btnSecondary} flex-1 text-sm`}>
                   <Target className="w-4 h-4 mr-1" />
                   Raport
-                </Button>
+                </button>
               )}
-              
-              <Button size="sm" variant="outline">
-                Edytuj
-              </Button>
             </div>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     )
   }
 
@@ -347,18 +345,18 @@ export function SprintsView({ sprints, issues, onUpdateSprints, onUpdateIssues, 
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold">Sprinty</h1>
-          <p className="text-muted-foreground">
+          <p className={classes.textMuted}>
             Zarządzaj sprintami i planuj iteracje rozwoju
           </p>
         </div>
         
-        <Button 
+        <button 
           onClick={handleCreateSprint}
-          className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+          className={classes.btnPrimary}
         >
           <Plus className="w-4 h-4 mr-2" />
           Nowy Sprint
-        </Button>
+        </button>
       </div>
 
       {/* Active Sprints */}
@@ -366,9 +364,9 @@ export function SprintsView({ sprints, issues, onUpdateSprints, onUpdateIssues, 
         <div className="space-y-4">
           <div className="flex items-center gap-2">
             <h2 className="text-xl font-semibold">Aktywne Sprinty</h2>
-            <Badge className="bg-green-100 text-green-800 border-green-200">
+            <span className={classes.badgeSuccess}>
               {activeSprints.length}
-            </Badge>
+            </span>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -384,9 +382,9 @@ export function SprintsView({ sprints, issues, onUpdateSprints, onUpdateIssues, 
         <div className="space-y-4">
           <div className="flex items-center gap-2">
             <h2 className="text-xl font-semibold">Planowane Sprinty</h2>
-            <Badge className="bg-blue-100 text-blue-800 border-blue-200">
+            <span className={classes.badgeInfo}>
               {plannedSprints.length}
-            </Badge>
+            </span>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -402,9 +400,9 @@ export function SprintsView({ sprints, issues, onUpdateSprints, onUpdateIssues, 
         <div className="space-y-4">
           <div className="flex items-center gap-2">
             <h2 className="text-xl font-semibold">Ukończone Sprinty</h2>
-            <Badge className="bg-gray-100 text-gray-800 border-gray-200">
+            <span className={classes.badgeSecondary}>
               {completedSprints.length}
-            </Badge>
+            </span>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -425,23 +423,23 @@ export function SprintsView({ sprints, issues, onUpdateSprints, onUpdateIssues, 
 
       {/* Empty State */}
       {sprints.length === 0 && (
-        <Card>
-          <CardContent className="py-12 text-center">
+        <div className={classes.card}>
+          <div className="py-12 text-center">
             <div className="space-y-4">
               <div className="text-6xl">🏃‍♂️</div>
               <div>
                 <h3 className="text-lg font-semibold">Brak sprintów</h3>
-                <p className="text-muted-foreground">
+                <p className={classes.textMuted}>
                   Utwórz swój pierwszy sprint, aby rozpocząć pracę w iteracjach
                 </p>
               </div>
-              <Button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">
+              <button className={classes.btnPrimary} onClick={handleCreateSprint}>
                 <Plus className="w-4 h-4 mr-2" />
                 Utwórz pierwszy sprint
-              </Button>
+              </button>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       )}
 
       {/* Backlog Dock */}
