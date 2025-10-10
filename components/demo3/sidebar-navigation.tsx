@@ -18,6 +18,8 @@ import {
   Plus,
   Moon,
   Sun,
+  List,
+  Star,
 } from "lucide-react"
 import { cn } from "@/lib/demo3/utils"
 import { Button } from "@/components/demo3/ui/button"

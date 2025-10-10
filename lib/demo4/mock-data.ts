@@ -1,0 +1,181 @@
+import type { User, Issue, Sprint, Team, Comment, Activity, AutomationRule } from "./types";
+
+export const mockData = {
+  currentUser: {
+    id: "user-1",
+    name: "Jan Kowalski",
+    email: "jan.kowalski@example.com",
+    avatarUrl: "https://api.dicebear.com/7.x/avataaars/svg?seed=Jan",
+    role: "admin" as const,
+  },
+
+  users: [
+    {
+      id: "user-1",
+      name: "Jan Kowalski",
+      email: "jan.kowalski@example.com",
+      avatarUrl: "https://api.dicebear.com/7.x/avataaars/svg?seed=Jan",
+      role: "admin" as const,
+    },
+    {
+      id: "user-2",
+      name: "Anna Nowak",
+      email: "anna.nowak@example.com",
+      avatarUrl: "https://api.dicebear.com/7.x/avataaars/svg?seed=Anna",
+      role: "member" as const,
+    },
+    {
+      id: "user-3",
+      name: "Piotr Wiśniewski",
+      email: "piotr.wisniewski@example.com",
+      avatarUrl: "https://api.dicebear.com/7.x/avataaars/svg?seed=Piotr",
+      role: "member" as const,
+    },
+  ] as User[],
+
+  issues: [
+    {
+      id: "issue-1",
+      key: "TASK-1",
+      title: "Naprawić błąd logowania",
+      description: "Użytkownicy zgłaszają problemy z logowaniem przez OAuth",
+      priority: "P0" as const,
+      status: "in_progress" as const,
+      assigneeId: "user-1",
+      sprintId: "sprint-1",
+      storyPoints: 5,
+      labels: ["bug", "urgent"],
+      createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+      updatedAt: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(),
+    },
+    {
+      id: "issue-2",
+      key: "TASK-2",
+      title: "Dodać dark mode do dashboardu",
+      description: "Implementacja przełącznika motywu i stylów dla trybu ciemnego",
+      priority: "P1" as const,
+      status: "todo" as const,
+      assigneeId: "user-2",
+      sprintId: "sprint-1",
+      storyPoints: 8,
+      labels: ["feature", "ui"],
+      createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+      updatedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+    },
+    {
+      id: "issue-3",
+      key: "TASK-3",
+      title: "Optymalizacja wydajności API",
+      description: "Zapytania do bazy danych są zbyt wolne",
+      priority: "P2" as const,
+      status: "in_review" as const,
+      assigneeId: "user-3",
+      sprintId: "sprint-1",
+      storyPoints: 13,
+      labels: ["performance", "backend"],
+      createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+      updatedAt: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(),
+    },
+    {
+      id: "issue-4",
+      key: "TASK-4",
+      title: "Aktualizacja dokumentacji",
+      description: "Dokumentacja API wymaga aktualizacji",
+      priority: "P3" as const,
+      status: "done" as const,
+      assigneeId: "user-2",
+      sprintId: "sprint-1",
+      storyPoints: 3,
+      labels: ["documentation"],
+      createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+      updatedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+    },
+  ] as Issue[],
+
+  sprints: [
+    {
+      id: "sprint-1",
+      name: "Sprint 12 - Q4 Week 1",
+      goal: "Poprawić stabilność i wydajność aplikacji",
+      start: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+      end: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+      status: "active" as const,
+      issueIds: ["issue-1", "issue-2", "issue-3", "issue-4"],
+    },
+    {
+      id: "sprint-2",
+      name: "Sprint 13 - Q4 Week 2",
+      goal: "Nowe funkcje dla użytkowników",
+      start: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+      end: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(),
+      status: "planned" as const,
+      issueIds: [],
+    },
+  ] as Sprint[],
+
+  teams: [
+    {
+      id: "team-1",
+      name: "Frontend Team",
+      memberIds: ["user-1", "user-2"],
+      velocityHistory: [25, 28, 30, 27, 32],
+    },
+    {
+      id: "team-2",
+      name: "Backend Team",
+      memberIds: ["user-3"],
+      velocityHistory: [20, 22, 24, 23, 26],
+    },
+  ] as Team[],
+
+  comments: [
+    {
+      id: "comment-1",
+      issueId: "issue-1",
+      authorId: "user-2",
+      body: "Sprawdziłam logi - problem występuje tylko w przeglądarce Safari",
+      createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+    },
+    {
+      id: "comment-2",
+      issueId: "issue-1",
+      authorId: "user-1",
+      body: "Dzięki! Zaczynam debugowanie",
+      createdAt: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(),
+    },
+  ] as Comment[],
+
+  activities: [
+    {
+      id: "activity-1",
+      actorId: "user-1",
+      type: "issue_updated",
+      targetType: "issue" as const,
+      targetId: "issue-1",
+      createdAt: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(),
+      payload: { status: "in_progress" },
+    },
+    {
+      id: "activity-2",
+      actorId: "user-2",
+      type: "comment_added",
+      targetType: "issue" as const,
+      targetId: "issue-1",
+      createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+      payload: { commentId: "comment-1" },
+    },
+  ] as Activity[],
+
+  automationRules: [
+    {
+      id: "rule-1",
+      name: "Auto-assign P0 issues",
+      active: true,
+      when: ["issue_created"],
+      if: ["priority = P0"],
+      then: ["assign_to_team_lead", "send_slack_notification"],
+      lastRunAt: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(),
+      lastRunStatus: "success" as const,
+    },
+  ] as AutomationRule[],
+};

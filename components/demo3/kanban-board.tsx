@@ -12,13 +12,7 @@ import type { Sprint, Status, Priority } from "@/lib/demo3/types"
 import { cn } from "@/lib/demo3/utils"
 import { IssueDetailView } from "@/components/demo3/issue-detail-view"
 import { useRouter } from "next/navigation"
-
-const priorityColors: Record<Priority, string> = {
-  P0: "bg-destructive text-destructive-foreground",
-  P1: "bg-orange-500 text-white",
-  P2: "bg-primary text-primary-foreground",
-  P3: "bg-muted text-muted-foreground",
-}
+import { priorityColors, statusColors, statusLabels } from "@/lib/demo3/constants"
 
 const columns: { id: Status; label: string; color: string }[] = [
   { id: "todo", label: "To Do", color: "bg-muted" },

@@ -1,5 +1,5 @@
 // Mock data for Syzio demo
-import type { User, Issue, Sprint, Team, Activity } from "./types"
+import type { User, Issue, Sprint, Team, Activity, Comment, AutomationRule } from "./types"
 
 export const mockUsers: User[] = [
   {
@@ -183,4 +183,48 @@ export const mockActivities: Activity[] = [
     targetId: "i3",
     createdAt: "2025-01-06T11:00:00Z",
   },
+]
+
+export const mockComments: Comment[] = [
+    {
+      id: "comment-1",
+      issueId: "i1",
+      userId: "u2",
+      content: "I'll take a look at this right away.",
+      createdAt: "2023-10-01T10:05:00Z",
+    },
+    {
+      id: "comment-2",
+      issueId: "i1",
+      userId: "u1",
+      content: "Thanks! Let me know if you need any logs.",
+      createdAt: "2023-10-01T10:10:00Z",
+    },
+]
+
+export const mockAutomationRules: AutomationRule[] = [
+    {
+      id: "1",
+      name: "Auto-assign urgent issues",
+      description: "Automatically assign P0 issues to team lead",
+      active: true,
+      lastRun: "2 hours ago",
+      status: "success",
+    },
+    {
+      id: "2",
+      name: "Sprint completion reminder",
+      description: "Send notification 2 days before sprint end",
+      active: true,
+      lastRun: "1 day ago",
+      status: "success",
+    },
+    {
+      id: "3",
+      name: "Stale issue detection",
+      description: "Flag issues with no activity for 7 days",
+      active: false,
+      lastRun: "5 days ago",
+      status: "error",
+    },
 ]

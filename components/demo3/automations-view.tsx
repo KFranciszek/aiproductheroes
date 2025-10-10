@@ -5,50 +5,40 @@ import { Button } from "@/components/demo3/ui/button"
 import { Badge } from "@/components/demo3/ui/badge"
 import { Switch } from "@/components/demo3/ui/switch"
 import { Plus, Sparkles, Zap, CheckCircle2, AlertCircle } from "lucide-react"
-
-const mockRules = [
-  {
-    id: "1",
-    name: "Auto-assign urgent issues",
-    description: "Automatically assign P0 issues to team lead",
-    active: true,
-    lastRun: "2 hours ago",
-    status: "success" as const,
-  },
-  {
-    id: "2",
-    name: "Sprint completion reminder",
-    description: "Send notification 2 days before sprint end",
-    active: true,
-    lastRun: "1 day ago",
-    status: "success" as const,
-  },
-  {
-    id: "3",
-    name: "Stale issue detection",
-    description: "Flag issues with no activity for 7 days",
-    active: false,
-    lastRun: "5 days ago",
-    status: "error" as const,
-  },
-]
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/demo3/ui/dialog"
+import { useData } from "@/lib/demo3/data-context"
 
 export function AutomationsView() {
+  const { automationRules } = useData()
+
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2">
-            <Sparkles className="h-8 w-8 text-primary" />
-            AI Automations
-          </h1>
-          <p className="text-muted-foreground">Automate your workflow with intelligent rules</p>
+          <h1 className="text-3xl font-bold tracking-tight">Automations</h1>
+          <p className="text-muted-foreground">Streamline your workflow with automated rules.</p>
         </div>
-        <Button>
-          <Plus className="mr-2 h-4 w-4" />
-          Create Rule
-        </Button>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button>
+              <Plus className="mr-2 h-4 w-4" />
+              Create Rule
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Create New Automation Rule</DialogTitle>
+              <DialogDescription>
+                The advanced, multi-step rule creator is coming soon.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="py-8 text-center text-muted-foreground">
+              <Zap className="mx-auto h-12 w-12 mb-4" />
+              <p>Define triggers, conditions, and actions to automate your process.</p>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
 
       {/* Stats */}
@@ -59,7 +49,7 @@ export function AutomationsView() {
             <Zap className="h-4 w-4 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{mockRules.filter((r) => r.active).length}</div>
+            <div className="text-2xl font-bold">{automationRules.filter((r) => r.active).length}</div>
             <p className="text-xs text-muted-foreground">Running automatically</p>
           </CardContent>
         </Card>
@@ -93,7 +83,7 @@ export function AutomationsView() {
       <div className="space-y-4">
         <h2 className="text-xl font-semibold">Automation Rules</h2>
         <div className="space-y-3">
-          {mockRules.map((rule) => (
+          {automationRules.map((rule) => (
             <Card key={rule.id}>
               <CardContent className="flex items-center justify-between p-6">
                 <div className="flex items-start gap-4 flex-1">

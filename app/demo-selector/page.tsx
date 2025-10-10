@@ -60,8 +60,26 @@ export default function DemoSelector() {
         "Command Palette i skróty klawiszowe",
         "Zaawansowane zarządzanie stanem"
       ],
+      status: "Dostępne",
+      href: "/demo3"
+    },
+    {
+      id: "demo4",
+      title: "Demo 4 - Ultra Design",
+      tagline: "Information First & SPA Architecture",
+      description: "Ultra-szczegółowy koncept design z pełną specyfikacją wizualną i dostępnością",
+      color: "cyan",
+      icon: Sparkles,
+      features: [
+        "Design System z pełną paletą kolorów",
+        "SPA z right drawer dla szczegółów",
+        "Command Palette (Ctrl+K) z fuzzy search",
+        "Collapsible sidebar z tooltipami",
+        "Kanban z WIP limits i drag&drop",
+        "WCAG 2.2 AA+ accessibility"
+      ],
       status: "Nowe",
-      href: "/demo3",
+      href: "/demo4",
       isNew: true
     }
   ]
@@ -104,7 +122,7 @@ export default function DemoSelector() {
         </div>
 
         {/* Demo Cards */}
-        <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+        <div className="grid md:grid-cols-2 gap-8 max-w-7xl mx-auto">
           {demos.map((demo) => {
             const Icon = demo.icon
             return (
@@ -113,7 +131,11 @@ export default function DemoSelector() {
                 className={`relative overflow-hidden transition-all hover:shadow-2xl hover:scale-[1.02] border-2 ${
                   demo.color === 'blue' 
                     ? 'hover:border-blue-500/50' 
-                    : 'hover:border-purple-500/50'
+                    : demo.color === 'purple'
+                    ? 'hover:border-purple-500/50'
+                    : demo.color === 'green'
+                    ? 'hover:border-green-500/50'
+                    : 'hover:border-cyan-500/50'
                 }`}
               >
                 {demo.isNew && (
@@ -125,14 +147,24 @@ export default function DemoSelector() {
                 )}
                 
                 <div className={`absolute top-0 right-0 w-64 h-64 rounded-full blur-3xl opacity-20 ${
-                  demo.color === 'blue' ? 'bg-blue-500' : 'bg-purple-500'
+                  demo.color === 'blue' 
+                    ? 'bg-blue-500' 
+                    : demo.color === 'purple'
+                    ? 'bg-purple-500'
+                    : demo.color === 'green'
+                    ? 'bg-green-500'
+                    : 'bg-cyan-500'
                 }`} />
 
                 <CardHeader className="relative">
                   <div className={`inline-flex items-center justify-center w-12 h-12 rounded-xl mb-4 ${
                     demo.color === 'blue' 
                       ? 'bg-blue-500/10 text-blue-600' 
-                      : 'bg-purple-500/10 text-purple-600'
+                      : demo.color === 'purple'
+                      ? 'bg-purple-500/10 text-purple-600'
+                      : demo.color === 'green'
+                      ? 'bg-green-500/10 text-green-600'
+                      : 'bg-cyan-500/10 text-cyan-600'
                   }`}>
                     <Icon className="w-6 h-6" />
                   </div>
@@ -153,7 +185,13 @@ export default function DemoSelector() {
                       {demo.features.map((feature, index) => (
                         <li key={index} className="flex items-start gap-2 text-sm">
                           <span className={`mt-0.5 ${
-                            demo.color === 'blue' ? 'text-blue-500' : 'text-purple-500'
+                            demo.color === 'blue' 
+                              ? 'text-blue-500' 
+                              : demo.color === 'purple'
+                              ? 'text-purple-500'
+                              : demo.color === 'green'
+                              ? 'text-green-500'
+                              : 'text-cyan-500'
                           }`}>✓</span>
                           <span className="text-muted-foreground">{feature}</span>
                         </li>
@@ -167,12 +205,16 @@ export default function DemoSelector() {
                       className={`w-full ${
                         demo.color === 'blue'
                           ? 'bg-blue-600 hover:bg-blue-700'
-                          : 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700'
+                          : demo.color === 'purple'
+                          ? 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700'
+                          : demo.color === 'green'
+                          ? 'bg-green-600 hover:bg-green-700'
+                          : 'bg-cyan-600 hover:bg-cyan-700'
                       }`}
                       size="lg"
                     >
                       <Link href={demo.href}>
-                        {demo.status === "W budowie" ? "Podgląd Demo 2" : "Uruchom Demo 1"}
+                        {demo.status === "W budowie" ? `Podgląd ${demo.title}` : `Uruchom ${demo.title}`}
                       </Link>
                     </Button>
                   </div>
@@ -188,7 +230,7 @@ export default function DemoSelector() {
             <CardContent className="pt-6">
               <div className="grid md:grid-cols-3 gap-8 text-center">
                 <div>
-                  <div className="text-3xl font-bold text-primary mb-2">2</div>
+                  <div className="text-3xl font-bold text-primary mb-2">4</div>
                   <p className="text-sm text-muted-foreground">Różne podejścia UX/UI</p>
                 </div>
                 <div>

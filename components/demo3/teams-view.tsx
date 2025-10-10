@@ -5,17 +5,36 @@ import { Button } from "@/components/demo3/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/demo3/ui/avatar"
 import { Plus, Users, TrendingUp, Activity } from "lucide-react"
 import { mockTeams, mockUsers, mockIssues } from "@/lib/demo3/mock-data"
+import { useData } from "@/lib/demo3/data-context"
+import { TeamForm } from "@/components/demo3/team-form"
+import React from "react"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/demo3/ui/dropdown-menu"
+import { MoreHorizontal } from "lucide-react"
 
 export function TeamsView() {
+  const { teams, users, issues, sprints } = useData()
+  const [isFormOpen, setIsFormOpen] = React.useState(false)
+  const [selectedTeam, setSelectedTeam] = React.useState<Team | undefined>(undefined)
+  
+  const handleOpenForm = (team?: Team) => {
+    setSelectedTeam(team)
+    setIsFormOpen(true)
+  }
+
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Teams</h1>
-          <p className="text-muted-foreground">{mockTeams.length} teams</p>
+          <p className="text-muted-foreground">Manage your teams and their members.</p>
         </div>
-        <Button>
+        <Button onClick={() => handleOpenForm()}>
           <Plus className="mr-2 h-4 w-4" />
           Create Team
         </Button>
@@ -23,7 +42,7 @@ export function TeamsView() {
 
       {/* Teams Grid */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {mockTeams.map((team) => {
+        {teams.map((team) => {
           const members = mockUsers.filter((u) => team.memberIds.includes(u.id))
           const teamIssues = mockIssues.filter((i) => members.some((m) => m.id === i.assigneeId))
           const avgVelocity =
@@ -74,14 +93,29 @@ export function TeamsView() {
                   </div>
                 </div>
 
-                <Button variant="outline" className="w-full bg-transparent">
-                  View Details
-                </Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className="w-full bg-transparent">
+                      View Details
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem>View Details</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleOpenForm(team)}>Edit</DropdownMenuItem>
+                    <DropdownMenuItem className="text-destructive">Delete</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </CardContent>
             </Card>
           )
         })}
       </div>
+      
+      <TeamForm 
+        open={isFormOpen}
+        onOpenChange={setIsFormOpen}
+        team={selectedTeam}
+      />
     </div>
   )
 }

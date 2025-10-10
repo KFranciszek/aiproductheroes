@@ -10,53 +10,43 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/demo3/ui/avatar"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/demo3/ui/dropdown-menu"
 import { LayoutGrid, LayoutList, MoreHorizontal, Plus, Search, Star, Filter } from "lucide-react"
-import { mockIssues, mockUsers, mockSprints } from "@/lib/demo3/mock-data"
 import { cn } from "@/lib/demo3/utils"
-import type { Priority, Status } from "@/lib/demo3/types"
+import type { Priority, Status, Issue } from "@/lib/demo3/types"
 import { IssueDetailView } from "@/components/demo3/issue-detail-view"
 import { Card, CardContent, CardHeader } from "@/components/demo3/ui/card"
-
-const priorityColors: Record<Priority, string> = {
-  P0: "bg-destructive text-destructive-foreground",
-  P1: "bg-orange-500 text-white",
-  P2: "bg-primary text-primary-foreground",
-  P3: "bg-muted text-muted-foreground",
-}
-
-const statusColors: Record<Status, string> = {
-  todo: "bg-muted text-muted-foreground",
-  in_progress: "bg-primary text-primary-foreground",
-  in_review: "bg-info text-white",
-  blocked: "bg-destructive text-destructive-foreground",
-  done: "bg-success text-white",
-}
-
-const statusLabels: Record<Status, string> = {
-  todo: "To Do",
-  in_progress: "In Progress",
-  in_review: "In Review",
-  blocked: "Blocked",
-  done: "Done",
-}
+import { useData } from "@/lib/demo3/data-context"
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/demo3/ui/alert-dialog"
+import { IssueForm } from "./issue-form"
+import { priorityColors, statusColors, statusLabels } from "@/lib/demo3/constants"
 
 export function IssuesList() {
   const searchParams = useSearchParams()
   const router = useRouter()
+  const { issues, users, sprints, deleteIssue, toggleFavorite } = useData()
   const [view, setView] = React.useState<"table" | "cards">("table")
   const [searchQuery, setSearchQuery] = React.useState("")
   const [priorityFilter, setPriorityFilter] = React.useState<string>("all")
   const [statusFilter, setStatusFilter] = React.useState<string>("all")
   const [selectedIssueId, setSelectedIssueId] = React.useState<string | null>(null)
+  const [isFormOpen, setIsFormOpen] = React.useState(false)
+  const [selectedIssueToEdit, setSelectedIssueToEdit] = React.useState<Issue | undefined>(undefined)
+  const [issueToDelete, setIssueToDelete] = React.useState<Issue | null>(null)
+  const isFavoritesView = searchParams.get("filter") === "favorites"
 
   React.useEffect(() => {
     const panel = searchParams.get("panel")
     if (panel) {
       setSelectedIssueId(panel)
+    } else {
+      setSelectedIssueId(null)
     }
   }, [searchParams])
 
   const filteredIssues = React.useMemo(() => {
-    return mockIssues.filter((issue) => {
+    return issues.filter((issue) => {
+      if (isFavoritesView && !issue.favorite) {
+        return false
+      }
       const matchesSearch =
         searchQuery === "" ||
         issue.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -65,16 +55,26 @@ export function IssuesList() {
       const matchesStatus = statusFilter === "all" || issue.status === statusFilter
       return matchesSearch && matchesPriority && matchesStatus
     })
-  }, [searchQuery, priorityFilter, statusFilter])
+  }, [issues, searchQuery, priorityFilter, statusFilter, isFavoritesView])
 
   const openIssueDetail = (issueId: string) => {
     setSelectedIssueId(issueId)
-    router.push(`/demo/issues?panel=${issueId}`, { scroll: false })
+    router.push(`/demo3/issues?panel=${issueId}`, { scroll: false })
   }
 
   const closeIssueDetail = () => {
     setSelectedIssueId(null)
     router.push("/demo3/issues", { scroll: false })
+  }
+  
+  const handleOpenForm = (issue?: Issue) => {
+    setSelectedIssueToEdit(issue)
+    setIsFormOpen(true)
+  }
+  
+  const handleDeleteClick = (e: React.MouseEvent, issue: Issue) => {
+    e.stopPropagation()
+    setIssueToDelete(issue)
   }
 
   return (
@@ -82,10 +82,10 @@ export function IssuesList() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Issues</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{isFavoritesView ? "Favorites" : "Issues"}</h1>
           <p className="text-muted-foreground">{filteredIssues.length} zadań</p>
         </div>
-        <Button>
+        <Button onClick={() => handleOpenForm()}>
           <Plus className="mr-2 h-4 w-4" />
           New Task
         </Button>
@@ -168,8 +168,8 @@ export function IssuesList() {
             </TableHeader>
             <TableBody>
               {filteredIssues.map((issue) => {
-                const assignee = mockUsers.find((u) => u.id === issue.assigneeId)
-                const sprint = mockSprints.find((s) => s.id === issue.sprintId)
+                const assignee = users.find((u) => u.id === issue.assigneeId)
+                const sprint = sprints.find((s) => s.id === issue.sprintId)
                 return (
                   <TableRow
                     key={issue.id}
@@ -181,7 +181,9 @@ export function IssuesList() {
                     </TableCell>
                     <TableCell className="font-medium">
                       <div className="flex items-center gap-2">
-                        {issue.favorite && <Star className="h-3 w-3 fill-yellow-500 text-yellow-500" />}
+                        <button onClick={(e) => { e.stopPropagation(); toggleFavorite(issue.id); }}>
+                          <Star className={cn("h-4 w-4 text-muted-foreground hover:text-yellow-500", issue.favorite && "fill-yellow-500 text-yellow-500")} />
+                        </button>
                         {issue.title}
                       </div>
                     </TableCell>
@@ -218,9 +220,9 @@ export function IssuesList() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem>Edit</DropdownMenuItem>
+                          <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleOpenForm(issue) }}>Edit</DropdownMenuItem>
                           <DropdownMenuItem>Duplicate</DropdownMenuItem>
-                          <DropdownMenuItem className="text-destructive">Delete</DropdownMenuItem>
+                          <DropdownMenuItem className="text-destructive" onClick={(e) => handleDeleteClick(e, issue)}>Delete</DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
@@ -233,8 +235,8 @@ export function IssuesList() {
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {filteredIssues.map((issue) => {
-            const assignee = mockUsers.find((u) => u.id === issue.assigneeId)
-            const sprint = mockSprints.find((s) => s.id === issue.sprintId)
+            const assignee = users.find((u) => u.id === issue.assigneeId)
+            const sprint = sprints.find((s) => s.id === issue.sprintId)
             return (
               <Card
                 key={issue.id}
@@ -245,7 +247,9 @@ export function IssuesList() {
                   <div className="flex items-start justify-between gap-2">
                     <code className="text-xs font-mono text-muted-foreground">{issue.key}</code>
                     <div className="flex gap-1">
-                      {issue.favorite && <Star className="h-3 w-3 fill-yellow-500 text-yellow-500" />}
+                      <button onClick={(e) => { e.stopPropagation(); toggleFavorite(issue.id); }}>
+                        <Star className={cn("h-4 w-4 text-muted-foreground hover:text-yellow-500", issue.favorite && "fill-yellow-500 text-yellow-500")} />
+                      </button>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
                           <Button variant="ghost" size="icon" className="h-6 w-6">
@@ -253,9 +257,9 @@ export function IssuesList() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem>Edit</DropdownMenuItem>
+                          <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleOpenForm(issue) }}>Edit</DropdownMenuItem>
                           <DropdownMenuItem>Duplicate</DropdownMenuItem>
-                          <DropdownMenuItem className="text-destructive">Delete</DropdownMenuItem>
+                          <DropdownMenuItem className="text-destructive" onClick={(e) => handleDeleteClick(e, issue)}>Delete</DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </div>
@@ -295,6 +299,36 @@ export function IssuesList() {
       {selectedIssueId && (
         <IssueDetailView issueId={selectedIssueId} open={!!selectedIssueId} onClose={closeIssueDetail} />
       )}
+      
+      {/* Issue Form Modal */}
+      <IssueForm 
+        issue={selectedIssueToEdit}
+        open={isFormOpen}
+        onOpenChange={setIsFormOpen}
+      />
+      
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={!!issueToDelete} onOpenChange={() => setIssueToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the issue <span className="font-medium text-foreground">{issueToDelete?.key}: {issueToDelete?.title}</span>.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={() => {
+                if(issueToDelete) deleteIssue(issueToDelete.id)
+              }}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

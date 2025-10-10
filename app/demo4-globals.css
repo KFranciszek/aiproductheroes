@@ -1,0 +1,206 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* === BRAND COLORS === */
+    --brand-primary-raw: 45, 91, 255;
+    --brand-secondary-raw: 124, 58, 237;
+    --brand-tertiary-raw: 6, 182, 212;
+    
+    --brand-primary: rgb(var(--brand-primary-raw));
+    --brand-secondary: rgb(var(--brand-secondary-raw));
+    --brand-tertiary: rgb(var(--brand-tertiary-raw));
+    
+    /* === DARK MODE (default) === */
+    color-scheme: dark;
+    
+    --bg-base: #0A0B0F;
+    --bg-elevated: #13141A;
+    --bg-overlay: #1C1D26;
+    --bg-subtle: rgba(var(--brand-primary-raw), 0.04);
+    --bg-hover: rgba(255, 255, 255, 0.04);
+    --bg-active: rgba(255, 255, 255, 0.08);
+    
+    --text-primary: #F1F3F5;
+    --text-secondary: #9CA3AF;
+    --text-tertiary: #6B7280;
+    --text-quaternary: #52525B;
+    --text-inverse: #0A0B0F;
+    --text-on-brand: #FFFFFF;
+    
+    --border-subtle: rgba(255, 255, 255, 0.06);
+    --border-default: rgba(255, 255, 255, 0.08);
+    --border-strong: rgba(255, 255, 255, 0.12);
+    --border-brand: rgba(var(--brand-primary-raw), 0.3);
+    
+    --overlay-light: rgba(255, 255, 255, 0.08);
+    --overlay-dark: rgba(0, 0, 0, 0.4);
+    --backdrop: rgba(0, 0, 0, 0.6);
+    
+    --shadow-color: 0, 0, 0;
+    
+    /* === SEMANTIC COLORS === */
+    --success-raw: 16, 185, 129;
+    --success: rgb(var(--success-raw));
+    --success-bg: rgba(var(--success-raw), 0.08);
+    --success-border: rgba(var(--success-raw), 0.25);
+    --success-text: #34D399;
+    
+    --warning-raw: 245, 158, 11;
+    --warning: rgb(var(--warning-raw));
+    --warning-bg: rgba(var(--warning-raw), 0.08);
+    --warning-border: rgba(var(--warning-raw), 0.25);
+    --warning-text: #FCD34D;
+    
+    --error-raw: 239, 68, 68;
+    --error: rgb(var(--error-raw));
+    --error-bg: rgba(var(--error-raw), 0.08);
+    --error-border: rgba(var(--error-raw), 0.25);
+    --error-text: #F87171;
+    
+    --info-raw: 6, 182, 212;
+    --info: rgb(var(--info-raw));
+    --info-bg: rgba(var(--info-raw), 0.08);
+    --info-border: rgba(var(--info-raw), 0.25);
+    --info-text: #22D3EE;
+    
+    /* === PRIORITY COLORS === */
+    --priority-p0-raw: 239, 68, 68;
+    --priority-p0: rgb(var(--priority-p0-raw));
+    --priority-p0-bg: rgba(var(--priority-p0-raw), 0.08);
+    --priority-p0-border: rgba(var(--priority-p0-raw), 0.3);
+    --priority-p0-text: #F87171;
+    
+    --priority-p1-raw: 245, 158, 11;
+    --priority-p1: rgb(var(--priority-p1-raw));
+    --priority-p1-bg: rgba(var(--priority-p1-raw), 0.08);
+    --priority-p1-border: rgba(var(--priority-p1-raw), 0.3);
+    --priority-p1-text: #FCD34D;
+    
+    --priority-p2: var(--brand-primary);
+    --priority-p2-bg: rgba(var(--brand-primary-raw), 0.08);
+    --priority-p2-border: rgba(var(--brand-primary-raw), 0.3);
+    --priority-p2-text: #60A5FA;
+    
+    --priority-p3-raw: 107, 114, 128;
+    --priority-p3: rgb(var(--priority-p3-raw));
+    --priority-p3-bg: rgba(var(--priority-p3-raw), 0.08);
+    --priority-p3-border: rgba(var(--priority-p3-raw), 0.3);
+    --priority-p3-text: #9CA3AF;
+    
+    /* === STATUS COLORS === */
+    --status-todo-raw: 107, 114, 128;
+    --status-todo: rgb(var(--status-todo-raw));
+    --status-todo-bg: rgba(var(--status-todo-raw), 0.08);
+    --status-todo-text: #9CA3AF;
+    
+    --status-progress: var(--brand-primary);
+    --status-progress-bg: rgba(var(--brand-primary-raw), 0.08);
+    --status-progress-text: #60A5FA;
+    
+    --status-review: var(--info);
+    --status-review-bg: rgba(var(--info-raw), 0.08);
+    --status-review-text: #22D3EE;
+    
+    --status-blocked: var(--error);
+    --status-blocked-bg: rgba(var(--error-raw), 0.08);
+    --status-blocked-text: #F87171;
+    
+    --status-done: var(--success);
+    --status-done-bg: rgba(var(--success-raw), 0.08);
+    --status-done-text: #34D399;
+    
+    /* === SPACING === */
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-6: 1.5rem;
+    --space-8: 2rem;
+    --space-12: 3rem;
+    
+    /* === RADIUS === */
+    --radius-sm: 0.5rem;
+    --radius-md: 0.75rem;
+    --radius-lg: 1rem;
+    --radius-xl: 1.5rem;
+    --radius-full: 9999px;
+  }
+  
+  .light {
+    color-scheme: light;
+    
+    --bg-base: #FAFAFA;
+    --bg-elevated: #FFFFFF;
+    --bg-overlay: #FFFFFF;
+    --bg-subtle: rgba(var(--brand-primary-raw), 0.03);
+    --bg-hover: rgba(0, 0, 0, 0.04);
+    --bg-active: rgba(0, 0, 0, 0.08);
+    
+    --text-primary: #18181B;
+    --text-secondary: #52525B;
+    --text-tertiary: #A1A1AA;
+    --text-quaternary: #D4D4D8;
+    --text-inverse: #FFFFFF;
+    
+    --border-subtle: rgba(0, 0, 0, 0.04);
+    --border-default: rgba(0, 0, 0, 0.08);
+    --border-strong: rgba(0, 0, 0, 0.12);
+    
+    --success-bg: rgba(var(--success-raw), 0.06);
+    --success-text: #059669;
+    
+    --warning-bg: rgba(var(--warning-raw), 0.06);
+    --warning-text: #D97706;
+    
+    --error-bg: rgba(var(--error-raw), 0.06);
+    --error-text: #DC2626;
+    
+    --info-bg: rgba(var(--info-raw), 0.06);
+    --info-text: #0891B2;
+    
+    --priority-p0-bg: rgba(var(--priority-p0-raw), 0.06);
+    --priority-p0-text: #DC2626;
+    
+    --priority-p1-bg: rgba(var(--priority-p1-raw), 0.06);
+    --priority-p1-text: #D97706;
+    
+    --priority-p2-bg: rgba(var(--brand-primary-raw), 0.06);
+    --priority-p2-text: #1D4ED8;
+    
+    --priority-p3-bg: rgba(var(--priority-p3-raw), 0.06);
+    --priority-p3-text: #6B7280;
+    
+    --status-todo-bg: rgba(var(--status-todo-raw), 0.06);
+    --status-todo-text: #6B7280;
+    
+    --status-progress-bg: rgba(var(--brand-primary-raw), 0.06);
+    --status-progress-text: #1D4ED8;
+    
+    --status-review-bg: rgba(var(--info-raw), 0.06);
+    --status-review-text: #0891B2;
+    
+    --status-blocked-bg: rgba(var(--error-raw), 0.06);
+    --status-blocked-text: #DC2626;
+    
+    --status-done-bg: rgba(var(--success-raw), 0.06);
+    --status-done-text: #059669;
+  }
+  
+  * {
+    border-color: var(--border-default);
+  }
+  
+  body {
+    background-color: var(--bg-base);
+    color: var(--text-primary);
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}

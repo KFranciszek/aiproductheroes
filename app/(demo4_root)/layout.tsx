@@ -3,18 +3,15 @@ import type { Metadata } from "next";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 import { Analytics } from "@vercel/analytics/next";
-import { Suspense } from "react";
-import "../demo3-globals.css";
-import { DataProvider } from "@/lib/demo3/data-context";
-import { UIProvider } from "@/lib/demo3/ui-context";
-import { ThemeProvider } from "@/components/demo3/theme-provider";
+import "../demo4-globals.css";
+import { Providers } from "./providers";
 
 export const metadata: Metadata = {
-  title: "Syzio - Demo 3",
-  description: "Modern project management application demo",
+  title: "Syzio - Demo 4",
+  description: "Ultra-szczegółowy koncept design aplikacji demonstracyjnej Syzio jako SPA",
 };
 
-export default function Demo3RootLayout({
+export default function Demo4RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -24,11 +21,9 @@ export default function Demo3RootLayout({
       <body
         className={`font-sans ${GeistSans.variable} ${GeistMono.variable} antialiased`}
       >
-        <DataProvider>
-          <UIProvider>
-            <ThemeProvider>{children}</ThemeProvider>
-          </UIProvider>
-        </DataProvider>
+        <Providers>
+          {children}
+        </Providers>
         <Analytics />
       </body>
     </html>
