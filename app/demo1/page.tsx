@@ -464,11 +464,15 @@ export default function SyzioDemo() {
         if (selectedTeamId) {
           const selectedTeam = teams.find(team => team.id === selectedTeamId);
           const teamMembers = mockData.users.filter(user => selectedTeam?.memberIds.includes(user.id));
+          const teamMemberIds = teamMembers.map(m => m.id);
+          const teamIssues = issues.filter(issue => 
+            issue.assignee && teamMemberIds.includes(issue.assignee.id)
+          );
           return (
             <TeamDetailView
               team={selectedTeam!}
               members={teamMembers}
-              issues={issues}
+              issues={teamIssues}
               activeSprint={activeSprint}
               onBack={() => setSelectedTeamId(null)}
               onViewIssue={handleViewIssueDetails}

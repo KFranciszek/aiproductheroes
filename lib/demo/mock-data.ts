@@ -631,7 +631,7 @@ const activeSprintIssues: Issue[] = predefinedTasks.map(taskData => {
       skills: assignee.skills,
       capacity: assignee.capacity
     } : undefined,
-    sprintId: activeSprint?.id,
+    sprintId: 'sprint-59', // Active sprint
     teamId: taskData.teamId, // Dodaj teamId z predefiniowanych zadań
     dependencies: {
       blocks: taskData.blocks || [],

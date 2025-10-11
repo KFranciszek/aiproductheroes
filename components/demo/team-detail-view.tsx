@@ -19,7 +19,11 @@ import {
   Eye
 } from "lucide-react";
 import { IssueCard } from "@/components/demo/issue-card";
-import type { Team, User, Issue, Sprint } from "@/types";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Search, Filter, X } from "lucide-react";
+import type { Team, User, Issue, Sprint, IssueStatus, Priority } from "@/types";
 
 interface TeamDetailViewProps {
   team: Team;
@@ -42,7 +46,7 @@ export function TeamDetailView({
 
   // Oblicz metryki zespołu
   const teamMetrics = useMemo(() => {
-    const teamIssues = issues.filter(issue => issue.teamId === team.id);
+    const teamIssues = issues; // Issues are already filtered by teamId in parent
     const completedIssues = teamIssues.filter(issue => issue.status === 'Done');
     const inProgressIssues = teamIssues.filter(issue => issue.status === 'In Progress');
     const todoIssues = teamIssues.filter(issue => issue.status === 'Todo');
@@ -320,24 +324,10 @@ export function TeamDetailView({
         </TabsContent>
 
         <TabsContent value="issues" className="mt-6">
-          <div className="space-y-4">
-            {issues.filter(issue => issue.teamId === team.id).map((issue) => (
-              <IssueCard
-                key={issue.id}
-                issue={issue}
-                onView={() => onViewIssue?.(issue.id)}
-              />
-            ))}
-            {issues.filter(issue => issue.teamId === team.id).length === 0 && (
-              <div className="text-center py-12">
-                <Target className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-medium mb-2">Brak zadań</h3>
-                <p className="text-muted-foreground">
-                  Ten zespół nie ma jeszcze przypisanych zadań.
-                </p>
-              </div>
-            )}
-          </div>
+          <TeamIssuesTable 
+            issues={issues}
+            onViewIssue={onViewIssue}
+          />
         </TabsContent>
 
         <TabsContent value="members" className="mt-6">
@@ -373,6 +363,183 @@ export function TeamDetailView({
           </div>
         </TabsContent>
       </Tabs>
+    </div>
+  );
+}
+
+// Team Issues Table Component with Filters
+function TeamIssuesTable({ 
+  issues, 
+  onViewIssue 
+}: { 
+  issues: Issue[]
+  onViewIssue?: (issueId: string) => void 
+}) {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [priorityFilter, setPriorityFilter] = useState<string>('all');
+
+  const filteredIssues = useMemo(() => {
+    return issues.filter(issue => {
+      const matchesSearch = issue.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           issue.id.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesStatus = statusFilter === 'all' || issue.status === statusFilter;
+      const matchesPriority = priorityFilter === 'all' || issue.priority === priorityFilter;
+      
+      return matchesSearch && matchesStatus && matchesPriority;
+    });
+  }, [issues, searchTerm, statusFilter, priorityFilter]);
+
+  const getPriorityColor = (priority: Priority) => {
+    switch (priority) {
+      case 'P0': return 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300';
+      case 'P1': return 'bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300';
+      case 'P2': return 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300';
+      case 'P3': return 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300';
+      default: return 'bg-gray-100 text-gray-700 dark:bg-gray-900 dark:text-gray-300';
+    }
+  };
+
+  const getStatusColor = (status: IssueStatus) => {
+    switch (status) {
+      case 'Todo': return 'bg-gray-100 text-gray-700 dark:bg-gray-900 dark:text-gray-300';
+      case 'In Progress': return 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300';
+      case 'In Review': return 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300';
+      case 'Done': return 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300';
+      default: return 'bg-gray-100 text-gray-700 dark:bg-gray-900 dark:text-gray-300';
+    }
+  };
+
+  if (issues.length === 0) {
+    return (
+      <div className="text-center py-12">
+        <Target className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+        <h3 className="text-lg font-medium mb-2">Brak zadań</h3>
+        <p className="text-muted-foreground">
+          Ten zespół nie ma jeszcze przypisanych zadań.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      {/* Filters */}
+      <div className="flex flex-col sm:flex-row gap-4">
+        <div className="flex-1 relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+          <Input
+            placeholder="Szukaj zadań..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10"
+          />
+        </div>
+        
+        <div className="flex gap-2">
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="w-40">
+              <SelectValue placeholder="Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Wszystkie</SelectItem>
+              <SelectItem value="Todo">Todo</SelectItem>
+              <SelectItem value="In Progress">In Progress</SelectItem>
+              <SelectItem value="In Review">In Review</SelectItem>
+              <SelectItem value="Done">Done</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Select value={priorityFilter} onValueChange={setPriorityFilter}>
+            <SelectTrigger className="w-40">
+              <SelectValue placeholder="Priorytet" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Wszystkie</SelectItem>
+              <SelectItem value="P0">P0 - Critical</SelectItem>
+              <SelectItem value="P1">P1 - High</SelectItem>
+              <SelectItem value="P2">P2 - Medium</SelectItem>
+              <SelectItem value="P3">P3 - Normal</SelectItem>
+              <SelectItem value="P4">P4 - Low</SelectItem>
+            </SelectContent>
+          </Select>
+
+          {(searchTerm || statusFilter !== 'all' || priorityFilter !== 'all') && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                setSearchTerm('');
+                setStatusFilter('all');
+                setPriorityFilter('all');
+              }}
+            >
+              <X className="w-4 h-4" />
+            </Button>
+          )}
+        </div>
+      </div>
+
+      {/* Table */}
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[100px]">ID</TableHead>
+              <TableHead>Tytuł</TableHead>
+              <TableHead>Priorytet</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Przypisany</TableHead>
+              <TableHead className="w-[100px]">Story Points</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {filteredIssues.map((issue) => (
+              <TableRow
+                key={issue.id}
+                className="cursor-pointer hover:bg-muted/50"
+                onClick={() => onViewIssue?.(issue.id)}
+              >
+                <TableCell className="font-mono text-sm">{issue.id}</TableCell>
+                <TableCell className="font-medium">{issue.title}</TableCell>
+                <TableCell>
+                  <Badge className={getPriorityColor(issue.priority)}>
+                    {issue.priority}
+                  </Badge>
+                </TableCell>
+                <TableCell>
+                  <Badge className={getStatusColor(issue.status)}>
+                    {issue.status}
+                  </Badge>
+                </TableCell>
+                <TableCell>
+                  {issue.assignee ? (
+                    <div className="flex items-center gap-2">
+                      <div className="w-6 h-6 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-xs font-medium">
+                        {issue.assignee.name.split(' ').map(n => n[0]).join('')}
+                      </div>
+                      <span className="text-sm">{issue.assignee.name}</span>
+                    </div>
+                  ) : (
+                    <span className="text-sm text-muted-foreground">Nieprzypisane</span>
+                  )}
+                </TableCell>
+                <TableCell className="text-center">{issue.storyPoints || 0}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+
+      {filteredIssues.length === 0 && issues.length > 0 && (
+        <div className="text-center py-8">
+          <p className="text-muted-foreground">Nie znaleziono zadań pasujących do filtrów.</p>
+        </div>
+      )}
+
+      <div className="text-sm text-muted-foreground">
+        Wyświetlono {filteredIssues.length} z {issues.length} zadań
+      </div>
     </div>
   );
 }
