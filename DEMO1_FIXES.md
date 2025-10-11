@@ -118,6 +118,30 @@
   - Poprawiono `--secondary` i `--secondary-foreground`
   - Poprawiono `--muted` w dark mode
 
+### ✅ 8. Błąd przy tworzeniu Issue
+
+**Problem:** Błąd `Cannot read properties of undefined (reading 'split')` przy tworzeniu nowego Issue.
+
+**Przyczyna:** 
+- Formularz `IssueForm` zapisuje `assignee` jako string (np. "John Doe")
+- Typ `Issue` oczekuje obiektu z polami: `id`, `name`, `avatar`, `role`, `skills`, `capacity`
+- Kod w `issues-list.tsx` próbował odczytać `issue.assignee.name.split()`
+
+**Rozwiązanie:**
+- Zaktualizowano `handleCreateIssue` w `app/demo1/page.tsx`:
+  - Sprawdza czy `assignee` jest stringiem
+  - Jeśli tak, konwertuje go na obiekt:
+    ```typescript
+    {
+      id: `user-${Date.now()}`,
+      name: issueData.assignee,
+      role: 'Developer',
+      skills: [],
+      capacity: 40
+    }
+    ```
+  - Teraz Issue zawsze ma poprawny obiekt assignee
+
 ## Testowanie
 
 Aby przetestować wszystkie naprawy:
@@ -166,6 +190,7 @@ Aby przetestować wszystkie naprawy:
 8. `components/ui/dialog.tsx` - poprawki tła modali
 9. `components/ui/select.tsx` - poprawki tła dropdown
 10. `components/ui/button.tsx` - **POPRAWKA**: zmieniono `variant="primary"` na używanie konkretnego koloru `#1173d4` zamiast zmiennej CSS
+11. `app/demo1/page.tsx` - **POPRAWKA**: naprawiono `handleCreateIssue` - konwersja assignee ze stringa na obiekt
 
 ## Szczegóły techniczne
 

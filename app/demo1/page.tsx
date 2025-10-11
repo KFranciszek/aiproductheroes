@@ -291,13 +291,26 @@ export default function SyzioDemo() {
 
   const handleCreateIssue = (issueData: Partial<Issue>) => {
     const templateFields = selectedTemplate?.fields || {}
+    
+    // Convert assignee string to object if needed
+    let assigneeObj = issueData.assignee
+    if (typeof issueData.assignee === 'string' && issueData.assignee) {
+      assigneeObj = {
+        id: `user-${Date.now()}`,
+        name: issueData.assignee,
+        role: 'Developer' as const,
+        skills: [],
+        capacity: 40
+      }
+    }
+    
     const newIssue: Issue = {
       id: generateTaskId(issues),
       title: issueData.title || templateFields.title || "",
       description: issueData.description || templateFields.description || "",
       priority: issueData.priority || templateFields.priority || "P3",
       status: issueData.status || templateFields.status || "Todo",
-      assignee: issueData.assignee || templateFields.assignee || "",
+      assignee: assigneeObj,
       sprintId: issueData.sprintId || templateFields.sprintId,
       attachments: [],
       isFavorite: false,
@@ -385,6 +398,8 @@ export default function SyzioDemo() {
       description: teamData.description || "",
       memberIds: teamData.memberIds || [],
       isActive: teamData.isActive ?? true,
+      color: teamData.color || '#1173d4',
+      defaultCapacity: teamData.defaultCapacity || 40,
       createdAt: new Date(),
       updatedAt: new Date(),
     }
