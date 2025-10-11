@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import { AlertTriangle, CheckCircle2, Clock, Users, Zap } from "lucide-react"
+import { KanbanBoard } from "./kanban-board"
 import type { Sprint, Issue, IssueStatus } from "@/types"
 import { formatDistanceToNow } from "date-fns"
 import { pl } from "date-fns/locale"
@@ -173,81 +174,13 @@ export function CurrentSprintView({
         </Card>
       )}
 
-      {/* Kanban Board */}
-      <div className="grid gap-6 md:grid-cols-4">
-        {columns.map(column => {
-          const columnIssues = sprintIssues.filter(issue => issue.status === column.status)
-          const current = columnIssues.length
-          const limit = column.limit
-          const wipStatus = limit ? getWipStatus(column.status, current, limit) : null
-
-          return (
-            <div key={column.status} className="space-y-4">
-              <div className="flex items-center justify-between">
-                <h3 className="font-semibold">{column.title}</h3>
-                <div className="flex items-center gap-2">
-                  {wipStatus && (
-                    <span className={`text-sm ${wipStatus.color}`}>
-                      {wipStatus.icon} {current}/{limit}
-                    </span>
-                  )}
-                  <Badge variant="outline">{current}</Badge>
-                </div>
-              </div>
-
-              <div className="space-y-3 min-h-[400px]">
-                {columnIssues.map(issue => (
-                  <Card 
-                    key={issue.id} 
-                    className="cursor-pointer hover:shadow-md transition-shadow"
-                    onClick={() => onViewDetails(issue.id)}
-                  >
-                    <CardHeader className="pb-3">
-                      <div className="flex items-start justify-between">
-                        <CardTitle className="text-sm line-clamp-2">{issue.title}</CardTitle>
-                        <Badge className={getPriorityColor(issue.priority)}>
-                          {issue.priority}
-                        </Badge>
-                      </div>
-                    </CardHeader>
-                    <CardContent className="pt-0">
-                      <p className="text-xs text-muted-foreground line-clamp-3 mb-3">
-                        {issue.description}
-                      </p>
-                      
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          {issue.assignee && (
-                            <div className="flex items-center gap-1">
-                              <div className="w-6 h-6 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-xs font-medium">
-                                {issue.assignee.name.split(' ').map(n => n[0]).join('')}
-                              </div>
-                              <span className="text-xs text-muted-foreground">
-                                {issue.assignee.name}
-                              </span>
-                            </div>
-                          )}
-                        </div>
-                        
-                        <div className="flex items-center gap-2">
-                          {issue.dependencies?.blockedBy && issue.dependencies.blockedBy.length > 0 && (
-                            <span className="text-xs text-red-600" title="Zablokowane">
-                              🔗
-                            </span>
-                          )}
-                          <span className="text-xs text-muted-foreground">
-                            {issue.id}
-                          </span>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </div>
-          )
-        })}
-      </div>
+      {/* Kanban Board with Drag & Drop */}
+      <KanbanBoard
+        sprint={sprint}
+        issues={issues}
+        onUpdateIssueStatus={onUpdateIssueStatus}
+        onViewDetails={onViewDetails}
+      />
     </div>
   )
 }
