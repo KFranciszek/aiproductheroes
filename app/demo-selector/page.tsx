@@ -4,14 +4,14 @@ import Link from "next/link"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { ArrowLeft, Sparkles, Layout, Grid3x3, Zap } from "lucide-react"
+import { ArrowLeft, Layout, Activity } from "lucide-react"
 
 export default function DemoSelector() {
   const demos = [
     {
       id: "demo1",
-      title: "Demo 1 - Classic Experience",
-      tagline: "Traditional & Feature-Rich",
+      title: "Syzio Project Management",
+      tagline: "Podstawowe narzędzie zarządzania zmiana w Twojej organizacji",
       description: "Klasyczne podejście z sidebarem i kompleksowymi funkcjami",
       color: "blue",
       icon: Layout,
@@ -27,59 +27,25 @@ export default function DemoSelector() {
       href: "/demo1"
     },
     {
-      id: "demo2",
-      title: "Demo 2 - Modern Design",
-      tagline: "Information First & Non-Blocking UI",
-      description: "Ultra-szczegółowy koncept design z naciskiem na dostępność i wydajność",
-      color: "purple",
-      icon: Grid3x3,
+      id: "demo5",
+      title: "Syzio Dev Monitoring",
+      tagline: "Deployment Tracking & Integration",
+      description: "Moduł monitoringu deploymentów z integracją Syzio PM",
+      color: "orange",
+      icon: Activity,
       features: [
-        "Top navigation z dostępnością WCAG 2.2 AA+",
-        "Card-based interface z Design System",
-        "Right drawer dla szczegółów (non-blocking)",
-        "Zaawansowane wyszukiwanie i filtry",
-        "Kanban z WIP limits i AI insights",
-        "Modułowy dashboard z drag&drop"
-      ],
-      status: "W budowie",
-      href: "/demo2",
-      isNew: true
-    },
-    {
-      id: "demo3",
-      title: "Demo 3 - Modern UI",
-      tagline: "Next-Gen Interface & Full Stack",
-      description: "Nowoczesny interfejs z pełną funkcjonalnością i zaawansowanymi komponentami",
-      color: "green",
-      icon: Zap,
-      features: [
-        "Nowoczesny design system z Tailwind CSS 4",
-        "Kompletny zestaw komponentów UI",
-        "Dark/Light mode z preferencjami użytkownika",
-        "Responsywny design z różnymi gęstościami",
-        "Command Palette i skróty klawiszowe",
-        "Zaawansowane zarządzanie stanem"
-      ],
-      status: "Dostępne",
-      href: "/demo3"
-    },
-    {
-      id: "demo4",
-      title: "Demo 4 - Ultra Design",
-      tagline: "Information First & SPA Architecture",
-      description: "Ultra-szczegółowy koncept design z pełną specyfikacją wizualną i dostępnością",
-      color: "cyan",
-      icon: Sparkles,
-      features: [
-        "Design System z pełną paletą kolorów",
-        "SPA z right drawer dla szczegółów",
-        "Command Palette (Ctrl+K) z fuzzy search",
-        "Collapsible sidebar z tooltipami",
-        "Kanban z WIP limits i drag&drop",
-        "WCAG 2.2 AA+ accessibility"
+        "Tracking deploymentów i release'ów",
+        "Integracja z Syzio PM (jaka paczka jakie storki i zadania)",
+        "Historia commitów Git z linkami",
+        "Metryki deploymentów i health status",
+        "Multi-environment monitoring",
+        "Incident log i śledzenie rollbacków",
+        "Zapytania: „co poszło w paczce R-102?”",
+        "Filtry i widoki środowiskowe"
+
       ],
       status: "Nowe",
-      href: "/demo4",
+      href: "/demo5",
       isNew: true
     }
   ]
@@ -103,21 +69,21 @@ export default function DemoSelector() {
       <div className="container mx-auto px-4 py-12 md:py-20">
         <div className="text-center mb-12 space-y-4">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
-            <Sparkles className="w-4 h-4" />
+            <Layout className="w-4 h-4" />
             Wybierz swoje doświadczenie
           </div>
           
           <h1 className="text-4xl md:text-6xl font-bold tracking-tight">
-            Wypróbuj różne podejścia
+            Rodzinna produktów Syzio
             <br />
             <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-              do tego samego produktu
+              One Project, Many Teams, Perfect Sync
+
             </span>
           </h1>
           
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Każde demo oferuje pełną funkcjonalność, ale z innym UX/UI. 
-            Porównaj podejścia i zobacz, które działa dla Ciebie najlepiej.
+Zestaw narzędzi do planowania, dostarczania i doskonalenia wytwarzania oprogramowania. Każdy moduł działa samodzielnie, a po integracji tworzą jeden spójny ekosystem.
           </p>
         </div>
 
@@ -135,6 +101,8 @@ export default function DemoSelector() {
                     ? 'hover:border-purple-500/50'
                     : demo.color === 'green'
                     ? 'hover:border-green-500/50'
+                    : demo.color === 'orange'
+                    ? 'hover:border-orange-500/50'
                     : 'hover:border-cyan-500/50'
                 }`}
               >
@@ -153,6 +121,8 @@ export default function DemoSelector() {
                     ? 'bg-purple-500'
                     : demo.color === 'green'
                     ? 'bg-green-500'
+                    : demo.color === 'orange'
+                    ? 'bg-orange-500'
                     : 'bg-cyan-500'
                 }`} />
 
@@ -164,6 +134,8 @@ export default function DemoSelector() {
                       ? 'bg-purple-500/10 text-purple-600'
                       : demo.color === 'green'
                       ? 'bg-green-500/10 text-green-600'
+                      : demo.color === 'orange'
+                      ? 'bg-orange-500/10 text-orange-600'
                       : 'bg-cyan-500/10 text-cyan-600'
                   }`}>
                     <Icon className="w-6 h-6" />
@@ -191,6 +163,8 @@ export default function DemoSelector() {
                               ? 'text-purple-500'
                               : demo.color === 'green'
                               ? 'text-green-500'
+                              : demo.color === 'orange'
+                              ? 'text-orange-500'
                               : 'text-cyan-500'
                           }`}>✓</span>
                           <span className="text-muted-foreground">{feature}</span>
@@ -209,6 +183,8 @@ export default function DemoSelector() {
                           ? 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700'
                           : demo.color === 'green'
                           ? 'bg-green-600 hover:bg-green-700'
+                          : demo.color === 'orange'
+                          ? 'bg-orange-600 hover:bg-orange-700'
                           : 'bg-cyan-600 hover:bg-cyan-700'
                       }`}
                       size="lg"
@@ -230,7 +206,7 @@ export default function DemoSelector() {
             <CardContent className="pt-6">
               <div className="grid md:grid-cols-3 gap-8 text-center">
                 <div>
-                  <div className="text-3xl font-bold text-primary mb-2">4</div>
+                  <div className="text-3xl font-bold text-primary mb-2">2</div>
                   <p className="text-sm text-muted-foreground">Różne podejścia UX/UI</p>
                 </div>
                 <div>

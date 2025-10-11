@@ -547,8 +547,8 @@ export default function SyzioDemo() {
           <span className="font-medium">Demo Mode</span>
           <span className="opacity-80">Explore all features freely</span>
         </div>
-        <Link href="/" className="hover:underline text-gray-900 dark:text-white">
-          ← Back to Home
+        <Link href="/demo-selector" className="hover:underline text-gray-900 dark:text-white">
+          ← Back to Demos
         </Link>
       </div>
 
