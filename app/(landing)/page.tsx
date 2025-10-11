@@ -110,6 +110,95 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+                    {/* Syzio Product Family Section */}
+      <section id="product-family" className="py-20 md:py-32 bg-muted/50">
+  <div className="container mx-auto px-6">
+    <div className="text-center max-w-4xl mx-auto mb-16">
+      <h2 className="text-4xl md:text-5xl font-extrabold text-foreground mb-4">
+        Meet the Syzio Product Family
+      </h2>
+      <p className="text-lg md:text-xl text-muted-foreground">
+        Four Syzio modules interact in an event-driven model to create a cohesive ecosystem for managing the entire software development lifecycle.
+      </p>
+    </div>
+
+    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+      {/* Syzio Project Management (PM) */}
+      <div className="bg-background border border-border rounded-xl p-6 flex flex-col items-start hover:shadow-lg hover:border-primary/50 transition-all duration-300">
+        <div className="p-3 mb-4 bg-blue-500/10 rounded-lg">
+          {/* PM Icon */}
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+        </div>
+        <h3 className="text-xl font-bold mb-2">Syzio Project Management</h3>
+        <p className="text-sm font-semibold text-primary mb-3">System of Truth for planning</p>
+        <ul className="list-disc list-inside text-muted-foreground space-y-1 text-sm">
+          <li>Epics, stories, tasks</li>
+          <li>Sprints & backlog</li>
+          <li>Statuses & priorities</li>
+          <li>Assignments & labels</li>
+        </ul>
+      </div>
+
+      {/* Syzio Development Monitoring (DevMon) */}
+      <div className="bg-background border border-border rounded-xl p-6 flex flex-col items-start hover:shadow-lg hover:border-violet-500/50 transition-all duration-300">
+        <div className="p-3 mb-4 bg-violet-500/10 rounded-lg">
+          {/* DevMon Icon */}
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-violet-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M8 9l4-4 4 4m0 6l-4 4-4-4" />
+          </svg>
+        </div>
+        <h3 className="text-xl font-bold mb-2">Syzio Development Monitoring</h3>
+        <p className="text-sm font-semibold text-violet-500 mb-3">System of Truth for delivery</p>
+        <ul className="list-disc list-inside text-muted-foreground space-y-1 text-sm">
+          <li>Commits & Pull Requests</li>
+          <li>Builds & release packages</li>
+          <li>Deployments & environments</li>
+          <li>Incidents & roll-backs</li>
+        </ul>
+      </div>
+
+      {/* Syzio Canis */}
+      <div className="bg-background border border-border rounded-xl p-6 flex flex-col items-start hover:shadow-lg hover:border-emerald-500/50 transition-all duration-300">
+        <div className="p-3 mb-4 bg-emerald-500/10 rounded-lg">
+          {/* Canis Icon */}
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+          </svg>
+        </div>
+        <h3 className="text-xl font-bold mb-2">Syzio Canis</h3>
+        <p className="text-sm font-semibold text-emerald-500 mb-3">System of Truth for knowledge & AI</p>
+        <ul className="list-disc list-inside text-muted-foreground space-y-1 text-sm">
+          <li>Stories/AC from documentation</li>
+          <li>Test data generation</li>
+          <li>Requirements verification</li>
+          <li>Traceability to sources</li>
+        </ul>
+      </div>
+
+      {/* Syzio Pulsar */}
+      <div className="bg-background border border-border rounded-xl p-6 flex flex-col items-start hover:shadow-lg hover:border-amber-500/50 transition-all duration-300">
+        <div className="p-3 mb-4 bg-amber-500/10 rounded-lg">
+          {/* Pulsar Icon */}
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+          </svg>
+        </div>
+        <h3 className="text-xl font-bold mb-2">Syzio Pulsar</h3>
+        <p className="text-sm font-semibold text-amber-500 mb-3">System of Truth for forecasts</p>
+        <ul className="list-disc list-inside text-muted-foreground space-y-1 text-sm">
+          <li>DORA/Flow metrics</li>
+          <li>Release Readiness Score</li>
+          <li>Forecasts & risk alerts</li>
+          <li>"What-if" analysis</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+
 
       {/* Problem Section */}
       <section id="features" className="py-20 md:py-24 relative overflow-hidden container mx-auto px-6">
@@ -224,98 +313,8 @@ export default function LandingPage() {
             </div>
           </div>
         </div>
-      </section>
-      {/* Syzio Product Family Section */}
-      <section id="product-family" className="py-20 md:py-32 bg-muted/50">
-  <div className="container mx-auto px-6">
-    <div className="text-center max-w-4xl mx-auto mb-16">
-      <h2 className="text-4xl md:text-5xl font-extrabold text-foreground mb-4">
-        Meet the Syzio Product Family
-      </h2>
-      <p className="text-lg md:text-xl text-muted-foreground">
-        Four Syzio modules interact in an event-driven model to create a cohesive ecosystem for managing the entire software development lifecycle.
-      </p>
-    </div>
-
-    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-      {/* Syzio Project Management (PM) */}
-      <div className="bg-background border border-border rounded-xl p-6 flex flex-col items-start hover:shadow-lg hover:border-primary/50 transition-all duration-300">
-        <div className="p-3 mb-4 bg-blue-500/10 rounded-lg">
-          {/* PM Icon */}
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
-        </div>
-        <h3 className="text-xl font-bold mb-2">Syzio Project Management</h3>
-        <p className="text-sm font-semibold text-primary mb-3">System of Truth for planning</p>
-        <ul className="list-disc list-inside text-muted-foreground space-y-1 text-sm">
-          <li>Epics, stories, tasks</li>
-          <li>Sprints & backlog</li>
-          <li>Statuses & priorities</li>
-          <li>Assignments & labels</li>
-        </ul>
-      </div>
-
-      {/* Syzio Development Monitoring (DevMon) */}
-      <div className="bg-background border border-border rounded-xl p-6 flex flex-col items-start hover:shadow-lg hover:border-violet-500/50 transition-all duration-300">
-        <div className="p-3 mb-4 bg-violet-500/10 rounded-lg">
-          {/* DevMon Icon */}
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-violet-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M8 9l4-4 4 4m0 6l-4 4-4-4" />
-          </svg>
-        </div>
-        <h3 className="text-xl font-bold mb-2">Syzio Development Monitoring</h3>
-        <p className="text-sm font-semibold text-violet-500 mb-3">System of Truth for delivery</p>
-        <ul className="list-disc list-inside text-muted-foreground space-y-1 text-sm">
-          <li>Commits & Pull Requests</li>
-          <li>Builds & release packages</li>
-          <li>Deployments & environments</li>
-          <li>Incidents & roll-backs</li>
-        </ul>
-      </div>
-
-      {/* Syzio Canis */}
-      <div className="bg-background border border-border rounded-xl p-6 flex flex-col items-start hover:shadow-lg hover:border-emerald-500/50 transition-all duration-300">
-        <div className="p-3 mb-4 bg-emerald-500/10 rounded-lg">
-          {/* Canis Icon */}
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-          </svg>
-        </div>
-        <h3 className="text-xl font-bold mb-2">Syzio Canis</h3>
-        <p className="text-sm font-semibold text-emerald-500 mb-3">System of Truth for knowledge & AI</p>
-        <ul className="list-disc list-inside text-muted-foreground space-y-1 text-sm">
-          <li>Stories/AC from documentation</li>
-          <li>Test data generation</li>
-          <li>Requirements verification</li>
-          <li>Traceability to sources</li>
-        </ul>
-      </div>
-
-      {/* Syzio Pulsar */}
-      <div className="bg-background border border-border rounded-xl p-6 flex flex-col items-start hover:shadow-lg hover:border-amber-500/50 transition-all duration-300">
-        <div className="p-3 mb-4 bg-amber-500/10 rounded-lg">
-          {/* Pulsar Icon */}
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-          </svg>
-        </div>
-        <h3 className="text-xl font-bold mb-2">Syzio Pulsar</h3>
-        <p className="text-sm font-semibold text-amber-500 mb-3">System of Truth for forecasts</p>
-        <ul className="list-disc list-inside text-muted-foreground space-y-1 text-sm">
-          <li>DORA/Flow metrics</li>
-          <li>Release Readiness Score</li>
-          <li>Forecasts & risk alerts</li>
-          <li>"What-if" analysis</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</section>
-
-      
-
-      
+      </section>  
+   
 
      
 
