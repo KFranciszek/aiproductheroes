@@ -55,3 +55,4 @@ export function EndSprintModal({ sprint, onOpenChange }: EndSprintModalProps) {
     </AlertDialog>
   )
 }
+

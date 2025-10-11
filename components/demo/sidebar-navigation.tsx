@@ -31,10 +31,7 @@ interface SidebarNavigationProps {
   onViewChange: (view: ViewType) => void
   issues: Issue[]
   sprints: Sprint[]
-  templates: TaskTemplate[]
   onCreateIssue: (issueData: Partial<Issue>) => void
-  onTemplateSelect: (template: TaskTemplate) => void
-  selectedTemplate: TaskTemplate | null
 }
 
 export function SidebarNavigation({
@@ -42,10 +39,7 @@ export function SidebarNavigation({
   onViewChange,
   issues,
   sprints,
-  templates,
-  onCreateIssue,
-  onTemplateSelect,
-  selectedTemplate
+  onCreateIssue
 }: SidebarNavigationProps) {
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
@@ -146,12 +140,19 @@ export function SidebarNavigation({
   return (
     <aside 
       className={cn(
-        "flex flex-col border-r border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark transition-all duration-300",
+        "flex flex-col border-r transition-all duration-300",
         isCollapsed ? "w-16" : "w-64"
       )}
+      style={{
+        backgroundColor: 'var(--surface-1)',
+        borderRightColor: 'var(--border-1)'
+      }}
     >
       {/* Logo */}
-      <div className="h-16 flex items-center justify-between px-4 border-b border-border-light dark:border-border-dark">
+      <div 
+        className="h-16 flex items-center justify-between px-4 border-b"
+        style={{ borderBottomColor: 'var(--border-1)' }}
+      >
         {!isCollapsed && (
           <div className="flex items-center gap-2">
             <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -188,11 +189,11 @@ export function SidebarNavigation({
             return (
               <Button
                 key={item.id}
-                variant={item.active ? "secondary" : "ghost"}
+                variant="ghost"
                 className={cn(
                   "w-full justify-start gap-3 transition-all duration-200",
                   isCollapsed && "justify-center",
-                  item.active && "bg-primary/10 text-primary hover:bg-primary/20"
+                  item.active && "bg-primary/10 text-[#1173d4] hover:bg-primary/20 dark:bg-primary/20 dark:text-[#60a5fa] dark:hover:bg-primary/30"
                 )}
                 onClick={() => onViewChange(item.id)}
               >
@@ -212,17 +213,17 @@ export function SidebarNavigation({
       </nav>
 
       {/* Bottom Actions */}
-      <div className="border-t border-border-light dark:border-border-dark p-2 space-y-2">
+      <div 
+        className="border-t p-2 space-y-2"
+        style={{ borderTopColor: 'var(--border-1)' }}
+      >
         {/* New Task Button */}
         {!isCollapsed ? (
           <IssueForm
             sprints={sprints}
             onSubmit={onCreateIssue}
-            templates={templates}
-            onTemplateSelect={onTemplateSelect}
-            selectedTemplate={selectedTemplate}
             trigger={
-              <Button className="w-full bg-primary hover:bg-primary/90 text-white">
+              <Button variant="primary" className="w-full">
                 <Plus className="h-4 w-4 mr-2" />
                 New Task
               </Button>
@@ -232,11 +233,8 @@ export function SidebarNavigation({
           <IssueForm
             sprints={sprints}
             onSubmit={onCreateIssue}
-            templates={templates}
-            onTemplateSelect={onTemplateSelect}
-            selectedTemplate={selectedTemplate}
             trigger={
-              <Button size="icon" className="w-full bg-primary hover:bg-primary/90 text-white">
+              <Button variant="primary" size="icon" className="w-full">
                 <Plus className="h-4 w-4" />
               </Button>
             }
@@ -260,11 +258,11 @@ export function SidebarNavigation({
 
         {/* Settings */}
         <Button
-          variant={currentView === "settings" ? "secondary" : "ghost"}
+          variant="ghost"
           className={cn(
             "w-full justify-start gap-3",
             isCollapsed && "justify-center",
-            currentView === "settings" && "bg-primary/10 text-primary"
+            currentView === "settings" && "bg-primary/10 text-[#1173d4] hover:bg-primary/20 dark:bg-primary/20 dark:text-[#60a5fa] dark:hover:bg-primary/30"
           )}
           onClick={() => onViewChange("settings")}
         >

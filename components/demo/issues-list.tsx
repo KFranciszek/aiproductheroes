@@ -100,7 +100,7 @@ export function IssuesList({
           sprints={sprints}
           onSubmit={onCreateIssue}
           trigger={
-            <Button className="bg-primary hover:bg-primary/90 text-white">
+            <Button variant="primary">
               <Plus className="h-4 w-4 mr-2" />
               New Task
             </Button>

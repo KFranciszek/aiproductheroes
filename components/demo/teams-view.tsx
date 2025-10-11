@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Search, Plus, Filter, Users, TrendingUp, Clock, Target } from "lucide-react";
 import { TeamCard } from "@/components/demo/team-card";
+import { TeamForm } from "@/components/demo/team-form";
 import type { Team, User, Issue, Sprint } from "@/types";
 
 interface TeamsViewProps {
@@ -15,6 +16,7 @@ interface TeamsViewProps {
   issues: Issue[];
   activeSprint?: Sprint;
   onViewTeamDetails?: (teamId: string) => void;
+  onCreateTeam?: (teamData: Partial<Team>) => void;
 }
 
 export function TeamsView({ 
@@ -22,7 +24,8 @@ export function TeamsView({
   users, 
   issues, 
   activeSprint, 
-  onViewTeamDetails 
+  onViewTeamDetails,
+  onCreateTeam 
 }: TeamsViewProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState<'name' | 'members' | 'progress' | 'capacity'>('name');
@@ -106,10 +109,18 @@ export function TeamsView({
             Zarządzaj zespołami i śledź ich wydajność
           </p>
         </div>
-        <Button className="flex items-center gap-2">
-          <Plus className="w-4 h-4" />
-          Nowy zespół
-        </Button>
+        {onCreateTeam && (
+          <TeamForm
+            users={users}
+            onSubmit={onCreateTeam}
+            trigger={
+              <Button variant="primary" className="flex items-center gap-2">
+                <Plus className="w-4 h-4" />
+                Nowy zespół
+              </Button>
+            }
+          />
+        )}
       </div>
 
       {/* Statystyki */}
@@ -228,10 +239,18 @@ export function TeamsView({
           <p className="text-muted-foreground mb-4">
             {searchTerm ? 'Nie znaleziono zespołów pasujących do wyszukiwania.' : 'Nie ma jeszcze żadnych zespołów.'}
           </p>
-          <Button>
-            <Plus className="w-4 h-4 mr-2" />
-            Stwórz pierwszy zespół
-          </Button>
+          {onCreateTeam && (
+            <TeamForm
+              users={users}
+              onSubmit={onCreateTeam}
+              trigger={
+                <Button variant="primary">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Stwórz pierwszy zespół
+                </Button>
+              }
+            />
+          )}
         </div>
       )}
     </div>

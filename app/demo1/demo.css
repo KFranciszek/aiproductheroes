@@ -27,7 +27,7 @@
   --muted-foreground: var(--text-light-muted);
   --accent: var(--primary);
   --accent-foreground: var(--primary-foreground);
-  --secondary: var(--surface-light);
+  --secondary: #f3f4f6;
   --secondary-foreground: var(--text-light);
   --popover: var(--surface-light);
   --popover-foreground: var(--text-light);
@@ -46,6 +46,7 @@
   --text-2: var(--text-light-muted);
   --surface-0: var(--background-light);
   --surface-1: var(--surface-light);
+  --surface-2: #f9fafb;
   --border-1: var(--border-light);
   --accent-weak: rgba(17, 115, 212, 0.1);
 }
@@ -64,10 +65,11 @@
   --card: var(--card-dark);
   --card-foreground: var(--text-dark);
   --border: var(--border-dark);
-  --muted: var(--card-dark);
+  --muted: #1a2633;
   --muted-foreground: var(--text-dark-muted);
   --accent: var(--primary);
-  --secondary: var(--card-dark);
+  --accent-foreground: var(--primary-foreground);
+  --secondary: #1a2633;
   --secondary-foreground: var(--text-dark);
   --popover: var(--card-dark);
   --popover-foreground: var(--text-dark);
@@ -78,7 +80,7 @@
   --text-2: var(--text-dark-muted);
   --surface-0: var(--background-dark);
   --surface-1: var(--card-dark);
-  --surface-2: var(--card-dark);
+  --surface-2: #1a2633;
   --border-1: var(--border-dark);
 }
 

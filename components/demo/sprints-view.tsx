@@ -82,7 +82,7 @@ export function SprintsView({
         <SprintForm
           onSubmit={onCreateSprint}
           trigger={
-            <Button className="bg-primary hover:bg-primary/90 text-white">
+            <Button variant="primary">
               <Plus className="h-4 w-4 mr-2" />
               Create Sprint
             </Button>
@@ -198,7 +198,7 @@ export function SprintsView({
               </div>
 
               <div className="flex items-center justify-center">
-                <Button className="bg-primary hover:bg-primary/90 text-white">
+                <Button variant="primary">
                   <Target className="h-4 w-4 mr-2" />
                   View Kanban Board
                 </Button>
@@ -359,7 +359,7 @@ export function SprintsView({
           <SprintForm
             onSubmit={onCreateSprint}
             trigger={
-              <Button className="bg-primary hover:bg-primary/90 text-white">
+              <Button variant="primary">
                 <Plus className="h-4 w-4 mr-2" />
                 Create First Sprint
               </Button>

@@ -378,6 +378,19 @@ export default function SyzioDemo() {
     )
   }
 
+  const handleCreateTeam = (teamData: Partial<Team>) => {
+    const newTeam: Team = {
+      id: `team-${Date.now()}`,
+      name: teamData.name || "",
+      description: teamData.description || "",
+      memberIds: teamData.memberIds || [],
+      isActive: teamData.isActive ?? true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }
+    setTeams([...teams, newTeam])
+  }
+
   const activeSprint = sprints.find((sprint) => sprint.status === "Active")
 
   const handleViewIssueDetails = (issueId: string) => {
@@ -454,6 +467,7 @@ export default function SyzioDemo() {
             issues={issues}
             activeSprint={activeSprint}
             onViewTeamDetails={setSelectedTeamId}
+            onCreateTeam={handleCreateTeam}
           />
         )
       case "reports":
@@ -509,12 +523,12 @@ export default function SyzioDemo() {
   return (
     <div className="flex flex-col h-screen">
       {/* Demo Mode Header */}
-      <div className="bg-accent-blue text-white px-4 py-2 text-sm flex items-center justify-between">
+      <div className="bg-[#1173d4] text-gray-900 px-4 py-2 text-sm flex items-center justify-between dark:text-white">
         <div className="flex items-center gap-2">
           <span className="font-medium">Demo Mode</span>
-          <span className="text-blue-200">Explore all features freely</span>
+          <span className="opacity-80">Explore all features freely</span>
         </div>
-        <Link href="/" className="hover:underline">
+        <Link href="/" className="hover:underline text-gray-900 dark:text-white">
           ← Back to Home
         </Link>
       </div>
@@ -533,10 +547,7 @@ export default function SyzioDemo() {
           onViewChange={setCurrentView}
           issues={issues}
           sprints={sprints}
-          templates={templates}
           onCreateIssue={handleCreateIssue}
-          onTemplateSelect={handleTemplateSelect}
-          selectedTemplate={selectedTemplate}
         />
         <div className="flex-1 overflow-hidden flex">
           <div className={cn(
