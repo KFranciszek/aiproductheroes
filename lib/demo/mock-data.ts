@@ -120,7 +120,24 @@ const teams: Team[] = [
 ];
 
 // 2. Generate Users
-const users: User[] = Array.from({ length: 25 }, (_, i) => {
+// Add current user first
+const currentUser: User = {
+  id: 'current-user',
+  name: 'Ty (Demo User)',
+  email: 'demo@example.com',
+  avatar: 'https://i.pravatar.cc/150?u=current-user',
+  role: 'Developer',
+  skills: ['React', 'TypeScript', 'Node.js', 'PostgreSQL'],
+  capacity: 8,
+  isActive: true,
+  joinedAt: new Date(2023, 0, 1),
+  lastSeen: new Date(),
+  teamIds: ['team-2'],
+  primaryTeamId: 'team-2',
+  isTeamLead: false,
+};
+
+const users: User[] = [currentUser, ...Array.from({ length: 25 }, (_, i) => {
   const firstName = getRandomElement(firstNames);
   const lastName = getRandomElement(lastNames);
   const userId = `user-${i + 1}`;
@@ -154,7 +171,7 @@ const users: User[] = Array.from({ length: 25 }, (_, i) => {
     primaryTeamId: userTeam?.id,
     isTeamLead: isLead,
   };
-});
+})];
 
 // 3. Generate Sprints with correct dates
 const sprints: Sprint[] = Array.from({ length: 60 }, (_, i) => {
@@ -534,6 +551,62 @@ const predefinedTasks = [
     storyPoints: 3,
     estimatedHours: 6,
     teamId: 'team-2', // Backend Core
+    blockedBy: []
+  },
+  // Tasks for current user (Dashboard demo)
+  {
+    id: 'TSK-1520',
+    title: 'Naprawa krytycznego błędu w płatnościach',
+    priority: 'P0' as Priority,
+    status: 'In Progress' as IssueStatus,
+    assigneeId: 'current-user',
+    storyPoints: 8,
+    estimatedHours: 16,
+    teamId: 'team-2',
+    blockedBy: []
+  },
+  {
+    id: 'TSK-1521',
+    title: 'Implementacja nowego dashboardu',
+    priority: 'P1' as Priority,
+    status: 'In Progress' as IssueStatus,
+    assigneeId: 'current-user',
+    storyPoints: 13,
+    estimatedHours: 24,
+    teamId: 'team-1',
+    blockedBy: []
+  },
+  {
+    id: 'TSK-1522',
+    title: 'Code review dla PR #234',
+    priority: 'P1' as Priority,
+    status: 'Todo' as IssueStatus,
+    assigneeId: 'current-user',
+    storyPoints: 2,
+    estimatedHours: 4,
+    teamId: 'team-2',
+    blockedBy: []
+  },
+  {
+    id: 'TSK-1523',
+    title: 'Aktualizacja dokumentacji API',
+    priority: 'P2' as Priority,
+    status: 'Todo' as IssueStatus,
+    assigneeId: 'current-user',
+    storyPoints: 3,
+    estimatedHours: 6,
+    teamId: 'team-2',
+    blockedBy: []
+  },
+  {
+    id: 'TSK-1524',
+    title: 'Optymalizacja zapytań do bazy danych',
+    priority: 'P2' as Priority,
+    status: 'In Review' as IssueStatus,
+    assigneeId: 'current-user',
+    storyPoints: 5,
+    estimatedHours: 10,
+    teamId: 'team-2',
     blockedBy: []
   }
 ];
