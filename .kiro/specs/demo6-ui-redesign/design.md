@@ -656,17 +656,17 @@ font-family: 'Inter', sans-serif;
           <div className="flex flex-col sm:flex-row sm:items-center gap-4 text-sm">
             <div className="flex items-center gap-2">
               <span className="font-medium">Źródła:</span>
-              <span className="bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded">PM</span>
-              <span className="bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded">DevMon</span>
+              <span className="bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded">Atlas</span>
+              <span className="bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded">Helix</span>
             </div>
             <div className="flex items-center gap-2">
               <button className="flex items-center gap-1 text-primary hover:underline">
                 <span className="material-icons text-sm">launch</span>
-                <span>Otwórz w DevMon</span>
+                <span>Otwórz w Helix</span>
               </button>
               <button className="flex items-center gap-1 text-primary hover:underline">
                 <span className="material-icons text-sm">launch</span>
-                <span>Otwórz w PM</span>
+                <span>Otwórz w Atlas</span>
               </button>
             </div>
           </div>

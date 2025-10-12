@@ -457,7 +457,7 @@ function StoriesView() {
 
             <div className="flex space-x-2">
               <button className="flex-1 bg-[#4F46E5] text-white rounded-md py-2 text-sm font-semibold hover:bg-indigo-700">
-                  Eksportuj do Atlas
+                Eksportuj do Atlas
               </button>
             </div>
           </div>

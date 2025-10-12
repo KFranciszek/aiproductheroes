@@ -7,78 +7,104 @@
 /* Demo2 Theme Container - Light Mode (Default) */
 .demo2-theme {
   /* "Architect's Clarity" - Light Theme */
-  --demo2-bg: #F4F4F5;           /* Kamienna Biel */
-  --demo2-surface: #FFFFFF;      /* Czysta Biel */
-  --demo2-text: #09090B;         /* Niemal Czarny */
-  --demo2-text-muted: #707074;   /* Ciemnoszary */
-  --demo2-border: #E0E0E2;       /* Jasnoszary */
-  --demo2-input: #E0E0E2;        /* Input border */
-  
+  --demo2-bg: #F4F4F5;
+  /* Kamienna Biel */
+  --demo2-surface: #FFFFFF;
+  /* Czysta Biel */
+  --demo2-text: #09090B;
+  /* Niemal Czarny */
+  --demo2-text-muted: #707074;
+  /* Ciemnoszary */
+  --demo2-border: #E0E0E2;
+  /* Jasnoszary */
+  --demo2-input: #E0E0E2;
+  /* Input border */
+
   /* Semantic Colors - Light */
-  --demo2-primary: #7C3AED;      /* Intensywny Fiolet */
+  --demo2-primary: #7C3AED;
+  /* Intensywny Fiolet */
   --demo2-primary-fg: #FFFFFF;
   --demo2-primary-hover: #6D28D9;
-  
-  --demo2-success: #16A34A;      /* Pewna Zieleń */
+
+  --demo2-success: #16A34A;
+  /* Pewna Zieleń */
   --demo2-success-fg: #FFFFFF;
   --demo2-success-hover: #15803D;
-  
-  --demo2-info: #2596EB;         /* Spokojny Błękit */
+
+  --demo2-info: #2596EB;
+  /* Spokojny Błękit */
   --demo2-info-fg: #FFFFFF;
   --demo2-info-hover: #1D4ED8;
-  
-  --demo2-warning: #F59E0B;      /* Ciepły Pomarańcz */
+
+  --demo2-warning: #F59E0B;
+  /* Ciepły Pomarańcz */
   --demo2-warning-fg: #FFFFFF;
   --demo2-warning-hover: #D97706;
-  
-  --demo2-destructive: #F43F5E;  /* Alarmująca Czerwień */
+
+  --demo2-destructive: #F43F5E;
+  /* Alarmująca Czerwień */
   --demo2-destructive-fg: #FFFFFF;
   --demo2-destructive-hover: #E11D48;
-  
-  --demo2-secondary: #F1F5F9;    /* Jasnoszary secondary */
+
+  --demo2-secondary: #F1F5F9;
+  /* Jasnoszary secondary */
   --demo2-secondary-fg: #0F172A;
   --demo2-secondary-hover: #E2E8F0;
-  
-  --demo2-muted: #F8FAFC;        /* Bardzo jasny szary */
+
+  --demo2-muted: #F8FAFC;
+  /* Bardzo jasny szary */
   --demo2-muted-fg: #64748B;
 }
 
 /* Demo2 Theme Container - Dark Mode */
 .demo2-theme.dark {
   /* "Analyst's Cockpit" - Dark Theme */
-  --demo2-bg: #161618;           /* Głęboki Grafit */
-  --demo2-surface: #1B1B1E;      /* Węglowy */
-  --demo2-text: #F4F4F5;         /* Jasnoszary */
-  --demo2-text-muted: #A3A3A5;   /* Stonowany Szary */
-  --demo2-border: #313135;       /* Ciemnoszary */
-  --demo2-input: #313135;        /* Input border */
-  
+  --demo2-bg: #161618;
+  /* Głęboki Grafit */
+  --demo2-surface: #1B1B1E;
+  /* Węglowy */
+  --demo2-text: #F4F4F5;
+  /* Jasnoszary */
+  --demo2-text-muted: #A3A3A5;
+  /* Stonowany Szary */
+  --demo2-border: #313135;
+  /* Ciemnoszary */
+  --demo2-input: #313135;
+  /* Input border */
+
   /* Semantic Colors - Dark (Luminous) */
-  --demo2-primary: #A78BFA;      /* Lawendowy */
+  --demo2-primary: #A78BFA;
+  /* Lawendowy */
   --demo2-primary-fg: #161618;
   --demo2-primary-hover: #8B5CF6;
-  
-  --demo2-success: #34D399;      /* Neonowa Mięta */
+
+  --demo2-success: #34D399;
+  /* Neonowa Mięta */
   --demo2-success-fg: #161618;
   --demo2-success-hover: #10B981;
-  
-  --demo2-info: #60BFFF;         /* Cyfrowy Błękit */
+
+  --demo2-info: #60BFFF;
+  /* Cyfrowy Błękit */
   --demo2-info-fg: #161618;
   --demo2-info-hover: #3B82F6;
-  
-  --demo2-warning: #FBBF24;      /* Złoty Bursztyn */
+
+  --demo2-warning: #FBBF24;
+  /* Złoty Bursztyn */
   --demo2-warning-fg: #161618;
   --demo2-warning-hover: #F59E0B;
-  
-  --demo2-destructive: #FB7185;  /* Intensywny Róż */
+
+  --demo2-destructive: #FB7185;
+  /* Intensywny Róż */
   --demo2-destructive-fg: #161618;
   --demo2-destructive-hover: #F43F5E;
-  
-  --demo2-secondary: #27272A;    /* Ciemnoszary secondary */
+
+  --demo2-secondary: #27272A;
+  /* Ciemnoszary secondary */
   --demo2-secondary-fg: #F4F4F5;
   --demo2-secondary-hover: #3F3F46;
-  
-  --demo2-muted: #18181B;        /* Bardzo ciemny szary */
+
+  --demo2-muted: #18181B;
+  /* Bardzo ciemny szary */
   --demo2-muted-fg: #A1A1AA;
 }
 
@@ -423,6 +449,3 @@
 .demo2-theme.dark .demo2-theme-toggle:hover {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
 }
-
-
-

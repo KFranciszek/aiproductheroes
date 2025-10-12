@@ -5,7 +5,7 @@ import "./demo.css"
 
 export const metadata: Metadata = {
   title: "Demo - Syzio",
-  description: "Interactive demo of Syzio project management platform. Explore all features freely.",
+  description: "Interactive demo of Syzio Atlas, project management platform. Explore all features freely.",
   robots: "noindex, nofollow",
 }
 

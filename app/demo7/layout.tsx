@@ -4,7 +4,6 @@ import { Inter } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import "../demo7-globals.css";
 import { Providers } from "./providers";
-import { Sidebar } from "@/components/demo7/sidebar";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -34,12 +33,7 @@ export default function Demo7RootLayout({
     <html lang="pl" suppressHydrationWarning>
       <body className={`${inter.variable} font-sans antialiased`}>
         <Providers>
-          <div className="flex h-screen">
-            <Sidebar />
-            <main className="flex-1 p-8 overflow-y-auto">
-              <div className="max-w-7xl mx-auto">{children}</div>
-            </main>
-          </div>
+          {children}
         </Providers>
         <Analytics />
       </body>
