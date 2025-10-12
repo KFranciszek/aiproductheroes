@@ -339,7 +339,7 @@ const Card = ({ children, className = '' }: { children: ReactNode; className?: s
   return (
     <div className={`rounded-lg border shadow-sm ${
       theme === 'dark' 
-        ? 'border-slate-800 bg-slate-900/50' 
+        ? 'border-[#3a4152] bg-[#232938]' 
         : 'border-slate-200 bg-white'
     } ${className}`}>
       {children}
@@ -409,10 +409,10 @@ const Button = ({ children, variant = 'default', size = 'default', className = '
   const { theme } = useTheme();
   
   const variants = theme === 'dark' ? {
-    default: 'bg-slate-50 text-slate-900 hover:bg-slate-50/90',
-    outline: 'border border-slate-800 bg-transparent hover:bg-slate-800 hover:text-slate-50',
-    secondary: 'bg-slate-800 text-slate-50 hover:bg-slate-800/80',
-    ghost: 'hover:bg-slate-800 hover:text-slate-50'
+    default: 'bg-white text-slate-900 hover:bg-white/90',
+    outline: 'border border-[#3a4152] bg-transparent hover:bg-[#2d3342] hover:text-slate-50',
+    secondary: 'bg-[#232938] text-slate-50 hover:bg-[#2d3342]',
+    ghost: 'hover:bg-[#2d3342] hover:text-slate-50'
   } : {
     default: 'bg-slate-900 text-slate-50 hover:bg-slate-900/90',
     outline: 'border border-slate-300 bg-transparent hover:bg-slate-100',
@@ -900,7 +900,7 @@ const PackageDetailView = ({ packageId, onBack }: { packageId: string; onBack: (
   );
 };
 
-const MonitoringDashboard = () => {
+const MonitoringDashboard = ({ onViewDetails }: { onViewDetails: (id: string) => void }) => {
   const { environments, packages } = useMonitoringStore();
   const { theme } = useTheme();
 
@@ -1050,9 +1050,9 @@ const MonitoringDashboard = () => {
         <CardContent>
           <div className="relative w-full overflow-auto">
             <table className="w-full caption-bottom text-sm">
-              <thead className={`border-b ${theme === 'dark' ? 'border-slate-800' : 'border-slate-200'}`}>
+              <thead className={`border-b ${theme === 'dark' ? 'border-[#3a4152]' : 'border-slate-200'}`}>
                 <tr className={`border-b transition-colors ${
-                  theme === 'dark' ? 'border-slate-800 hover:bg-slate-800/50' : 'border-slate-200 hover:bg-slate-50'
+                  theme === 'dark' ? 'border-[#3a4152] hover:bg-[#2d3342]/50' : 'border-slate-200 hover:bg-slate-50'
                 }`}>
                   <th className={`h-12 px-4 text-left align-middle font-medium ${textSecondary}`}>Package</th>
                   <th className={`h-12 px-4 text-left align-middle font-medium ${textSecondary}`}>Status</th>
@@ -1067,7 +1067,7 @@ const MonitoringDashboard = () => {
               <tbody>
                 {recentDeployments.map((pkg) => (
                   <tr key={pkg.id} className={`border-b transition-colors ${
-                    theme === 'dark' ? 'border-slate-800 hover:bg-slate-800/50' : 'border-slate-200 hover:bg-slate-50'
+                    theme === 'dark' ? 'border-[#3a4152] hover:bg-[#2d3342]/50' : 'border-slate-200 hover:bg-slate-50'
                   }`}>
                     <td className="p-4 align-middle">
                       <div>
@@ -1100,7 +1100,7 @@ const MonitoringDashboard = () => {
                       </div>
                     </td>
                     <td className="p-4 align-middle text-right">
-                      <Button variant="ghost" size="icon">
+                      <Button variant="ghost" size="icon" onClick={() => onViewDetails(pkg.id)}>
                         <ChevronRight className="h-4 w-4" />
                       </Button>
                     </td>
@@ -1378,12 +1378,12 @@ function AppContent({ activeView, setActiveView }: {
     { id: 'environments', label: 'Environments', icon: <Server className="h-4 w-4" /> }
   ];
 
-  const bgMain = theme === 'dark' ? 'bg-slate-950' : 'bg-slate-50';
-  const bgHeader = theme === 'dark' ? 'bg-slate-950' : 'bg-white';
-  const borderColor = theme === 'dark' ? 'border-slate-800' : 'border-slate-200';
+  const bgMain = theme === 'dark' ? 'bg-[#1a1f2e]' : 'bg-slate-50';
+  const bgHeader = theme === 'dark' ? 'bg-[#1a1f2e]' : 'bg-white';
+  const borderColor = theme === 'dark' ? 'border-[#3a4152]' : 'border-slate-200';
   const textPrimary = theme === 'dark' ? 'text-slate-50' : 'text-slate-900';
   const textSecondary = theme === 'dark' ? 'text-slate-400' : 'text-slate-500';
-  const iconBg = theme === 'dark' ? 'bg-slate-900 border-slate-800' : 'bg-slate-100 border-slate-200';
+  const iconBg = theme === 'dark' ? 'bg-[#232938] border-[#3a4152]' : 'bg-slate-100 border-slate-200';
 
   return (
     <div className={`min-h-screen ${bgMain} transition-colors duration-300`}>
@@ -1404,7 +1404,7 @@ function AppContent({ activeView, setActiveView }: {
                   <Package className={`h-5 w-5 ${textPrimary}`} />
                 </div>
                 <div>
-                  <h1 className={`text-xl font-bold ${textPrimary}`}>Syzio Dev Monitoring</h1>
+                  <h1 className={`text-xl font-bold ${textPrimary}`}>Syzio Helix</h1>
                   <p className={`text-sm ${textSecondary}`}>Deployment tracking system</p>
                 </div>
               </div>
@@ -1459,7 +1459,7 @@ function AppContent({ activeView, setActiveView }: {
           <PackageDetailView packageId={selectedPackageId} onBack={handleBackFromDetails} />
         ) : (
           <>
-            {activeView === 'dashboard' && <MonitoringDashboard />}
+            {activeView === 'dashboard' && <MonitoringDashboard onViewDetails={handleViewDetails} />}
             {activeView === 'deployments' && <DeploymentsView onViewDetails={handleViewDetails} />}
             {activeView === 'environments' && <EnvironmentsView />}
           </>

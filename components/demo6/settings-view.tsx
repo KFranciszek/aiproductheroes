@@ -12,17 +12,17 @@ export function SettingsView() {
           <CardTitle>Connectors</CardTitle>
           <CardDescription>Źródła danych</CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-3 text-sm">
           <div className="flex items-center justify-between rounded-xl border p-3">
-            <Label htmlFor="pm">PM (Syzio)</Label>
+            <div>Syzio Atlas</div>
             <Switch id="pm" defaultChecked />
           </div>
           <div className="flex items-center justify-between rounded-xl border p-3">
-            <Label htmlFor="devmon">Dev Monitoring</Label>
+            <div>Syzio Helix</div>
             <Switch id="devmon" defaultChecked />
           </div>
           <div className="flex items-center justify-between rounded-xl border p-3">
-            <Label htmlFor="docs">Repo dokumentów (PDF/MD)</Label>
+            <div>Repo dokumentów (PDF/MD)</div>
             <Switch id="docs" defaultChecked />
           </div>
         </CardContent>
@@ -33,19 +33,16 @@ export function SettingsView() {
           <CardTitle>Reguły & Słownik</CardTitle>
           <CardDescription>NFR / terminologia</CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-3 text-sm">
           <div className="flex items-center justify-between rounded-xl border p-3">
-            <div>
-              <Label htmlFor="p95">P95</Label>
-              <span className="text-sm text-muted-foreground ml-2">&lt; 300ms</span>
-            </div>
+            <div>P95 <span className="text-muted-foreground">&lt; 300ms</span></div>
             <Switch id="p95" defaultChecked />
           </div>
           <div className="flex items-center justify-between rounded-xl border p-3">
-            <Label htmlFor="wcag">WCAG AA</Label>
+            <div>WCAG AA</div>
             <Switch id="wcag" defaultChecked />
           </div>
-          <div className="rounded-xl border p-3 text-sm">
+          <div className="rounded-xl border p-3">
             Słownik domeny: payments, card, charge, 3DS…
           </div>
         </CardContent>

@@ -531,7 +531,7 @@ function CanisReleaseQA(){
       <Card className="rounded-2xl md:col-span-2">
         <CardHeader>
           <CardTitle>Odpowiedź Canis</CardTitle>
-          <CardDescription>Źródła: DevMon + PM + Canis</CardDescription>
+          <CardDescription>Źródła: Helix + Atlas + Canis</CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="rounded-xl border p-3 text-sm bg-muted/30">
@@ -539,8 +539,8 @@ function CanisReleaseQA(){
             Pokrycie AC: {acCoverage.filter(x=> relData.issues.includes(x.key)).map(x=> `${x.key} ${x.covered}/${x.ac}`).join(", ") || 'brak danych'}.
           </div>
           <div className="flex gap-2">
-            <Button variant="outline">Open in DevMon</Button>
-            <Button variant="outline">Open in PM</Button>
+            <Button variant="outline">Open in Helix</Button>
+            <Button variant="outline">Open in Atlas</Button>
           </div>
         </CardContent>
       </Card>
@@ -559,11 +559,11 @@ function CanisSettings(){
         </CardHeader>
         <CardContent className="space-y-3 text-sm">
           <div className="flex items-center justify-between rounded-xl border p-3">
-            <div>PM (Syzio)</div>
+            <div>Syzio Atlas</div>
             <Switch defaultChecked/>
           </div>
           <div className="flex items-center justify-between rounded-xl border p-3">
-            <div>Dev Monitoring</div>
+            <div>Syzio Helix</div>
             <Switch defaultChecked/>
           </div>
           <div className="flex items-center justify-between rounded-xl border p-3">

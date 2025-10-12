@@ -123,7 +123,7 @@ export default function LandingPage() {
     </div>
 
     <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-      {/* Syzio Project Management (PM) */}
+      {/* Syzio Atlas (PM) */}
       <div className="bg-background border border-border rounded-xl p-6 flex flex-col items-start hover:shadow-lg hover:border-primary/50 transition-all duration-300">
         <div className="p-3 mb-4 bg-blue-500/10 rounded-lg">
           {/* PM Icon */}
@@ -131,7 +131,7 @@ export default function LandingPage() {
             <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
         </div>
-        <h3 className="text-xl font-bold mb-2">Syzio Project Management</h3>
+        <h3 className="text-xl font-bold mb-2">Syzio Atlas</h3>
         <p className="text-sm font-semibold text-primary mb-3">System of Truth for planning</p>
         <ul className="list-disc list-inside text-muted-foreground space-y-1 text-sm">
           <li>Epics, stories, tasks</li>
@@ -149,7 +149,7 @@ export default function LandingPage() {
             <path strokeLinecap="round" strokeLinejoin="round" d="M8 9l4-4 4 4m0 6l-4 4-4-4" />
           </svg>
         </div>
-        <h3 className="text-xl font-bold mb-2">Syzio Development Monitoring</h3>
+        <h3 className="text-xl font-bold mb-2">Syzio Helix</h3>
         <p className="text-sm font-semibold text-violet-500 mb-3">System of Truth for delivery</p>
         <ul className="list-disc list-inside text-muted-foreground space-y-1 text-sm">
           <li>Commits & Pull Requests</li>

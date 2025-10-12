@@ -1,5 +1,3 @@
-import { Card, CardContent, CardTitle, CardHeader } from "@/components/ui/card";
-
 export function KPI({
   title,
   value,
@@ -10,14 +8,14 @@ export function KPI({
   hint?: string;
 }) {
   return (
-    <Card className="kpi-card">
-      <CardHeader>
-        <CardTitle>{title}</CardTitle>
-      </CardHeader>
-      <CardContent>
+    <div className="bg-white dark:bg-[#1F2937] border border-[#E5E7EB] dark:border-[#374151] rounded-lg p-6 shadow-sm">
+      <div className="mb-4">
+        <h3 className="text-lg font-semibold">{title}</h3>
+      </div>
+      <div>
         <div className="text-3xl font-semibold">{value}</div>
-        {hint && <div className="text-xs text-muted mt-1">{hint}</div>}
-      </CardContent>
-    </Card>
+        {hint && <div className="text-xs text-[#6B7280] dark:text-[#9CA3AF] mt-1">{hint}</div>}
+      </div>
+    </div>
   );
 }

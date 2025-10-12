@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 
 export default function Demo6Page() {
   const [activeTab, setActiveTab] = useState("chat");
@@ -33,10 +34,17 @@ export default function Demo6Page() {
           <div className="flex items-center bg-[#F9FAFB] dark:bg-[#1F2937] border border-[#E5E7EB] dark:border-[#374151] rounded-md px-2 py-1 text-sm">
             <span>System of Truth for knowledge & AI
 
-</span>
+            </span>
           </div>
         </div>
         <div className="flex items-center space-x-4">
+          <Link
+            href="/demo-selector"
+            className="flex items-center space-x-1 text-sm text-[#6B7280] dark:text-[#9CA3AF] hover:text-[#4F46E5] dark:hover:text-[#4F46E5] transition-colors"
+          >
+            <span className="material-icons text-base">arrow_back</span>
+            <span>Back to Demos</span>
+          </Link>
           <button className="text-[#6B7280] dark:text-[#9CA3AF] hover:text-[#1F2937] dark:hover:text-[#F9FAFB]">
             <span className="material-icons">help_outline</span>
           </button>
@@ -54,11 +62,10 @@ export default function Demo6Page() {
               <li key={tab}>
                 <button
                   onClick={() => setActiveTab(tab.toLowerCase().replace(/\s+/g, "-"))}
-                  className={`pb-3 ${
-                    activeTab === tab.toLowerCase().replace(/\s+/g, "-")
-                      ? "border-b-2 border-[#4F46E5] text-[#4F46E5] font-semibold"
-                      : "text-[#6B7280] dark:text-[#9CA3AF] hover:text-[#1F2937] dark:hover:text-[#F9FAFB]"
-                  }`}
+                  className={`pb-3 ${activeTab === tab.toLowerCase().replace(/\s+/g, "-")
+                    ? "border-b-2 border-[#4F46E5] text-[#4F46E5] font-semibold"
+                    : "text-[#6B7280] dark:text-[#9CA3AF] hover:text-[#1F2937] dark:hover:text-[#F9FAFB]"
+                    }`}
                 >
                   {tab}
                 </button>
@@ -381,7 +388,7 @@ function StoriesView() {
 
             <div className="flex space-x-2">
               <button className="flex-1 bg-[#4F46E5] text-white rounded-md py-2 text-sm font-semibold hover:bg-indigo-700">
-                Eksportuj do PM
+                Eksportuj do Atlas
               </button>
             </div>
           </div>
@@ -450,7 +457,7 @@ function StoriesView() {
 
             <div className="flex space-x-2">
               <button className="flex-1 bg-[#4F46E5] text-white rounded-md py-2 text-sm font-semibold hover:bg-indigo-700">
-                Eksportuj do PM
+                  Eksportuj do Atlas
               </button>
             </div>
           </div>
@@ -907,17 +914,17 @@ function ReleaseQAView() {
               <div className="flex flex-col sm:flex-row sm:items-center gap-4 text-sm">
                 <div className="flex items-center gap-2">
                   <span className="font-medium">Źródła:</span>
-                  <span className="bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded">PM</span>
-                  <span className="bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded">DevMon</span>
+                  <span className="bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded">Atlas</span>
+                  <span className="bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded">Helix</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <button className="flex items-center gap-1 text-[#4F46E5] hover:underline">
                     <span className="material-icons text-sm">launch</span>
-                    <span>Otwórz w DevMon</span>
+                    <span>Otwórz w Helix</span>
                   </button>
                   <button className="flex items-center gap-1 text-[#4F46E5] hover:underline">
                     <span className="material-icons text-sm">launch</span>
-                    <span>Otwórz w PM</span>
+                    <span>Otwórz w Atlas</span>
                   </button>
                 </div>
               </div>
@@ -954,9 +961,9 @@ function SettingsView() {
               <div className="flex items-center space-x-4">
                 <span className="material-icons text-[#4F46E5]">work_outline</span>
                 <div>
-                  <h3 className="font-medium">PM (Syzio)</h3>
+                  <h3 className="font-medium">Syzio Atlas</h3>
                   <p className="text-sm text-[#6B7280] dark:text-[#9CA3AF]">
-                    Dane o backlogu i releasach
+                    Dane o backlogu i projektach, storkach
                   </p>
                 </div>
               </div>
@@ -977,7 +984,7 @@ function SettingsView() {
               <div className="flex items-center space-x-4">
                 <span className="material-icons text-[#4F46E5]">monitoring</span>
                 <div>
-                  <h3 className="font-medium">Dev Monitoring</h3>
+                  <h3 className="font-medium">Syzio Helix</h3>
                   <p className="text-sm text-[#6B7280] dark:text-[#9CA3AF]">
                     Dane o deploymentach
                   </p>

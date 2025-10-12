@@ -1,8 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
 import { getState, subscribe } from "@/lib/demo7/store";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 
 export default function Page() {
   const [s, setS] = useState(getState());
@@ -23,27 +21,29 @@ export default function Page() {
     <div className="space-y-8">
       <div>
         <h2 className="text-2xl font-bold mb-1">Activity & Audit</h2>
-        <p className="text-muted-foreground">Recent system events and changes</p>
+        <p className="text-[#6B7280] dark:text-[#9CA3AF]">Recent system events and changes</p>
       </div>
-      <Card className="shadow-sm">
-        <CardHeader><CardTitle>Recent Events</CardTitle></CardHeader>
-        <CardContent className="space-y-3">
+      <div className="bg-white dark:bg-[#1F2937] border border-[#E5E7EB] dark:border-[#374151] rounded-lg shadow-sm">
+        <div className="p-6 border-b border-[#E5E7EB] dark:border-[#374151]">
+          <h3 className="text-lg font-semibold">Recent Events</h3>
+        </div>
+        <div className="p-6 space-y-3">
           {s.activities.length === 0 && (
-            <div className="text-sm text-muted-foreground p-4 text-center">No events yet</div>
+            <div className="text-sm text-[#6B7280] dark:text-[#9CA3AF] p-4 text-center">No events yet</div>
           )}
           {s.activities.map((a) => (
-            <div key={a.id} className="p-4 bg-gray-50 dark:bg-slate-800/50 rounded-lg flex items-center justify-between">
+            <div key={a.id} className="p-4 bg-[#F9FAFB] dark:bg-[#111827] rounded-lg flex items-center justify-between">
               <div className="flex items-center gap-3 flex-1">
-                <Badge className={getTypeBadge(a.type)}>{a.type}</Badge>
+                <span className={`px-2 py-1 rounded text-xs font-medium ${getTypeBadge(a.type)}`}>{a.type}</span>
                 <span className="text-sm">{a.message}</span>
               </div>
-              <span className="text-xs text-muted-foreground whitespace-nowrap ml-4">
+              <span className="text-xs text-[#6B7280] dark:text-[#9CA3AF] whitespace-nowrap ml-4">
                 {new Date(a.at).toLocaleString()}
               </span>
             </div>
           ))}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }

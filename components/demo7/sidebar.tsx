@@ -1,7 +1,6 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
 import {
   Home,
   Truck,
@@ -29,15 +28,15 @@ const items = [
 export function Sidebar() {
   const pathname = usePathname();
   return (
-    <aside className="flex w-64 flex-col border-r bg-card">
-      <div className="p-4 border-b">
+    <aside className="flex w-64 flex-col border-r border-[#E5E7EB] dark:border-[#374151] bg-white dark:bg-[#1F2937]">
+      <div className="p-4 border-b border-[#E5E7EB] dark:border-[#374151]">
         <div className="flex items-center space-x-2">
-          <div className="p-2 bg-primary rounded-lg">
+          <div className="p-2 bg-[#4F46E5] rounded-lg">
             <Sparkles className="w-5 h-5 text-white" />
           </div>
           <div>
             <h1 className="text-lg font-bold">Pulsar Nova</h1>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-[#6B7280] dark:text-[#9CA3AF]">
               Delivery · Quality · Outcomes
             </p>
           </div>
@@ -50,12 +49,11 @@ export function Sidebar() {
             <Link
               key={href}
               href={href}
-              className={cn(
-                "flex items-center px-3 py-2 rounded-lg transition-colors",
+              className={`flex items-center px-3 py-2 rounded-lg transition-colors ${
                 active
-                  ? "bg-primary/10 text-primary font-semibold"
-                  : "hover:bg-muted/50"
-              )}
+                  ? "bg-[#4F46E5]/10 text-[#4F46E5] font-semibold"
+                  : "hover:bg-[#F9FAFB] dark:hover:bg-[#111827]"
+              }`}
             >
               <Icon className="w-5 h-5 mr-3" />
               <span>{label}</span>
@@ -63,7 +61,7 @@ export function Sidebar() {
           );
         })}
       </nav>
-      <div className="p-4 border-t">
+      <div className="p-4 border-t border-[#E5E7EB] dark:border-[#374151]">
         <p className="text-sm font-medium">PoC v1.0</p>
       </div>
     </aside>

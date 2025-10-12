@@ -4,13 +4,13 @@ import Link from "next/link"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { ArrowLeft, Layout, Activity,Bot,Radar } from "lucide-react"
+import { ArrowLeft, Layout, Activity, Bot, Radar } from "lucide-react"
 
 export default function DemoSelector() {
   const demos = [
     {
       id: "demo1",
-      title: "Syzio Project Management",
+      title: "Syzio Atlas",
       tagline: "Podstawowe narzędzie zarządzania zmiana w Twojej organizacji",
       description: "Klasyczne podejście z sidebarem i kompleksowymi funkcjami",
       color: "blue",
@@ -28,14 +28,14 @@ export default function DemoSelector() {
     },
     {
       id: "demo5",
-      title: "Syzio Dev Monitoring",
+      title: "Syzio Helix",
       tagline: "Deployment Tracking & Integration",
-      description: "Moduł monitoringu deploymentów z integracją Syzio PM",
+      description: "Moduł monitoringu deploymentów z integracją Syzio Atlas",
       color: "orange",
       icon: Activity,
       features: [
         "Tracking deploymentów i release'ów",
-        "Integracja z Syzio PM (jaka paczka jakie storki i zadania)",
+        "Integracja z Syzio Atlas (jaka paczka jakie storki i zadania)",
         "Historia commitów Git z linkami",
         "Metryki deploymentów i health status",
         "Multi-environment monitoring",
@@ -50,54 +50,54 @@ export default function DemoSelector() {
     },
 
     {
-    id: "demo6",
-    title: "Syzio Canis",
-    tagline: "Agent AI rozumiejący Twoją dokumentację i backlog",
-    description: "Generuje story z AC, dane testowe i weryfikuje wymagania na podstawie dokumentacji (RAG) i danych z Syzio.",
-    color: "purple",
-    icon: Bot,
-    features: [
-      "Chat RAG nad dokumentacją i backlogiem (cytowania)",
-      "Generator Story/AC (INVEST, Gherkin)",
-      "Generator danych testowych (JSON/CSV/SQL)",
-      "Weryfikator wymagań i wykrywanie konfliktów",
-      "Release Q&A (co było w paczce?)",
-      "Command Palette akcje Canis (Ctrl+K)",
-      "Eksport artefaktów bezpośrednio do PM",
-      "Słownik domeny i reguły walidacyjne"
+      id: "demo6",
+      title: "Syzio Canis",
+      tagline: "Agent AI rozumiejący Twoją dokumentację i backlog",
+      description: "Generuje story z AC, dane testowe i weryfikuje wymagania na podstawie dokumentacji (RAG) i danych z Syzio.",
+      color: "purple",
+      icon: Bot,
+      features: [
+        "Chat RAG nad dokumentacją i backlogiem (cytowania)",
+        "Generator Story/AC (INVEST, Gherkin)",
+        "Generator danych testowych (JSON/CSV/SQL)",
+        "Weryfikator wymagań i wykrywanie konfliktów",
+        "Release Q&A (co było w paczce?)",
+        "Command Palette akcje Canis (Ctrl+K)",
+        "Eksport artefaktów bezpośrednio do Atlas",
+        "Słownik domeny i reguły walidacyjne"
 
-    ],
+      ],
 
       status: "Nowe",
       href: "/demo6",
       isNew: true
-    
-  },
+
+    },
 
     {
-    id: "demo7",
-    title: "Syzio Pulsar Nova",
-    tagline: "Prognozy dostarczenia i jakość releasów w czasie rzeczywistym",
-    description: "DORA/Flow, Readiness Score i Risk Radar zasilane danymi z PM, DevMon i Canis — decyzje go/no-go na fakty.",
-    color: "pink",
-    icon: Radar,
-    features: [
-      "Dashboard DORA + Flow Metrics",
-      "Release Readiness Score i Quality Gates",
-      "Prognozy Monte Carlo dla epików i releasów",
-      "Risk Radar i alerty (Slack/Email)",
-      "What-if: +1 dev, limit WIP, scope cut",
-      "Aging work i WIP heatmap",
-      "Trendy i insighty dla liderów",
-      "API do eksportu metryk i raportów"
-    ],
+      id: "demo7",
+      title: "Syzio Pulsar Nova",
+      tagline: "Prognozy dostarczenia i jakość releasów w czasie rzeczywistym",
+      description: "DORA/Flow, Readiness Score i Risk Radar zasilane danymi z Atlas, Helix i Canis — decyzje go/no-go na fakty.",
+      color: "pink",
+      icon: Radar,
+      features: [
+        "Dashboard DORA + Flow Metrics",
+        "Release Readiness Score i Quality Gates",
+        "Prognozy Monte Carlo dla epików i releasów",
+        "Risk Radar i alerty (Slack/Email)",
+        "What-if: +1 dev, limit WIP, scope cut",
+        "Aging work i WIP heatmap",
+        "Trendy i insighty dla liderów",
+        "API do eksportu metryk i raportów"
+      ],
       status: "Nowe",
       href: "/demo7",
       isNew: true
-  }
+    }
 
 
-  
+
 
   ]
 
@@ -138,92 +138,123 @@ export default function DemoSelector() {
           </p>
         </div>
 
-        {/* Ecosystem Description */}
-        <div className="max-w-5xl mx-auto mb-16">
-          <Card className="border-2 border-primary/20 bg-gradient-to-br from-primary/5 via-background to-background">
-            <CardContent className="pt-8 pb-8 px-8">
-              <div className="space-y-6">
-                {/* Main Description */}
-                <div className="space-y-4">
+        {/* Ecosystem Description & Video */}
+        <div className="max-w-7xl mx-auto mb-16">
+          <div className="grid lg:grid-cols-2 gap-8">
+            {/* Ecosystem Description */}
+            <Card className="border-2 border-primary/20 bg-gradient-to-br from-primary/5 via-background to-background">
+              <CardContent className="pt-8 pb-8 px-8">
+                <div className="space-y-6">
+                  {/* Main Description */}
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="h-1 w-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full" />
+                      <h3 className="text-2xl font-bold">Zintegrowany Ekosystem</h3>
+                    </div>
+                    <p className="text-lg text-muted-foreground leading-relaxed">
+                      Syzio to zintegrowany ekosystem <span className="font-semibold text-foreground">czterech modułów</span>, które łączą plan, dostarczanie, wiedzę i analitykę w jednej pętli.
+                      Dane przepływają między <span className="text-blue-600 font-medium">Atlas</span>, <span className="text-orange-600 font-medium">Helix</span>, <span className="text-purple-600 font-medium">Canis</span> i <span className="text-pink-600 font-medium">Pulsar</span> w czasie rzeczywistym,
+                      tworząc wspólny graf śledzenia od story do wdrożenia.
+                    </p>
+                    <p className="text-base text-muted-foreground leading-relaxed">
+                      Każdy moduł działa samodzielnie, a po spięciu zyskujesz <span className="font-semibold text-foreground">automatyczne feedback-loopy</span>, które podnoszą jakość i przewidywalność.
+                      W praktyce oznacza to mniej niejasności przed sprintem, bardziej świadome decyzje o releasach i natychmiastowe odpowiedzi na pytania o to, co i dlaczego trafiło do paczki.
+                    </p>
+                  </div>
+
+                  {/* Integration Flow */}
+                  <div className="grid md:grid-cols-2 gap-4 pt-4">
+                    <div className="space-y-3">
+                      <div className="flex items-start gap-3 p-4 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-600 font-bold text-sm">
+                          1
+                        </div>
+                        <div>
+                          <div className="font-semibold text-sm mb-1">Canis → Atlas</div>
+                          <div className="text-sm text-muted-foreground">
+                            Wygenerowane AC + weryfikacje → podnosi jakość story przed sprintem
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-start gap-3 p-4 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-600 font-bold text-sm">
+                          2
+                        </div>
+                        <div>
+                          <div className="font-semibold text-sm mb-1">Pulsar → Atlas</div>
+                          <div className="text-sm text-muted-foreground">
+                            Risk Radar i prognozy → zmiany zakresu lub re-plan
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-3">
+                      <div className="flex items-start gap-3 p-4 rounded-lg bg-pink-500/10 border border-pink-500/20">
+                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-pink-500/20 flex items-center justify-center text-pink-600 font-bold text-sm">
+                          3
+                        </div>
+                        <div>
+                          <div className="font-semibold text-sm mb-1">Pulsar → Helix</div>
+                          <div className="text-sm text-muted-foreground">
+                            Quality Gates (np. blokada wdrożenia, jeśli criticalBugs &gt; 0)
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-start gap-3 p-4 rounded-lg bg-orange-500/10 border border-orange-500/20">
+                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-orange-500/20 flex items-center justify-center text-orange-600 font-bold text-sm">
+                          4
+                        </div>
+                        <div>
+                          <div className="font-semibold text-sm mb-1">Helix → Canis</div>
+                          <div className="text-sm text-muted-foreground">
+                            Kontekst paczek → Canis odpowiada „co poszło gdzie i dlaczego"
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Bottom Note */}
+                  <div className="pt-4 border-t border-border/50">
+                    <p className="text-sm text-center text-muted-foreground italic">
+                      💡 Poniżej możesz przetestować <span className="font-semibold text-foreground">Project Management</span> i <span className="font-semibold text-foreground">Development Monitoring</span> — dwa kluczowe moduły ekosystemu
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Video Player */}
+            <Card className="border-2 border-primary/20 bg-gradient-to-br from-primary/5 via-background to-background">
+              <CardContent className="pt-8 pb-8 px-8 h-full flex flex-col">
+                <div className="space-y-4 flex-1 flex flex-col">
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="h-1 w-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full" />
-                    <h3 className="text-2xl font-bold">Zintegrowany Ekosystem</h3>
+                    <div className="h-1 w-12 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full" />
+                    <h3 className="text-2xl font-bold">Zobacz Syzio w akcji</h3>
                   </div>
-                  <p className="text-lg text-muted-foreground leading-relaxed">
-                    Syzio to zintegrowany ekosystem <span className="font-semibold text-foreground">czterech modułów</span>, które łączą plan, dostarczanie, wiedzę i analitykę w jednej pętli.
-                    Dane przepływają między <span className="text-blue-600 font-medium">Project Management</span>, <span className="text-orange-600 font-medium">Development Monitoring</span>, <span className="text-purple-600 font-medium">Canis</span> i <span className="text-pink-600 font-medium">Pulsarem</span> w czasie rzeczywistym,
-                    tworząc wspólny graf śledzenia od story do wdrożenia.
-                  </p>
-                  <p className="text-base text-muted-foreground leading-relaxed">
-                    Każdy moduł działa samodzielnie, a po spięciu zyskujesz <span className="font-semibold text-foreground">automatyczne feedback-loopy</span>, które podnoszą jakość i przewidywalność.
-                    W praktyce oznacza to mniej niejasności przed sprintem, bardziej świadome decyzje o releasach i natychmiastowe odpowiedzi na pytania o to, co i dlaczego trafiło do paczki.
-                  </p>
-                </div>
 
-                {/* Integration Flow */}
-                <div className="grid md:grid-cols-2 gap-4 pt-4">
-                  <div className="space-y-3">
-                    <div className="flex items-start gap-3 p-4 rounded-lg bg-blue-500/10 border border-blue-500/20">
-                      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-600 font-bold text-sm">
-                        1
-                      </div>
-                      <div>
-                        <div className="font-semibold text-sm mb-1">Canis → PM</div>
-                        <div className="text-sm text-muted-foreground">
-                          Wygenerowane AC + weryfikacje → podnosi jakość story przed sprintem
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="flex items-start gap-3 p-4 rounded-lg bg-purple-500/10 border border-purple-500/20">
-                      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-600 font-bold text-sm">
-                        2
-                      </div>
-                      <div>
-                        <div className="font-semibold text-sm mb-1">Pulsar → PM</div>
-                        <div className="text-sm text-muted-foreground">
-                          Risk Radar i prognozy → zmiany zakresu lub re-plan
-                        </div>
-                      </div>
+                  <div className="flex-1 flex items-center justify-center">
+                    <div className="w-full aspect-video rounded-lg overflow-hidden bg-black/5">
+                      <iframe
+                        src="https://player.vimeo.com/video/1126625548?badge=0&autopause=0&player_id=0&app_id=58479"
+                        className="w-full h-full"
+                        frameBorder="0"
+                        allow="autoplay; fullscreen; picture-in-picture; clipboard-write"
+                        title="Syzio Demo"
+                      />
                     </div>
                   </div>
 
-                  <div className="space-y-3">
-                    <div className="flex items-start gap-3 p-4 rounded-lg bg-pink-500/10 border border-pink-500/20">
-                      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-pink-500/20 flex items-center justify-center text-pink-600 font-bold text-sm">
-                        3
-                      </div>
-                      <div>
-                        <div className="font-semibold text-sm mb-1">Pulsar → DevMon</div>
-                        <div className="text-sm text-muted-foreground">
-                          Quality Gates (np. blokada wdrożenia, jeśli criticalBugs &gt; 0)
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="flex items-start gap-3 p-4 rounded-lg bg-orange-500/10 border border-orange-500/20">
-                      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-orange-500/20 flex items-center justify-center text-orange-600 font-bold text-sm">
-                        4
-                      </div>
-                      <div>
-                        <div className="font-semibold text-sm mb-1">DevMon → Canis</div>
-                        <div className="text-sm text-muted-foreground">
-                          Kontekst paczek → Canis odpowiada „co poszło gdzie i dlaczego"
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Bottom Note */}
-                <div className="pt-4 border-t border-border/50">
-                  <p className="text-sm text-center text-muted-foreground italic">
-                    💡 Poniżej możesz przetestować <span className="font-semibold text-foreground">Project Management</span> i <span className="font-semibold text-foreground">Development Monitoring</span> — dwa kluczowe moduły ekosystemu
+                  <p className="text-sm text-center text-muted-foreground pt-4">
+                    Poznaj możliwości platformy Syzio i zobacz jak może usprawnić pracę Twojego zespołu
                   </p>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </div>
         </div>
 
         {/* Demo Cards */}
