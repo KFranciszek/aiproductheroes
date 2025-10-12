@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useData } from "@/lib/demo6/data-context";
+import { SuggestionBanner } from "./suggestion-banner";
 import { toast } from "sonner";
 
 export function StoriesGenerator() {
@@ -38,7 +39,16 @@ export function StoriesGenerator() {
   };
 
   return (
-    <div className="grid gap-4 md:grid-cols-3">
+    <div className="space-y-4">
+      {generatedStories.length === 0 && (
+        <SuggestionBanner
+          suggestionId="stories-first-gen"
+          title="Rozpocznij generowanie"
+          description="Wypełnij formularz po lewej i wygeneruj pierwsze user stories z kryteriami akceptacji"
+        />
+      )}
+      
+      <div className="grid gap-4 md:grid-cols-3">
       {/* Generator Form */}
       <Card>
         <CardHeader>
@@ -194,6 +204,7 @@ export function StoriesGenerator() {
             </CardContent>
           </Card>
         ))}
+      </div>
       </div>
     </div>
   );

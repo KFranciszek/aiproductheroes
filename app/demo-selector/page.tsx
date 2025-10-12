@@ -76,10 +76,10 @@ export default function DemoSelector() {
 
     {
     id: "demo7",
-    title: "Syzio Pulsar",
+    title: "Syzio Pulsar Nova",
     tagline: "Prognozy dostarczenia i jakość releasów w czasie rzeczywistym",
     description: "DORA/Flow, Readiness Score i Risk Radar zasilane danymi z PM, DevMon i Canis — decyzje go/no-go na fakty.",
-    color: "amber",
+    color: "pink",
     icon: Radar,
     features: [
       "Dashboard DORA + Flow Metrics",
@@ -91,12 +91,9 @@ export default function DemoSelector() {
       "Trendy i insighty dla liderów",
       "API do eksportu metryk i raportów"
     ],
-
-    
       status: "Nowe",
       href: "/demo7",
       isNew: true
-    
   }
 
 

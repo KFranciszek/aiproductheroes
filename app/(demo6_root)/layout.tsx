@@ -1,7 +1,5 @@
 import type React from "react";
 import type { Metadata } from "next";
-import { GeistSans } from "geist/font/sans";
-import { GeistMono } from "geist/font/mono";
 import { Analytics } from "@vercel/analytics/next";
 import "../demo6-globals.css";
 import { Providers } from "./providers";
@@ -18,12 +16,8 @@ export default function Demo6RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body
-        className={`font-sans ${GeistSans.variable} ${GeistMono.variable} antialiased`}
-      >
-        <Providers>
-          {children}
-        </Providers>
+      <body className="font-sans antialiased bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+        <Providers>{children}</Providers>
         <Analytics />
       </body>
     </html>

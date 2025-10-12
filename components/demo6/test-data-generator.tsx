@@ -33,8 +33,20 @@ export function TestDataGenerator() {
   };
 
   const handleExport = () => {
+    if (!currentDataset) return;
+    
+    const { exportToJSON, exportToCSV, exportToSQL } = require("@/lib/demo6/export-utils");
+    
+    if (exportFormat === "json") {
+      exportToJSON(currentDataset.records, `test-data-${schema.replace(/[^a-z0-9]/gi, '-')}`);
+    } else if (exportFormat === "csv") {
+      exportToCSV(currentDataset.records, `test-data-${schema.replace(/[^a-z0-9]/gi, '-')}`);
+    } else if (exportFormat === "sql") {
+      exportToSQL(currentDataset.records, "test_data", `test-data-${schema.replace(/[^a-z0-9]/gi, '-')}`);
+    }
+    
     toast.success(`Eksport ${exportFormat.toUpperCase()}`, {
-      description: `Pobrano ${recordCount} rekordów`,
+      description: `Pobrano ${currentDataset.records.length} rekordów`,
     });
   };
 

@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  darkMode: ["class"],
+  darkMode: "class",
   content: [
     './pages/**/*.{ts,tsx}',
     './components/**/*.{ts,tsx}',
@@ -35,28 +35,45 @@ module.exports = {
         "accent-green": "#10b981",    // Sprint Syzio
         "accent-cyan": "#06b6d4",     // Highlights
         
-        // ===== Demo App - Keep existing colors =====
-        // Primary - niebieski jak w Stitch
+        // ===== Demo 6 Canis - New Design System =====
+        // Primary Colors
         primary: {
-          DEFAULT: "#1173d4",
+          DEFAULT: "#4F46E5",         // Indigo - główny kolor akcji
+          light: "#E0E7FF",           // Tło dla primary elementów (light)
+          dark: "#3730A3",            // Tło dla primary elementów (dark)
           foreground: "#ffffff",
         },
         
-        // Light Mode - Linear style
-        "background-light": "#f6f7f8",
-        "surface-light": "#ffffff",  /* Karty białe - różne od tła */
-        "text-light": "#000000",
-        "text-light-muted": "rgba(0, 0, 0, 0.6)",
-        "text-light-secondary": "rgba(0, 0, 0, 0.8)",
-        "border-light": "rgba(0, 0, 0, 0.1)",
+        // Background Colors - Light Mode
+        "background-light": "#FFFFFF",
+        "surface-light": "#F9FAFB",
         
-        // Dark Mode - Linear style
-        "background-dark": "#101922",
+        // Background Colors - Dark Mode
+        "background-dark": "#111827",
+        "surface-dark": "#1F2937",
+        
+        // Border Colors
+        "border-light": "#E5E7EB",
+        "border-dark": "#374151",
+        
+        // Text Colors - Light Mode
+        "text-light": "#1F2937",
+        "text-secondary-light": "#6B7280",
+        
+        // Text Colors - Dark Mode
+        "text-dark": "#F9FAFB",
+        "text-secondary-dark": "#9CA3AF",
+        
+        // Status Colors
+        success: "#10B981",
+        warning: "#F59E0B",
+        danger: "#EF4444",
+        error: "#EF4444",
+        
+        // ===== Legacy Demo App Colors =====
+        "text-light-muted": "rgba(0, 0, 0, 0.6)",
         "card-dark": "#283C4F",
-        "text-dark": "#E0E6EB",
         "text-dark-muted": "#9BA3AF",
-        "border-dark": "rgba(255, 255, 255, 0.1)",
-        "surface-dark": "#283C4F",
         
         // Linear tokens
         "surface-0": "var(--surface-0)",
@@ -107,7 +124,7 @@ module.exports = {
       fontFamily: {
         body: ["var(--font-body)"],
         display: ["var(--font-display)"],
-        sans: ["var(--font-body)"],
+        sans: ["Inter", "sans-serif"],
       },
       fontSize: {
         xs: "var(--fs-xs)",
@@ -130,12 +147,13 @@ module.exports = {
         bold: "var(--fw-bold)",
       },
       borderRadius: {
-        sm: "var(--radius-sm)",      // 4px - Stitch style
-        DEFAULT: "var(--radius)",     // 8px (0.25rem)
-        md: "var(--radius)",
-        lg: "var(--radius-lg)",      // 12px (0.5rem)
-        xl: "var(--radius-xl)",      // 16px (0.75rem)
-        full: "var(--radius-full)",
+        sm: "0.25rem",               // 4px
+        DEFAULT: "0.5rem",           // 8px - Demo 6 Canis default
+        md: "0.5rem",                // 8px
+        lg: "0.75rem",               // 12px
+        xl: "1rem",                  // 16px
+        "2xl": "1.5rem",             // 24px
+        full: "9999px",
       },
       spacing: {
         1: "var(--space-1)",  // 4px

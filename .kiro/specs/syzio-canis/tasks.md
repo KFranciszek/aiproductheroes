@@ -227,6 +227,7 @@ lib/
 
 
 
+
 - [ ] 7. Build Stories Generator
   - [ ] 7.1 Create StoryGeneratorForm component
     - File: `components/demo6/stories-generator.tsx` (part of)
@@ -268,7 +269,9 @@ lib/
     - Add 400ms delay to simulate AI processing
     - _Requirements: 2.1, 2.2, 2.7_
   
-  - [ ] 7.5 Integrate components into StoriesGenerator view
+
+  - [x] 7.5 Integrate components into StoriesGenerator view
+
     - Layout: form on left (33%), story cards grid on right (67%)
     - Connect to DataContext
     - Handle generate button click
@@ -278,9 +281,11 @@ lib/
     - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 7.2_
 
 
+
 - [ ] 8. Build Test Data Generator
   - [ ] 8.1 Create SchemaSelector component
     - File: `components/demo6/test-data-generator.tsx` (part of)
+
     - Select dropdown with sample schemas (payments.yaml#/Card, etc.)
     - Display selected schema name
     - _Requirements: 3.1_
@@ -288,35 +293,42 @@ lib/
   - [ ] 8.2 Create DataConfigForm component
     - Record count Input (number type)
     - Edge cases configuration section
+
     - Rules editor Button (opens Dialog)
     - Generate and Export Buttons
     - _Requirements: 3.2, 3.6_
   
   - [ ] 8.3 Create RulesEditor Dialog
     - Textarea with YAML syntax (monospace font)
+
     - Pre-fill with default rules for selected schema
     - Save Button
     - Use Dialog component from shadcn/ui
     - _Requirements: 3.2_
   
-  - [ ] 8.4 Create DataPreviewTable component
+  - [x] 8.4 Create DataPreviewTable component
+
     - Display first 10 records in Table
     - Show all fields as columns
     - Use monospace font for data cells
     - Add horizontal scroll for many columns
     - _Requirements: 3.3_
   
-  - [ ] 8.5 Implement test data generation logic
+
+  - [x] 8.5 Implement test data generation logic
+
     - Add generateTestData function to DataContext
     - Parse schema and rules
     - Generate realistic mock data (simple random generation for PoC)
     - Apply edge case overrides
     - Support JSON/CSV/SQL export formats
+
     - Add 300ms delay to simulate processing
     - _Requirements: 3.2, 3.4, 3.5, 3.6, 3.7_
   
   - [ ] 8.6 Integrate components into TestDataGenerator view
     - Layout: config form on left (33%), preview table on right (67%)
+
     - Connect to DataContext
     - Handle generate button click
     - Implement export with format Select (JSON/CSV/SQL)
@@ -324,12 +336,14 @@ lib/
     - Make responsive (stack on mobile)
     - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7, 7.2_
 
+
 - [ ] 9. Build Verify View (Requirements Verification)
   - [ ] 9.1 Create FindingsTable component
     - File: `components/demo6/verify-view.tsx` (part of)
     - Display findings with columns: Type, Severity, Description, Source, Action
     - Use Badge for severity (destructive/default/secondary)
     - Add "Create Task" Button in action column
+
     - Make table scrollable with ScrollArea
     - _Requirements: 4.3, 4.5_
   
@@ -337,45 +351,55 @@ lib/
     - Display relationships as simple list (Doc → Story → Release)
     - Use monospace font
     - Show in Card component
+
     - _Requirements: 4.4_
+
   
   - [ ] 9.3 Create ConstellationGraph component (simplified for PoC)
     - Use simple SVG for node-edge visualization
     - Nodes as circles (color-coded: cyan=safe, red=conflict, yellow=warning)
     - Edges as lines between nodes
     - Click node to show details in Dialog
+
     - Keep it simple for PoC (no zoom/pan)
     - _Requirements: 4.1, 4.2, 4.7_
   
   - [ ] 9.4 Create FindingDetail Dialog
     - Show full finding description
+
     - Display all affected artifacts
     - Show suggested fix
     - Add "Create Fix Task" Button
     - _Requirements: 4.4, 4.6_
   
-  - [ ] 9.5 Implement verification logic
+  - [x] 9.5 Implement verification logic
+
     - Add verifyRequirements function to DataContext
     - Analyze documents and stories for conflicts (mock analysis)
     - Detect missing AC, ambiguous terms (mock detection)
     - Build dependency graph from mock data
     - _Requirements: 4.1, 4.2, 4.3, 4.5_
+
   
   - [ ] 9.6 Integrate components into VerifyView
     - Layout: findings table (67%), trace matrix (33%)
     - Add optional graph view toggle
+
     - Connect to DataContext
+
     - Handle "Create Task" button (show success toast)
     - Make responsive (stack on mobile)
     - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 4.7, 7.2_
 
 - [ ] 10. Build Release Q&A View
-  - [ ] 10.1 Create ReleaseSelector component
+  - [x] 10.1 Create ReleaseSelector component
+
     - File: `components/demo6/release-qa.tsx` (part of)
     - Select dropdown with sample releases (R-101, R-102, etc.)
     - Display release ID and environment
     - _Requirements: 5.1_
   
+
   - [ ] 10.2 Create QuickQuestions component
     - Display common questions as clickable Badges
     - Questions: "Co było w paczce?", "Czy gate spełnione?", "Co się zmieniło?"
@@ -403,23 +427,31 @@ lib/
     - Handle release selection and question clicks
     - Add loading state during answer generation
     - Make responsive (stack on mobile)
+
+
+
     - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 7.2_
 
 
 - [ ] 11. Build Command Palette
   - [ ] 11.1 Create CommandPalette component
     - File: `components/demo6/command-palette.tsx`
+
     - Use shadcn/ui Command component
     - Add keyboard listener for ⌘K / Ctrl+K in useEffect
     - Connect to UIContext for open state
     - _Requirements: 6.1, 6.2_
   
-  - [ ] 11.2 Add navigation commands
+  - [x] 11.2 Add navigation commands
+
     - CommandGroup "Navigation"
     - Commands for each tab (Chat, Stories, Test Data, Verify, Release Q&A, Settings)
     - Implement navigation on command select (update UIContext activeTab)
     - _Requirements: 6.2, 6.3_
   
+
+
+
   - [ ] 11.3 Add action commands
     - CommandGroup "Actions"
     - Commands: "Generate Story", "Verify Requirements", "Generate Test Data", "Ask About Release"
@@ -427,40 +459,49 @@ lib/
     - Trigger corresponding actions (show toast or navigate to tab)
     - _Requirements: 6.2, 6.3_
   
-  - [ ] 11.4 Implement search and filtering
+  - [x] 11.4 Implement search and filtering
+
     - Use CommandInput for fuzzy search
     - Show CommandEmpty when no results
     - Display keyboard shortcuts with Kbd component
     - _Requirements: 6.4, 6.5_
   
-  - [ ] 11.5 Integrate CommandPalette into app
+  - [x] 11.5 Integrate CommandPalette into app
+
     - Add to AppShell
     - Connect search input in TopBar to open palette (onFocus)
     - Handle Escape key to close
     - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5, 6.6_
+
+
 
 - [ ] 12. Build Settings View
   - [ ] 12.1 Create ConnectorsSettings component
     - File: `components/demo6/settings-view.tsx` (part of)
     - Display list of data sources (PM, DevMon, Documents)
     - Add Switch toggle for each
+
     - Show connection status Badge
     - _Requirements: 8.1, 8.2_
   
   - [ ] 12.2 Create RulesSettings component
     - Display NFR rules (P95 < 300ms, WCAG AA)
     - Add Switch toggles
+
     - Show domain dictionary terms
     - _Requirements: 9.1_
   
   - [ ] 12.3 Integrate components into SettingsView
     - Layout: 2-column grid (Connectors, Rules)
+
     - Connect to DataContext for settings state
     - Handle toggle changes (update context state)
     - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5, 8.6, 8.7, 9.1_
 
-- [ ] 13. Implement proactive suggestions
-  - [ ] 13.1 Create SuggestionBanner component
+- [x] 13. Implement proactive suggestions
+
+  - [x] 13.1 Create SuggestionBanner component
+
     - File: `components/demo6/suggestion-banner.tsx`
     - Display contextual suggestions based on current view
     - Show Alert with suggestion text and action Button
@@ -469,15 +510,19 @@ lib/
   
   - [ ] 13.2 Implement suggestion logic
     - Add getSuggestions function to DataContext
+
     - Analyze current context (open issue, sprint status, etc.)
     - Return relevant suggestions (mock logic)
     - Examples: "Generate AC?", "Verify requirements?", "Add test data?"
     - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5_
   
-  - [ ] 13.3 Integrate suggestions into views
+  - [x] 13.3 Integrate suggestions into views
+
     - Add SuggestionBanner to Chat, Stories, Verify views
     - Connect to DataContext
+
     - Handle suggestion actions
+
     - Store dismissed suggestions in UIContext
     - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5, 9.6_
 
@@ -485,23 +530,28 @@ lib/
   - [ ] 14.1 Create export utilities
     - File: `lib/demo6/export-utils.ts`
     - Implement exportToMarkdown function
+
     - Implement exportToJSON function
     - Implement exportToCSV function
     - Implement exportToSQL function
     - Implement downloadFile utility
     - _Requirements: 10.1, 10.2, 10.3, 10.4_
   
+
   - [ ] 14.2 Add export buttons to views
     - Stories: Export Button with format Select (Markdown/JSON/CSV)
     - Test Data: Export Button with format Select (JSON/CSV/SQL)
     - Verify: Export graph Button (PNG/SVG/JSON) - simplified for PoC
     - Connect to export utilities
     - _Requirements: 10.1, 10.2, 10.3, 10.4, 10.5, 10.6_
+
   
   - [ ] 14.3 Implement file download
     - Trigger browser download with proper filename and MIME type
     - Add metadata to exported files (date, author, source)
+
     - Show success toast after download
+
     - _Requirements: 10.1, 10.2, 10.3, 10.4, 10.5_
 
 - [ ] 15. Add animations and micro-interactions
@@ -510,6 +560,7 @@ lib/
     - Add skeleton loaders for chat messages, story cards (use shadcn/ui Skeleton)
     - Implement fade-in animation for new content (CSS transition)
     - _Requirements: 7.5_
+
   
   - [ ] 15.2 Add hover effects
     - Cards: transform scale + shadow on hover
@@ -517,17 +568,21 @@ lib/
     - Badges: subtle pulse on hover
     - Add to global CSS
     - _Requirements: 7.6_
+
   
   - [ ] 15.3 Implement success/error animations
     - Success toast with checkmark icon
     - Error toast with shake animation
     - Use Sonner toast library
     - _Requirements: 7.5, 7.6_
+
   
   - [ ] 15.4 Add cosmic theme animations
     - Subtle pulsing for active elements (CSS keyframes)
     - Fade-in for page load
+
     - Keep animations subtle and performant
+
     - _Requirements: 7.4, 7.5_
 
 
@@ -535,20 +590,26 @@ lib/
   - [ ] 16.1 Test and fix mobile layout (< 768px)
     - Single column layouts for all views
     - Hide sources panel in chat
+
     - Stack form + results vertically
     - Scrollable tabs
     - Test on mobile viewport
     - _Requirements: 7.2_
   
+
   - [ ] 16.2 Test and fix tablet layout (768px - 1024px)
     - 2-column grids where appropriate
     - Adjusted spacing and padding
+
+
+
     - Test on tablet viewport
     - _Requirements: 7.2_
   
   - [ ] 16.3 Test and fix desktop layout (> 1024px)
     - 3-column grids for chat view
     - 2-column grids for other views
+
     - Optimal spacing (max-w-[1200px] container)
     - _Requirements: 7.1, 7.2_
 
@@ -559,6 +620,7 @@ lib/
     - Enter/Space for buttons
     - Escape to close dialogs and command palette
     - Test with keyboard only
+
     - _Requirements: 6.1, 6.2_
   
   - [ ] 17.2 Add ARIA labels and roles
@@ -566,17 +628,20 @@ lib/
     - Add aria-label to icon buttons
     - Add role="status" to loading states
     - Add aria-live for dynamic content
+
     - _Requirements: 7.1_
   
   - [ ] 17.3 Ensure color contrast
     - Test all text against backgrounds (use browser DevTools)
     - Ensure 4.5:1 minimum contrast ratio
     - Add visible focus indicators (outline)
+
     - Test in both light and dark modes
     - _Requirements: 7.3, 7.6_
   
   - [ ] 17.4 Add skip link
     - Add "Skip to main content" link at top of AppShell
+
     - Hidden until focused (sr-only + focus:not-sr-only)
     - Link to main content area with id="main-content"
     - _Requirements: 7.1_
