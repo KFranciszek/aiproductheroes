@@ -1,6 +1,6 @@
 ﻿"use client";
 import React, { useState, useEffect } from 'react';
-import { Star, Bell, Settings, ChevronDown, Menu, X, TrendingUp, TrendingDown, AlertTriangle, CheckCircle, Target, Rocket, BarChart3, FileText, Clock, Users, Filter, Download, RefreshCw, MoreVertical, ChevronRight, Plus, GitBranch, Activity, Shield, Award, Calendar, PieChart, BarChart, Code, Bug, Zap, ArrowUpRight, ArrowDownRight, Minus } from 'lucide-react';
+import { Star, Settings, Menu, TrendingUp, TrendingDown, AlertTriangle, CheckCircle, Target, Rocket, BarChart3, FileText, Clock, Users, Download, MoreVertical, ChevronRight, Plus, Activity, Shield, Calendar, Zap, ArrowUpRight } from 'lucide-react';
 
 const NovaSystem = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -39,6 +39,19 @@ const NovaSystem = () => {
     return <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${colors[type]}`}>{children}</span>;
   };
 
+  const InfoBox = ({ children }) => (
+    <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6 rounded-r-lg">
+      <div className="flex items-start gap-3">
+        <div className="flex-shrink-0 mt-0.5">
+          <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+          </svg>
+        </div>
+        <p className="text-sm text-gray-700 leading-relaxed">{children}</p>
+      </div>
+    </div>
+  );
+
   const CircularProgress = ({ value, size = 80 }) => {
     const radius = (size - 8) / 2;
     const circumference = 2 * Math.PI * radius;
@@ -71,12 +84,16 @@ const NovaSystem = () => {
   // ==================== DASHBOARD VIEW ====================
   const DashboardView = () => (
     <div className="space-y-6">
+      <InfoBox>
+        Dashboard agreguje kluczowe metryki z całego systemu Syzio. Health Score łączy dane z modułu Delivery (postęp sprintów), Quality Gates (pokrycie testami, błędy) oraz OKR (realizacja celów). Active Blockers pochodzą z modułu Issues, a AI Insights analizują dane z Activity Log i przewidują ryzyka na podstawie historycznych wzorców zespołu.
+      </InfoBox>
+      
       {/* Health Overview */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Q4 2024 Overview</h1>
-            <p className="text-sm text-gray-600 mt-1">Sprint 24 â€˘ 8 days remaining</p>
+            <p className="text-sm text-gray-600 mt-1">Sprint 24 • 8 days remaining</p>
           </div>
           <div className="flex items-center gap-6">
             <CircularProgress value={healthCount} size={80} />
@@ -139,9 +156,9 @@ const NovaSystem = () => {
           </div>
           <div className="p-4 space-y-3">
             {[
-              { icon: 'âš ď¸Ź', title: 'Bottleneck Detected', desc: 'Code Review delaying 8 tasks', confidence: 94 },
-              { icon: 'đź‘¤', title: 'Resource Alert', desc: 'Sarah Chen at 150% capacity', confidence: 100 },
-              { icon: 'đź“', title: 'Velocity Forecast', desc: 'Next sprint: 38-44 SP', confidence: 85 }
+              { icon: 'âš ď¸Ź', icon: '⚠️', title: 'Bottleneck Detected', desc: 'Code Review delaying 8 tasks', confidence: 94 },
+              { icon: '👤', title: 'Resource Alert', desc: 'Sarah Chen at 150% capacity', confidence: 100 },
+              { icon: '📈', title: 'Velocity Forecast', desc: 'Next sprint: 38-44 SP', confidence: 85 }
             ].map((insight, idx) => (
               <div key={idx} className="p-3 border-l-4 border-purple-400 bg-purple-50 rounded-r-lg">
                 <div className="flex items-start gap-3">
@@ -189,6 +206,10 @@ const NovaSystem = () => {
   // ==================== OKR TREE VIEW ====================
   const OKRTreeView = () => (
     <div className="space-y-6">
+      <InfoBox>
+        OKR Tree wizualizuje hierarchię celów organizacji zgodnie z metodologią Objectives and Key Results. Cele firmowe kaskadują do celów zespołowych, które są powiązane z konkretnymi zadaniami w module Issues. Postęp OKR jest automatycznie aktualizowany na podstawie statusu zadań w Sprintach i Kanban, zapewniając real-time tracking realizacji strategii.
+      </InfoBox>
+      
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
         <div className="flex items-center justify-between mb-6">
           <div>
@@ -196,7 +217,7 @@ const NovaSystem = () => {
             <p className="text-sm text-gray-600 mt-1">Hierarchical view of objectives and key results</p>
           </div>
           <div className="flex items-center gap-3">
-            <select className="px-3 py-2 text-sm border border-gray-300 rounded-lg">
+            <select className="px-3 py-2 text-sm border border-gray-300 rounded-lg text-gray-900 font-medium">
               <option>Q4 2024</option>
               <option>Q3 2024</option>
             </select>
@@ -214,7 +235,7 @@ const NovaSystem = () => {
               <Target className="text-indigo-600" size={24} />
               <div className="flex-1">
                 <div className="font-bold text-lg text-gray-900">Achieve Product-Market Fit</div>
-                <div className="text-sm text-gray-600">Company Objective â€˘ Q4 2024</div>
+                <div className="text-sm text-gray-600">Company Objective • Q4 2024</div>
               </div>
               <Badge type="warning">65%</Badge>
             </div>
@@ -285,12 +306,16 @@ const NovaSystem = () => {
   // ==================== DELIVERY METRICS VIEW ====================
   const DeliveryMetricsView = () => (
     <div className="space-y-6">
+      <InfoBox>
+        Delivery Metrics śledzi wydajność zespołu w oparciu o dane ze Sprintów i Kanban. Velocity i Throughput są obliczane automatycznie z zamkniętych zadań, Cycle Time mierzy czas od "In Progress" do "Done", a Lead Time od utworzenia do zamknięcia. Burndown Chart pokazuje postęp aktualnego sprintu w czasie rzeczywistym, pomagając identyfikować opóźnienia i dostosowywać scope.
+      </InfoBox>
+      
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Delivery Metrics</h1>
           <p className="text-sm text-gray-600 mt-1">Sprint performance and throughput analysis</p>
         </div>
-        <select className="px-3 py-2 text-sm border border-gray-300 rounded-lg">
+        <select className="px-3 py-2 text-sm border border-gray-300 rounded-lg text-gray-900 font-medium">
           <option>Sprint 24</option>
           <option>Sprint 23</option>
         </select>
@@ -337,19 +362,50 @@ const NovaSystem = () => {
       {/* Burndown Chart */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
         <h2 className="font-semibold text-gray-900 mb-4">Burndown Chart</h2>
-        <div className="h-64 flex items-end justify-between border-b border-l border-gray-300 pb-4 pl-4">
-          {[45, 42, 38, 35, 30, 28, 25, 23, 18].map((remaining, idx) => (
-            <div key={idx} className="flex-1 relative" style={{ height: '200px' }}>
-              <div className="absolute bottom-0 w-full flex justify-center items-end">
-                <div className="w-2 bg-red-400 rounded-t transition-all duration-1000"
-                     style={{ height: animateProgress ? `${(remaining / 45) * 100}%` : '0%' }} />
-              </div>
+        <div className="relative h-64 border-b border-l border-gray-300">
+          {/* Grid lines */}
+          {[0, 25, 50, 75, 100].map((percent) => (
+            <div key={percent} className="absolute w-full border-t border-gray-100" 
+                 style={{ bottom: `${percent}%` }}>
+              <span className="absolute -left-8 -top-2 text-xs text-gray-500">
+                {Math.round((45 * (100 - percent)) / 100)}
+              </span>
             </div>
           ))}
-          <div className="absolute border-t-2 border-dashed border-blue-400" 
-               style={{ width: '100%', bottom: '100px' }} />
+          
+          {/* Ideal line */}
+          <svg className="absolute inset-0 w-full h-full" style={{ overflow: 'visible' }}>
+            <line x1="0" y1="0" x2="100%" y2="100%" 
+                  stroke="#93C5FD" strokeWidth="2" strokeDasharray="5,5" />
+          </svg>
+          
+          {/* Actual burndown line */}
+          <svg className="absolute inset-0 w-full h-full" style={{ overflow: 'visible' }}>
+            <polyline
+              points={[45, 42, 38, 35, 30, 28, 25, 23, 18].map((val, idx) => 
+                `${(idx / 8) * 100}%,${100 - (val / 45) * 100}%`
+              ).join(' ')}
+              fill="none"
+              stroke="#EF4444"
+              strokeWidth="3"
+              className={animateProgress ? 'opacity-100' : 'opacity-0'}
+              style={{ transition: 'opacity 1s' }}
+            />
+            {/* Data points */}
+            {[45, 42, 38, 35, 30, 28, 25, 23, 18].map((val, idx) => (
+              <circle
+                key={idx}
+                cx={`${(idx / 8) * 100}%`}
+                cy={`${100 - (val / 45) * 100}%`}
+                r="4"
+                fill="#EF4444"
+                className={animateProgress ? 'opacity-100' : 'opacity-0'}
+                style={{ transition: 'opacity 1s' }}
+              />
+            ))}
+          </svg>
         </div>
-        <div className="flex justify-between text-xs text-gray-600 mt-2">
+        <div className="flex justify-between text-xs text-gray-600 mt-4 pl-4">
           <span>Day 1</span>
           <span>Day 5</span>
           <span>Day 10 (Today)</span>
@@ -408,6 +464,10 @@ const NovaSystem = () => {
   // ==================== QUALITY GATES VIEW ====================
   const QualityGatesView = () => (
     <div className="space-y-6">
+      <InfoBox>
+        Quality Gates monitoruje standardy jakości kodu i testów, integrując się z narzędziami CI/CD i repozytoriami kodu. Code Coverage i Test Pass Rate pochodzą z pipeline'ów automatyzacji, Bug Density jest obliczana z Issues oznaczonych jako "bug", a Tech Debt Ratio śledzi zadania z tagiem "technical-debt". Moduł blokuje merge do głównej gałęzi, gdy kluczowe metryki spadają poniżej progów.
+      </InfoBox>
+      
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Quality Gates</h1>
@@ -553,14 +613,18 @@ const NovaSystem = () => {
   // ==================== TEAM PERFORMANCE VIEW ====================
   const TeamPerformanceView = () => (
     <div className="space-y-6">
+      <InfoBox>
+        Team Performance agreguje indywidualne metryki członków zespołu z modułu Activity i Issues. Workload jest obliczany na podstawie przypisanych zadań i ich Story Points, Velocity śledzi zamknięte zadania w czasie, a Status pokazuje obciążenie względem capacity. Dane pomagają w równoważeniu pracy zespołu i identyfikacji bottlenecków personalnych podczas planowania sprintów.
+      </InfoBox>
+      
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Team Performance</h1>
           <p className="text-sm text-gray-600 mt-1">Analytics and individual metrics</p>
         </div>
-        <select className="px-3 py-2 text-sm border border-gray-300 rounded-lg">
-          <option>Engineering Team</option>
+        <select className="px-3 py-2 text-sm border border-gray-300 rounded-lg text-gray-900 font-medium">
           <option>Product Team</option>
+          <option>Marketing Team</option>
         </select>
       </div>
 
@@ -698,6 +762,10 @@ const NovaSystem = () => {
   // ==================== PREDICTIVE ANALYTICS VIEW ====================
   const PredictiveView = () => (
     <div className="space-y-6">
+      <InfoBox>
+        Predictive Analytics wykorzystuje machine learning do analizy historycznych danych z wszystkich modułów Syzio. Success Probability przewiduje szanse ukończenia sprintu na podstawie velocity, remaining work i historical patterns. Risk Assessment identyfikuje zagrożenia analizując dependencies, team capacity i quality metrics. AI Recommendations sugerują konkretne akcje optymalizacyjne oparte na podobnych projektach z przeszłości.
+      </InfoBox>
+      
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Predictive Analytics</h1>
@@ -776,11 +844,11 @@ const NovaSystem = () => {
               <div className="text-sm font-semibold text-gray-900 mb-2">AI Recommendations</div>
               <ul className="space-y-2">
                 <li className="flex items-start gap-2 text-xs text-gray-700">
-                  <span className="text-purple-600 mt-0.5">â€˘</span>
+                  <span className="text-purple-600 mt-0.5">•</span>
                   <span>Increase test coverage by 5% to boost success probability to 82%</span>
                 </li>
                 <li className="flex items-start gap-2 text-xs text-gray-700">
-                  <span className="text-purple-600 mt-0.5">â€˘</span>
+                  <span className="text-purple-600 mt-0.5">•</span>
                   <span>Address 2 critical bugs to improve delivery confidence</span>
                 </li>
               </ul>
@@ -853,15 +921,15 @@ const NovaSystem = () => {
               <div className="text-sm font-semibold text-gray-900 mb-2">AI Recommendations</div>
               <ul className="space-y-2">
                 <li className="flex items-start gap-2 text-xs text-gray-700">
-                  <span className="text-purple-600 mt-0.5">â€˘</span>
+                  <span className="text-purple-600 mt-0.5">•</span>
                   <span>Prioritize technical debt reduction - could improve probability by 12%</span>
                 </li>
                 <li className="flex items-start gap-2 text-xs text-gray-700">
-                  <span className="text-purple-600 mt-0.5">â€˘</span>
+                  <span className="text-purple-600 mt-0.5">•</span>
                   <span>Add 8 more performance tests to cover critical paths</span>
                 </li>
                 <li className="flex items-start gap-2 text-xs text-gray-700">
-                  <span className="text-purple-600 mt-0.5">â€˘</span>
+                  <span className="text-purple-600 mt-0.5">•</span>
                   <span>Refactor high-complexity modules identified in code analysis</span>
                 </li>
               </ul>
@@ -1054,6 +1122,10 @@ const NovaSystem = () => {
   // ==================== REPORTS VIEW ====================
   const ReportsView = () => (
     <div className="space-y-6">
+      <InfoBox>
+        Reports Center umożliwia generowanie raportów z dowolnego modułu Syzio w formatach PDF, Excel i CSV. Raporty mogą być tworzone ad-hoc lub automatycznie według harmonogramu (daily, weekly, monthly). Dane są agregowane z Issues, Sprints, OKR, Quality Gates i Team Performance, z możliwością filtrowania po datach, zespołach i projektach. Raporty mogą być udostępniane stakeholderom przez email lub link.
+      </InfoBox>
+      
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Reports Center</h1>
@@ -1111,7 +1183,7 @@ const NovaSystem = () => {
                 <FileText className="text-gray-400" size={24} />
                 <div>
                   <div className="font-medium text-gray-900">{report.name}</div>
-                  <div className="text-xs text-gray-600 mt-1">{report.date} â€˘ {report.type}, {report.size}</div>
+                  <div className="text-xs text-gray-600 mt-1">{report.date} • {report.type}, {report.size}</div>
                 </div>
               </div>
               <div className="flex items-center gap-2">
@@ -1162,23 +1234,13 @@ const NovaSystem = () => {
         </div>
 
         <div className="flex items-center gap-3">
-          <select className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
+          <select className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white text-gray-900 font-medium">
             <option>Q4 2024</option>
             <option>Q3 2024</option>
           </select>
-          <button className="p-2 hover:bg-gray-100 rounded-lg transition" title="Refresh">
-            <RefreshCw size={18} className="text-gray-600" />
-          </button>
-          <button className="relative p-2 hover:bg-gray-100 rounded-lg transition">
-            <Bell size={18} className="text-gray-600" />
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full"></span>
-          </button>
           <button className="p-2 hover:bg-gray-100 rounded-lg transition">
             <Settings size={18} className="text-gray-600" />
           </button>
-          <div className="w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center text-white text-sm font-medium ml-2">
-            JD
-          </div>
         </div>
       </header>
 
@@ -1187,18 +1249,6 @@ const NovaSystem = () => {
         <aside className={`${sidebarOpen ? 'w-64' : 'w-0'} bg-white border-r border-gray-200 overflow-y-auto transition-all duration-300`}>
           <div className="p-4">
             <div className="mb-6 pb-4 border-b border-gray-200">
-              <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
-                Current Project
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-lg flex items-center justify-center text-white text-sm font-bold">
-                  TC
-                </div>
-                <div className="flex-1">
-                  <div className="font-semibold text-sm text-gray-900">TechCorp Mobile</div>
-                  <div className="text-xs text-gray-500">Engineering Team</div>
-                </div>
-              </div>
             </div>
 
             <nav className="space-y-1">
