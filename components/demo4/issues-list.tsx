@@ -320,8 +320,8 @@ export function IssuesList() {
           </div>
         )}
       </div>
+
+      <IssueForm open={issueFormOpen} onOpenChange={setIssueFormOpen} />
     </div>
   );
 }
-
-      <IssueForm open={issueFormOpen} onOpenChange={setIssueFormOpen} />
