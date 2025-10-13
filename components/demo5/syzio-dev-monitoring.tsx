@@ -2,7 +2,7 @@
 
 import React, { useState, createContext, useContext, ReactNode } from 'react';
 import Link from 'next/link';
-import { Calendar, Clock, GitCommit, Package, TrendingUp, AlertCircle, CheckCircle, XCircle, Loader, ExternalLink, Search, Plus, Activity, Server, BarChart3, Filter, ChevronRight, ArrowUpRight, ArrowDownRight, Moon, Sun, ArrowLeft } from 'lucide-react';
+import { Calendar, Clock, GitCommit, Package, TrendingUp, AlertCircle, CheckCircle, XCircle, Loader, ExternalLink, Search, Plus, Activity, Server, BarChart3, Filter, ChevronRight, ArrowUpRight, ArrowDownRight, Moon, Sun, ArrowLeft, MoreVertical, Play, RotateCcw } from 'lucide-react';
 
 // ============================================
 // THEME CONTEXT
@@ -107,6 +107,257 @@ interface MonitoringContextType {
 }
 
 const MonitoringContext = createContext<MonitoringContextType | undefined>(undefined);
+
+// ============================================
+// DATA GENERATION HELPERS
+// ============================================
+
+const generateId = (prefix: string, num: number): string => `${prefix}-${num}`;
+
+const generateHash = (): string => Math.random().toString(36).substring(2, 9);
+
+const randomElement = <T,>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
+
+const randomDate = (start: Date, end: Date): Date =>
+  new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+
+// Data pools
+const developers = [
+  'Jan Kowalski',
+  'Anna Nowak',
+  'Piotr Wiśniewski',
+  'Maria Kowalczyk',
+  'Tomasz Lewandowski',
+  'Katarzyna Wójcik',
+  'Michał Kamiński',
+  'Agnieszka Zielińska'
+];
+
+const issueTypes: JiraIssue['type'][] = ['story', 'bug', 'task', 'epic'];
+const priorities: JiraIssue['priority'][] = ['highest', 'high', 'medium', 'low', 'lowest'];
+const statuses: JiraIssue['status'][] = ['todo', 'in-progress', 'in-review', 'done'];
+const environments: Environment['name'][] = ['dev', 'staging', 'production'];
+const packageStatuses: DeploymentPackage['status'][] = ['draft', 'ready', 'deploying', 'deployed', 'failed', 'rollback'];
+
+const generateLabels = (type: JiraIssue['type']): string[] => {
+  const labelMap: Record<JiraIssue['type'], string[]> = {
+    story: ['feature', 'ui', 'ux', 'integration', 'api'],
+    bug: ['bugfix', 'critical', 'hotfix', 'security'],
+    task: ['maintenance', 'devops', 'monitoring', 'optimization'],
+    epic: ['epic', 'initiative', 'milestone']
+  };
+
+  const availableLabels = labelMap[type];
+  const count = 1 + Math.floor(Math.random() * 3); // 1-3 labels
+  const selected: string[] = [];
+
+  for (let i = 0; i < count; i++) {
+    const label = randomElement(availableLabels);
+    if (!selected.includes(label)) {
+      selected.push(label);
+    }
+  }
+
+  return selected;
+};
+
+const generateSummary = (type: JiraIssue['type']): string => {
+  const summaries: Record<JiraIssue['type'], string[]> = {
+    story: [
+      'Implement payment gateway integration',
+      'Add user profile customization',
+      'Create admin dashboard',
+      'Implement real-time notifications',
+      'Add multi-language support',
+      'Create reporting module',
+      'Implement OAuth authentication',
+      'Add data export functionality'
+    ],
+    bug: [
+      'Fix memory leak in data processing',
+      'Resolve login timeout issue',
+      'Fix incorrect currency conversion',
+      'Resolve race condition in cache',
+      'Fix broken pagination',
+      'Resolve API timeout errors',
+      'Fix data validation issues',
+      'Resolve session management bug'
+    ],
+    task: [
+      'Update dependencies to latest versions',
+      'Add monitoring alerts',
+      'Optimize database queries',
+      'Implement rate limiting',
+      'Update API documentation',
+      'Configure CI/CD pipeline',
+      'Set up error tracking',
+      'Implement backup strategy'
+    ],
+    epic: [
+      'Payment system overhaul',
+      'Mobile app redesign',
+      'Performance optimization initiative',
+      'Security enhancement project'
+    ]
+  };
+
+  return randomElement(summaries[type]);
+};
+
+const generateDescription = (type: JiraIssue['type'], summary: string): string => {
+  const descriptions: Record<JiraIssue['type'], string[]> = {
+    story: [
+      `Implement ${summary.toLowerCase()} to improve user experience and add new functionality to the platform.`,
+      `Add ${summary.toLowerCase()} with full integration testing and documentation.`,
+      `Create ${summary.toLowerCase()} following best practices and design patterns.`
+    ],
+    bug: [
+      `${summary} causing issues in production. Need to investigate and fix immediately.`,
+      `Critical bug: ${summary.toLowerCase()}. Affecting multiple users.`,
+      `${summary} - requires immediate attention and hotfix deployment.`
+    ],
+    task: [
+      `${summary} to improve system reliability and maintainability.`,
+      `Technical task: ${summary.toLowerCase()} as part of ongoing maintenance.`,
+      `${summary} to meet compliance and security requirements.`
+    ],
+    epic: [
+      `Major initiative: ${summary.toLowerCase()}. This epic encompasses multiple stories and tasks.`,
+      `Strategic project: ${summary.toLowerCase()} to achieve business objectives.`
+    ]
+  };
+
+  return randomElement(descriptions[type]);
+};
+
+const generateIssue = (id: number, packageIndex: number): JiraIssue => {
+  // Weighted random type selection
+  const typeRandom = Math.random();
+  let type: JiraIssue['type'];
+  if (typeRandom < 0.40) type = 'story';
+  else if (typeRandom < 0.70) type = 'bug';
+  else if (typeRandom < 0.95) type = 'task';
+  else type = 'epic';
+
+  // Weighted random status selection
+  const statusRandom = Math.random();
+  let status: JiraIssue['status'];
+  if (statusRandom < 0.55) status = 'done';
+  else if (statusRandom < 0.75) status = 'in-progress';
+  else if (statusRandom < 0.90) status = 'in-review';
+  else status = 'todo';
+
+  const summary = generateSummary(type);
+  const createdAt = randomDate(new Date('2025-07-01'), new Date('2025-10-01'));
+  const updatedAt = randomDate(createdAt, new Date('2025-10-13'));
+
+  return {
+    id: `canis-${packageIndex}-${id}`,
+    key: `SZ-${1200 + packageIndex * 10 + id}`,
+    summary,
+    description: generateDescription(type, summary),
+    type,
+    status,
+    priority: randomElement(priorities),
+    assignee: randomElement(developers),
+    reporter: randomElement(developers),
+    storyPoints: randomElement([1, 2, 3, 5, 8, 13, 21]),
+    labels: generateLabels(type),
+    createdAt,
+    updatedAt
+  };
+};
+
+const generateCommit = (issue: JiraIssue, index: number): GitCommit => {
+  const commitTypes = ['feat', 'fix', 'perf', 'docs', 'test', 'refactor', 'chore'];
+  const weights = [0.40, 0.30, 0.10, 0.05, 0.05, 0.05, 0.05];
+
+  // Weighted random commit type
+  const random = Math.random();
+  let cumulativeWeight = 0;
+  let commitType = 'feat';
+
+  for (let i = 0; i < commitTypes.length; i++) {
+    cumulativeWeight += weights[i];
+    if (random < cumulativeWeight) {
+      commitType = commitTypes[i];
+      break;
+    }
+  }
+
+  // Generate commit message
+  const summaryLower = issue.summary.toLowerCase();
+  const shortSummary = summaryLower.length > 50 ? summaryLower.substring(0, 47) + '...' : summaryLower;
+  const message = `${commitType}: ${shortSummary} (${issue.key})`;
+
+  // Generate timestamp between issue creation and update
+  const timestamp = randomDate(issue.createdAt, issue.updatedAt);
+
+  return {
+    hash: generateHash(),
+    message,
+    author: issue.assignee,
+    timestamp,
+    linkedIssues: [issue.key]
+  };
+};
+
+const generatePackage = (index: number): DeploymentPackage => {
+  // Generate 2-6 issues per package
+  const issueCount = 2 + Math.floor(Math.random() * 5);
+  const issues = Array.from({ length: issueCount }, (_, i) => generateIssue(i, index));
+
+  // Generate 1-3 commits per issue
+  const commits = issues.flatMap(issue => {
+    const commitCount = 1 + Math.floor(Math.random() * 3);
+    return Array.from({ length: commitCount }, (_, i) => generateCommit(issue, i));
+  });
+
+  // Sort commits by timestamp
+  commits.sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
+
+  // Determine status with weighted distribution
+  let status: DeploymentPackage['status'];
+  if (index < 2) status = 'draft';
+  else if (index < 6) status = 'ready';
+  else if (index === 6) status = 'deploying';
+  else if (index < 16) status = 'deployed';
+  else if (index < 18) status = 'failed';
+  else status = 'rollback';
+
+  // Determine environment
+  let environment: Environment['name'];
+  if (index < 5) environment = 'dev';
+  else if (index < 10) environment = 'staging';
+  else environment = 'production';
+
+  const createdAt = randomDate(new Date('2025-07-15'), new Date('2025-10-10'));
+  const deployedAt = status === 'deployed' || status === 'rollback'
+    ? randomDate(createdAt, new Date('2025-10-13'))
+    : undefined;
+
+  return {
+    id: generateId('pkg-canis', 100 + index),
+    name: `R-${100 + index} (Canis)`,
+    version: `R-${100 + index}`,
+    status,
+    environment,
+    linkedIssues: issues.map(i => i.key),
+    jiraIssues: issues,
+    commits,
+    createdAt,
+    deployedAt,
+    healthStatus: randomElement(['healthy', 'healthy', 'healthy', 'warning', 'critical'] as const),
+    metrics: status === 'deployed' || status === 'failed' || status === 'rollback' ? {
+      buildTime: 120 + Math.floor(Math.random() * 480),
+      deployTime: 180 + Math.floor(Math.random() * 420),
+      errorRate: Math.random() * 10,
+      successRate: 90 + Math.random() * 10,
+      rollbackCount: Math.floor(Math.random() * 4)
+    } : undefined,
+    createdBy: randomElement(developers)
+  };
+};
 
 const initialPackages: DeploymentPackage[] = [
   {
@@ -468,7 +719,9 @@ const initialPackages: DeploymentPackage[] = [
     healthStatus: 'healthy',
     metrics: { buildTime: 205, deployTime: 280, errorRate: 0.3, successRate: 99.7, rollbackCount: 0 },
     createdBy: 'Piotr Wiśniewski'
-  }
+  },
+  // Generated packages
+  ...Array.from({ length: 15 }, (_, i) => generatePackage(i))
 ];
 
 const initialEnvironments: Environment[] = [
@@ -483,7 +736,37 @@ function MonitoringProvider({ children }: { children: ReactNode }) {
 
   const addPackage = (pkg: DeploymentPackage) => setPackages(prev => [...prev, pkg]);
   const updatePackageStatus = (id: string, status: DeploymentPackage['status']) => {
-    setPackages(prev => prev.map(pkg => pkg.id === id ? { ...pkg, status } : pkg));
+    setPackages(prev => prev.map(pkg => {
+      if (pkg.id === id) {
+        const updates: Partial<DeploymentPackage> = { status };
+
+        // Update deployedAt timestamp when deploying
+        if (status === 'deployed') {
+          updates.deployedAt = new Date();
+          // Generate metrics if not present
+          if (!pkg.metrics) {
+            updates.metrics = {
+              buildTime: 120 + Math.floor(Math.random() * 480),
+              deployTime: 180 + Math.floor(Math.random() * 420),
+              errorRate: Math.random() * 5,
+              successRate: 95 + Math.random() * 5,
+              rollbackCount: 0
+            };
+          }
+        }
+
+        // Increment rollback count when rolling back
+        if (status === 'rollback' && pkg.metrics) {
+          updates.metrics = {
+            ...pkg.metrics,
+            rollbackCount: pkg.metrics.rollbackCount + 1
+          };
+        }
+
+        return { ...pkg, ...updates };
+      }
+      return pkg;
+    }));
   };
   const simulateDeploy = async (id: string) => {
     updatePackageStatus(id, 'deploying');
@@ -505,6 +788,83 @@ function useMonitoringStore() {
 }
 
 // ============================================
+// QUICK ACTIONS COMPONENT
+// ============================================
+
+const QuickActionsMenu = ({ pkg }: { pkg: DeploymentPackage }) => {
+  const { updatePackageStatus } = useMonitoringStore();
+  const { theme } = useTheme();
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleDeploy = () => {
+    updatePackageStatus(pkg.id, 'deployed');
+    setIsOpen(false);
+  };
+
+  const handleRollback = () => {
+    updatePackageStatus(pkg.id, 'rollback');
+    setIsOpen(false);
+  };
+
+  const showDeploy = pkg.status === 'ready';
+  const showRollback = pkg.status === 'deployed';
+
+  if (!showDeploy && !showRollback) {
+    return null;
+  }
+
+  return (
+    <div className="relative">
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <MoreVertical className="h-4 w-4" />
+      </Button>
+
+      {isOpen && (
+        <>
+          <div
+            className="fixed inset-0 z-10"
+            onClick={() => setIsOpen(false)}
+          />
+          <div className={`absolute right-0 top-full mt-1 z-20 w-48 rounded-md border shadow-lg ${theme === 'dark'
+            ? 'border-[#3a4152] bg-[#232938]'
+            : 'border-slate-200 bg-white'
+            }`}>
+            {showDeploy && (
+              <button
+                onClick={handleDeploy}
+                className={`flex w-full items-center gap-2 px-3 py-2 text-sm ${theme === 'dark'
+                  ? 'text-slate-50 hover:bg-[#2d3342]'
+                  : 'text-slate-900 hover:bg-slate-100'
+                  }`}
+              >
+                <Play className="h-4 w-4" />
+                Deploy
+              </button>
+            )}
+            {showRollback && (
+              <button
+                onClick={handleRollback}
+                className={`flex w-full items-center gap-2 px-3 py-2 text-sm ${theme === 'dark'
+                  ? 'text-slate-50 hover:bg-[#2d3342]'
+                  : 'text-slate-900 hover:bg-slate-100'
+                  }`}
+              >
+                <RotateCcw className="h-4 w-4" />
+                Rollback
+              </button>
+            )}
+          </div>
+        </>
+      )}
+    </div>
+  );
+};
+
+// ============================================
 // SHADCN-STYLE COMPONENTS
 // ============================================
 
@@ -512,8 +872,8 @@ const Card = ({ children, className = '' }: { children: ReactNode; className?: s
   const { theme } = useTheme();
   return (
     <div className={`rounded-lg border shadow-sm ${theme === 'dark'
-        ? 'border-[#3a4152] bg-[#232938]'
-        : 'border-slate-200 bg-white'
+      ? 'border-[#3a4152] bg-[#232938]'
+      : 'border-slate-200 bg-white'
       } ${className}`}>
       {children}
     </div>
@@ -1039,10 +1399,10 @@ const PackageDetailView = ({ packageId, onBack }: { packageId: string; onBack: (
             <CardContent>
               <div className="flex items-center gap-3">
                 <div className={`w-12 h-12 rounded-full flex items-center justify-center ${pkg.healthStatus === 'healthy'
-                    ? theme === 'dark' ? 'bg-green-950' : 'bg-green-100'
-                    : pkg.healthStatus === 'warning'
-                      ? theme === 'dark' ? 'bg-yellow-950' : 'bg-yellow-100'
-                      : theme === 'dark' ? 'bg-red-950' : 'bg-red-100'
+                  ? theme === 'dark' ? 'bg-green-950' : 'bg-green-100'
+                  : pkg.healthStatus === 'warning'
+                    ? theme === 'dark' ? 'bg-yellow-950' : 'bg-yellow-100'
+                    : theme === 'dark' ? 'bg-red-950' : 'bg-red-100'
                   }`}>
                   {pkg.healthStatus === 'healthy' ? (
                     <CheckCircle className="w-6 h-6 text-green-500" />
@@ -1065,9 +1425,240 @@ const PackageDetailView = ({ packageId, onBack }: { packageId: string; onBack: (
   );
 };
 
+// Analytics View Component
+const AnalyticsView = ({ onBack }: { onBack: () => void }) => {
+  const { packages } = useMonitoringStore();
+  const { theme } = useTheme();
+
+  const textPrimary = theme === 'dark' ? 'text-slate-50' : 'text-slate-900';
+  const textSecondary = theme === 'dark' ? 'text-slate-400' : 'text-slate-500';
+
+  const totalDeployments = packages.length;
+  const successfulDeployments = packages.filter(p => p.status === 'deployed').length;
+  const failedDeployments = packages.filter(p => p.status === 'failed').length;
+  const successRate = ((successfulDeployments / totalDeployments) * 100).toFixed(1);
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center gap-4">
+        <Button variant="ghost" size="icon" onClick={onBack}>
+          <ArrowLeft className="h-4 w-4" />
+        </Button>
+        <div>
+          <h1 className={`text-3xl font-bold ${textPrimary}`}>Analytics Dashboard</h1>
+          <p className={`text-sm ${textSecondary}`}>Deployment metrics and insights</p>
+        </div>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-4">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-sm">Total Deployments</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className={`text-3xl font-bold ${textPrimary}`}>{totalDeployments}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-sm">Successful</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-green-500">{successfulDeployments}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-sm">Failed</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-red-500">{failedDeployments}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-sm">Success Rate</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className={`text-3xl font-bold ${textPrimary}`}>{successRate}%</div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Deployment Trends</CardTitle>
+          <CardDescription>Last 30 days deployment activity</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className={`h-64 flex items-center justify-center ${textSecondary}`}>
+            📊 Chart visualization would go here
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+
+// Commit History View Component
+const CommitHistoryView = ({ onBack }: { onBack: () => void }) => {
+  const { packages } = useMonitoringStore();
+  const { theme } = useTheme();
+
+  const textPrimary = theme === 'dark' ? 'text-slate-50' : 'text-slate-900';
+  const textSecondary = theme === 'dark' ? 'text-slate-400' : 'text-slate-500';
+
+  const allCommits = packages.flatMap(p => p.commits.map(c => ({ ...c, packageName: p.name })))
+    .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
+    .slice(0, 20);
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center gap-4">
+        <Button variant="ghost" size="icon" onClick={onBack}>
+          <ArrowLeft className="h-4 w-4" />
+        </Button>
+        <div>
+          <h1 className={`text-3xl font-bold ${textPrimary}`}>Commit History</h1>
+          <p className={`text-sm ${textSecondary}`}>Recent commits across all packages</p>
+        </div>
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Recent Commits</CardTitle>
+          <CardDescription>{allCommits.length} commits shown</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {allCommits.map((commit, idx) => (
+              <div key={idx} className={`flex items-start gap-4 pb-4 ${idx !== allCommits.length - 1 ? 'border-b' : ''} ${theme === 'dark' ? 'border-slate-800' : 'border-slate-200'}`}>
+                <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${theme === 'dark' ? 'bg-slate-800' : 'bg-slate-100'}`}>
+                  <GitCommit className={`h-5 w-5 ${textSecondary}`} />
+                </div>
+                <div className="flex-1">
+                  <p className={`font-medium ${textPrimary}`}>{commit.message}</p>
+                  <div className={`text-sm ${textSecondary} mt-1`}>
+                    {commit.author} • {commit.packageName} • {commit.timestamp.toLocaleString()}
+                  </div>
+                  <div className="flex gap-2 mt-2">
+                    <Badge variant="secondary" className="font-mono text-xs">{commit.hash}</Badge>
+                    {commit.linkedIssues.map(issue => (
+                      <Badge key={issue} variant="secondary" className="text-xs">{issue}</Badge>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+
+// System Status View Component
+const SystemStatusView = ({ onBack }: { onBack: () => void }) => {
+  const { environments } = useMonitoringStore();
+  const { theme } = useTheme();
+
+  const textPrimary = theme === 'dark' ? 'text-slate-50' : 'text-slate-900';
+  const textSecondary = theme === 'dark' ? 'text-slate-400' : 'text-slate-500';
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center gap-4">
+        <Button variant="ghost" size="icon" onClick={onBack}>
+          <ArrowLeft className="h-4 w-4" />
+        </Button>
+        <div>
+          <h1 className={`text-3xl font-bold ${textPrimary}`}>System Status</h1>
+          <p className={`text-sm ${textSecondary}`}>Real-time system health and performance</p>
+        </div>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-3">
+        {environments.map(env => (
+          <Card key={env.name}>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle className="capitalize">{env.name}</CardTitle>
+                <StatusBadge status={env.status} />
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <div className={`text-sm ${textSecondary}`}>Uptime</div>
+                <div className={`text-2xl font-bold ${textPrimary}`}>{env.uptime}%</div>
+              </div>
+              <div>
+                <div className={`text-sm ${textSecondary}`}>URL</div>
+                <div className={`text-sm ${textPrimary} font-mono`}>{env.url}</div>
+              </div>
+              <Button variant="outline" size="sm" className="w-full">
+                <ExternalLink className="h-4 w-4 mr-2" />
+                Open Environment
+              </Button>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>System Metrics</CardTitle>
+          <CardDescription>Current system performance indicators</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-2">
+              <div className={`text-sm ${textSecondary}`}>CPU Usage</div>
+              <div className="flex items-center gap-2">
+                <div className="flex-1 h-2 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
+                  <div className="h-full bg-green-500" style={{ width: '45%' }} />
+                </div>
+                <span className={`text-sm font-medium ${textPrimary}`}>45%</span>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <div className={`text-sm ${textSecondary}`}>Memory Usage</div>
+              <div className="flex items-center gap-2">
+                <div className="flex-1 h-2 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
+                  <div className="h-full bg-blue-500" style={{ width: '62%' }} />
+                </div>
+                <span className={`text-sm font-medium ${textPrimary}`}>62%</span>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <div className={`text-sm ${textSecondary}`}>Disk Usage</div>
+              <div className="flex items-center gap-2">
+                <div className="flex-1 h-2 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
+                  <div className="h-full bg-yellow-500" style={{ width: '78%' }} />
+                </div>
+                <span className={`text-sm font-medium ${textPrimary}`}>78%</span>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <div className={`text-sm ${textSecondary}`}>Network I/O</div>
+              <div className="flex items-center gap-2">
+                <div className="flex-1 h-2 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
+                  <div className="h-full bg-purple-500" style={{ width: '34%' }} />
+                </div>
+                <span className={`text-sm font-medium ${textPrimary}`}>34%</span>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+
 const MonitoringDashboard = ({ onViewDetails }: { onViewDetails: (id: string) => void }) => {
   const { environments, packages } = useMonitoringStore();
   const { theme } = useTheme();
+  const [activeView, setActiveView] = useState<'dashboard' | 'analytics' | 'commits' | 'system'>('dashboard');
+  const [showNewDeploymentModal, setShowNewDeploymentModal] = useState(false);
 
   const recentDeployments = packages
     .filter(p => p.status === 'deployed')
@@ -1088,6 +1679,40 @@ const MonitoringDashboard = ({ onViewDetails }: { onViewDetails: (id: string) =>
   const textPrimary = theme === 'dark' ? 'text-slate-50' : 'text-slate-900';
   const textSecondary = theme === 'dark' ? 'text-slate-400' : 'text-slate-500';
   const iconColor = theme === 'dark' ? 'text-slate-400' : 'text-slate-500';
+
+  // Quick Actions handlers
+  const handleNewDeployment = () => {
+    setShowNewDeploymentModal(true);
+  };
+
+  const handleViewAnalytics = () => {
+    setActiveView('analytics');
+  };
+
+  const handleCommitHistory = () => {
+    setActiveView('commits');
+  };
+
+  const handleSystemStatus = () => {
+    setActiveView('system');
+  };
+
+  const handleBackToDashboard = () => {
+    setActiveView('dashboard');
+  };
+
+  // Render different views based on activeView
+  if (activeView === 'analytics') {
+    return <AnalyticsView onBack={handleBackToDashboard} />;
+  }
+
+  if (activeView === 'commits') {
+    return <CommitHistoryView onBack={handleBackToDashboard} />;
+  }
+
+  if (activeView === 'system') {
+    return <SystemStatusView onBack={handleBackToDashboard} />;
+  }
 
   return (
     <div className="space-y-6">
@@ -1185,19 +1810,35 @@ const MonitoringDashboard = ({ onViewDetails }: { onViewDetails: (id: string) =>
             <CardDescription>Common deployment tasks</CardDescription>
           </CardHeader>
           <CardContent className="space-y-2">
-            <Button variant="outline" className="w-full justify-start">
+            <Button
+              variant="outline"
+              className={`w-full justify-start ${theme === 'dark' ? 'border-slate-700 hover:bg-slate-800' : ''}`}
+              onClick={handleNewDeployment}
+            >
               <Plus className="h-4 w-4" />
               New Deployment
             </Button>
-            <Button variant="outline" className="w-full justify-start">
+            <Button
+              variant="outline"
+              className={`w-full justify-start ${theme === 'dark' ? 'border-slate-700 hover:bg-slate-800' : ''}`}
+              onClick={handleViewAnalytics}
+            >
               <BarChart3 className="h-4 w-4" />
               View Analytics
             </Button>
-            <Button variant="outline" className="w-full justify-start">
+            <Button
+              variant="outline"
+              className={`w-full justify-start ${theme === 'dark' ? 'border-slate-700 hover:bg-slate-800' : ''}`}
+              onClick={handleCommitHistory}
+            >
               <GitCommit className="h-4 w-4" />
               Commit History
             </Button>
-            <Button variant="outline" className="w-full justify-start">
+            <Button
+              variant="outline"
+              className={`w-full justify-start ${theme === 'dark' ? 'border-slate-700 hover:bg-slate-800' : ''}`}
+              onClick={handleSystemStatus}
+            >
               <Activity className="h-4 w-4" />
               System Status
             </Button>
@@ -1262,9 +1903,12 @@ const MonitoringDashboard = ({ onViewDetails }: { onViewDetails: (id: string) =>
                       </div>
                     </td>
                     <td className="p-4 align-middle text-right">
-                      <Button variant="ghost" size="icon" onClick={() => onViewDetails(pkg.id)}>
-                        <ChevronRight className="h-4 w-4" />
-                      </Button>
+                      <div className="flex items-center justify-end gap-2">
+                        <QuickActionsMenu pkg={pkg} />
+                        <Button variant="ghost" size="icon" onClick={() => onViewDetails(pkg.id)}>
+                          <ChevronRight className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -1273,6 +1917,68 @@ const MonitoringDashboard = ({ onViewDetails }: { onViewDetails: (id: string) =>
           </div>
         </CardContent>
       </Card>
+
+      {/* New Deployment Modal */}
+      {showNewDeploymentModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <Card className="w-full max-w-2xl">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle>Create New Deployment</CardTitle>
+                <Button variant="ghost" size="icon" onClick={() => setShowNewDeploymentModal(false)}>
+                  <XCircle className="h-4 w-4" />
+                </Button>
+              </div>
+              <CardDescription>Configure a new deployment package</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <label className={`text-sm font-medium ${textPrimary}`}>Package Name</label>
+                <input
+                  type="text"
+                  placeholder="e.g., Release 2.2.0"
+                  className={`w-full mt-1 px-3 py-2 rounded-md border ${theme === 'dark'
+                      ? 'bg-slate-800 border-slate-700 text-slate-50'
+                      : 'bg-white border-slate-300 text-slate-900'
+                    }`}
+                />
+              </div>
+              <div>
+                <label className={`text-sm font-medium ${textPrimary}`}>Environment</label>
+                <select
+                  className={`w-full mt-1 px-3 py-2 rounded-md border ${theme === 'dark'
+                      ? 'bg-slate-800 border-slate-700 text-slate-50'
+                      : 'bg-white border-slate-300 text-slate-900'
+                    }`}
+                >
+                  <option>dev</option>
+                  <option>staging</option>
+                  <option>production</option>
+                </select>
+              </div>
+              <div>
+                <label className={`text-sm font-medium ${textPrimary}`}>Linked Issues</label>
+                <input
+                  type="text"
+                  placeholder="e.g., SZ-1234, SZ-1235"
+                  className={`w-full mt-1 px-3 py-2 rounded-md border ${theme === 'dark'
+                      ? 'bg-slate-800 border-slate-700 text-slate-50'
+                      : 'bg-white border-slate-300 text-slate-900'
+                    }`}
+                />
+              </div>
+              <div className="flex gap-2 pt-4">
+                <Button onClick={() => setShowNewDeploymentModal(false)} className="flex-1">
+                  Create Package
+                </Button>
+                <Button variant="outline" onClick={() => setShowNewDeploymentModal(false)} className="flex-1">
+                  Cancel
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
     </div>
   );
 };
@@ -1327,7 +2033,7 @@ const DeploymentsView = ({ onViewDetails }: { onViewDetails: (id: string) => voi
               value={filters.status}
               onChange={(e) => setFilters({ ...filters, status: e.target.value })}
               className={`flex h-10 rounded-md border ${inputBorder} ${inputBg} px-3 py-2 text-sm ${textPrimary} focus:outline-none focus:ring-1 ${theme === 'dark' ? 'focus:ring-slate-300' : 'focus:ring-slate-700'
-                }`}
+                } [&>option]:text-black`}
             >
               <option value="all">All Status</option>
               <option value="draft">Draft</option>
@@ -1339,7 +2045,7 @@ const DeploymentsView = ({ onViewDetails }: { onViewDetails: (id: string) => voi
               value={filters.environment}
               onChange={(e) => setFilters({ ...filters, environment: e.target.value })}
               className={`flex h-10 rounded-md border ${inputBorder} ${inputBg} px-3 py-2 text-sm ${textPrimary} focus:outline-none focus:ring-1 ${theme === 'dark' ? 'focus:ring-slate-300' : 'focus:ring-slate-700'
-                }`}
+                } [&>option]:text-black`}
             >
               <option value="all">All Environments</option>
               <option value="dev">Development</option>
@@ -1387,7 +2093,12 @@ const DeploymentsView = ({ onViewDetails }: { onViewDetails: (id: string) => voi
                     Deploy Now
                   </Button>
                 )}
-                <Button size="sm" variant="outline" onClick={() => onViewDetails(pkg.id)}>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => onViewDetails(pkg.id)}
+                  className={theme === 'dark' ? 'border-white text-black hover:bg-white hover:text-black' : ''}
+                >
                   View Details
                 </Button>
               </div>
@@ -1599,8 +2310,8 @@ function AppContent({ activeView, setActiveView }: {
                   key={tab.id}
                   onClick={() => setActiveView(tab.id as any)}
                   className={`flex items-center gap-2 border-b-2 px-1 py-4 text-sm font-medium transition-colors ${activeView === tab.id
-                      ? `${theme === 'dark' ? 'border-slate-50 text-slate-50' : 'border-slate-900 text-slate-900'}`
-                      : `border-transparent ${textSecondary} ${theme === 'dark' ? 'hover:border-slate-700 hover:text-slate-300' : 'hover:border-slate-300 hover:text-slate-700'}`
+                    ? `${theme === 'dark' ? 'border-slate-50 text-slate-50' : 'border-slate-900 text-slate-900'}`
+                    : `border-transparent ${textSecondary} ${theme === 'dark' ? 'hover:border-slate-700 hover:text-slate-300' : 'hover:border-slate-300 hover:text-slate-700'}`
                     }`}
                 >
                   {tab.icon}

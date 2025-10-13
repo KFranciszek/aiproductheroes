@@ -1,5 +1,7 @@
+'use client';
+
 import type React from "react";
-import type { Metadata } from "next";
+import { useEffect } from "react";
 import { Inter } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import "../demo7-globals.css";
@@ -12,31 +14,27 @@ const inter = Inter({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: "Syzio Pulsar Nova - Demo 7",
-  description:
-    "Prognozy dostarczenia i jakość releasów w czasie rzeczywistym",
-};
-
-export const viewport = {
-  width: "device-width",
-  initialScale: 1,
-  maximumScale: 1,
-};
-
 export default function Demo7RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  useEffect(() => {
+    return () => {
+      // Cleanup demo7 theme classes when leaving (next-themes adds 'dark' class)
+      if (typeof document !== 'undefined') {
+        document.documentElement.classList.remove('dark', 'light');
+        document.documentElement.removeAttribute('style');
+      }
+    };
+  }, []);
+
   return (
-    <html lang="pl" suppressHydrationWarning>
-      <body className={`${inter.variable} font-sans antialiased`}>
-        <Providers>
-          {children}
-        </Providers>
-        <Analytics />
-      </body>
-    </html>
+    <div className={`${inter.variable} font-sans antialiased`}>
+      <Providers>
+        {children}
+      </Providers>
+      <Analytics />
+    </div>
   );
 }
