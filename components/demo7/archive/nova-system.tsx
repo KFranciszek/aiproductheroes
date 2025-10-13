@@ -2,32 +2,33 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Star, Settings, Menu, TrendingUp, TrendingDown, AlertTriangle, CheckCircle, Target, Rocket, BarChart3, FileText, Clock, Users, Download, MoreVertical, ChevronRight, Plus, Activity, Shield, Calendar, Zap, ArrowUpRight, ArrowLeft } from 'lucide-react';
+import { 
+  aggregateHealthScore, 
+  generateAIInsights, 
+  getBlockedTasks,
+  getAtlasMetrics,
+  getTeamMetrics,
+  getUserPerformance,
+  calculateBurndown,
+  getQualityGates,
+  getOKRData
+} from '@/lib/demo7/data-aggregator';
+import type { HealthScore, AIInsight } from '@/lib/demo7/types';
 
 const NovaSystem = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [activeTab, setActiveTab] = useState('dashboard');
   const [animateProgress, setAnimateProgress] = useState(false);
-  const [healthCount, setHealthCount] = useState(0);
+  const [healthScore, setHealthScore] = useState<HealthScore | null>(null);
+  const [aiInsights, setAIInsights] = useState<AIInsight[]>([]);
 
   useEffect(() => {
-    let count = 0;
-    const target = 73;
-    const duration = 1500;
-    const increment = target / (duration / 16);
+    // Load real data
+    const score = aggregateHealthScore();
+    setHealthScore(score);
+    setAIInsights(generateAIInsights());
     
-    const timer = setInterval(() => {
-      count += increment;
-      if (count >= target) {
-        setHealthCount(target);
-        clearInterval(timer);
-      } else {
-        setHealthCount(Math.floor(count));
-      }
-    }, 16);
-
     setTimeout(() => setAnimateProgress(true), 100);
-    
-    return () => clearInterval(timer);
   }, []);
 
   const Badge = ({ type, children }) => {
@@ -83,40 +84,54 @@ const NovaSystem = () => {
   };
 
   // ==================== DASHBOARD VIEW ====================
-  const DashboardView = () => (
-    <div className="space-y-6">
-      <InfoBox>
-        Dashboard agreguje kluczowe metryki z całego systemu Syzio. Health Score łączy dane z modułu Delivery (postęp sprintów), Quality Gates (pokrycie testami, błędy) oraz OKR (realizacja celów). Active Blockers pochodzą z modułu Issues, a AI Insights analizują dane z Activity Log i przewidują ryzyka na podstawie historycznych wzorców zespołu.
-      </InfoBox>
-      
-      {/* Health Overview */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Q4 2024 Overview</h1>
-            <p className="text-sm text-gray-600 mt-1">Sprint 24 • 8 days remaining</p>
-          </div>
-          <div className="flex items-center gap-6">
-            <CircularProgress value={healthCount} size={80} />
-            <div className="space-y-2">
-              {[
-                { label: 'Outcome', value: 81, color: 'bg-indigo-500' },
-                { label: 'Delivery', value: 89, color: 'bg-green-500' },
-                { label: 'Quality', value: 76, color: 'bg-amber-500' }
-              ].map((metric, idx) => (
-                <div key={idx} className="flex items-center gap-3">
-                  <span className="text-xs text-gray-600 w-20">{metric.label}</span>
-                  <div className="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
-                    <div className={`h-full ${metric.color} transition-all duration-1000`} 
-                         style={{ width: animateProgress ? `${metric.value}%` : '0%' }} />
+  const DashboardView = () => {
+    const blockedTasks = getBlockedTasks();
+    const atlasMetrics = getAtlasMetrics();
+    
+    return (
+      <div className="space-y-6">
+        <InfoBox>
+          Dashboard agreguje kluczowe metryki z całego systemu Syzio. Health Score łączy dane z modułu <strong>Atlas</strong> (postęp sprintów), <strong>Canis</strong> (jakość dokumentacji) oraz <strong>Helix</strong> (stabilność deploymentów). Active Blockers pochodzą z rzeczywistych zależności zadań, a AI Insights analizują wzorce cross-system.
+        </InfoBox>
+        
+        {/* Health Overview */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">Q4 2024 Overview</h1>
+              <p className="text-sm text-gray-600 mt-1">
+                {atlasMetrics.activeSprint?.name || 'Sprint 59'} • {atlasMetrics.completedSP} / {atlasMetrics.totalSP} SP completed
+              </p>
+            </div>
+            <div className="flex items-center gap-6">
+              <CircularProgress value={healthScore?.overall || 0} size={80} />
+              <div className="space-y-2">
+                {[
+                  { label: 'Outcome', value: healthScore?.breakdown.outcome || 0, color: 'bg-indigo-500' },
+                  { label: 'Delivery', value: healthScore?.breakdown.delivery || 0, color: 'bg-green-500' },
+                  { label: 'Quality', value: healthScore?.breakdown.quality || 0, color: 'bg-amber-500' }
+                ].map((metric, idx) => (
+                  <div key={idx} className="flex items-center gap-3">
+                    <span className="text-xs text-gray-600 w-20">{metric.label}</span>
+                    <div className="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
+                      <div className={`h-full ${metric.color} transition-all duration-1000`} 
+                           style={{ width: animateProgress ? `${metric.value}%` : '0%' }} />
+                    </div>
+                    <span className="text-xs font-semibold text-gray-900 w-8">{metric.value}%</span>
                   </div>
-                  <span className="text-xs font-semibold text-gray-900 w-8">{metric.value}%</span>
-                </div>
-              ))}
+                ))}
+              </div>
+            </div>
+          </div>
+          <div className="mt-4 pt-4 border-t border-gray-200">
+            <div className="flex items-center gap-2 text-xs text-gray-500">
+              <span className="px-2 py-1 bg-blue-50 text-blue-700 rounded">Atlas</span>
+              <span className="px-2 py-1 bg-purple-50 text-purple-700 rounded">Canis</span>
+              <span className="px-2 py-1 bg-green-50 text-green-700 rounded">Helix</span>
+              <span className="ml-2">→ Unified Intelligence</span>
             </div>
           </div>
         </div>
-      </div>
 
       {/* Critical Issues & AI */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
