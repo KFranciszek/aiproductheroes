@@ -25,11 +25,18 @@ export function CanisChat() {
     // Add user message
     addMessageToThread(selectedThreadId, "user", userMessage);
 
-    // Simulate AI response
-    setTimeout(() => {
-      addMessageToThread(selectedThreadId, "ai", "Dodaję AC do scenariuszy negatywnych. Chcesz wysłać do PM?");
+    // Simulate AI response with delay
+    setTimeout(async () => {
+      const responses = [
+        "Dodaję AC do scenariuszy negatywnych. Chcesz wysłać do PM?",
+        "Znalazłem odpowiedź w dokumentacji. Czy to pomaga?",
+        "Wykryłem potencjalny konflikt z istniejącym wymaganiem. Sprawdź SZ-1234.",
+        "Zgodnie z payments.yaml, ta konfiguracja jest poprawna.",
+      ];
+      const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+      await addMessageToThread(selectedThreadId, "ai", randomResponse);
       setIsLoading(false);
-    }, 500);
+    }, 800 + Math.random() * 400);
   };
 
   const handleAction = (action: string) => {
@@ -52,7 +59,7 @@ export function CanisChat() {
         {/* Threads Sidebar */}
         <div className="col-span-1 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-lg p-4">
           <h2 className="text-sm font-semibold mb-2">Wątki</h2>
-          <p className="text-sm text-text-secondary-light dark:text-text-secondary-dark mb-4">ACME / SHOP</p>
+          <p className="text-sm text-text-secondary-light dark:text-text-secondary-dark mb-4">Projekt płatności</p>
           <ul className="space-y-2">
             {chatThreads.map(thread => (
               <li key={thread.id}>

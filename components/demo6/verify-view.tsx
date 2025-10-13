@@ -9,12 +9,19 @@ import { useData } from "@/lib/demo6/data-context";
 import { toast } from "sonner";
 
 export function VerifyView() {
-  const { findings } = useData();
+  const { findings, createTaskFromFinding } = useData();
 
-  const handleCreateTask = (findingId: string) => {
-    toast.success("Utworzono zadanie naprawcze", {
-      description: `Fix for ${findingId}`,
-    });
+  const handleCreateTask = async (findingId: string) => {
+    try {
+      const taskId = await createTaskFromFinding(findingId);
+      toast.success("Utworzono zadanie naprawcze", {
+        description: `Zadanie ${taskId} zostało utworzone`,
+      });
+    } catch (error) {
+      toast.error("Błąd tworzenia zadania", {
+        description: "Spróbuj ponownie",
+      });
+    }
   };
 
   const getSeverityVariant = (severity: string) => {

@@ -1,69 +1,61 @@
-export function exportToMarkdown(data: any, filename: string): void {
-  let markdown = `# ${filename}\n\n`;
-  markdown += `Generated: ${new Date().toISOString()}\n\n`;
-  
-  if (Array.isArray(data)) {
-    data.forEach((item, i) => {
-      markdown += `## Item ${i + 1}\n\n`;
-      markdown += JSON.stringify(item, null, 2) + "\n\n";
-    });
-  } else {
-    markdown += "```json\n";
-    markdown += JSON.stringify(data, null, 2);
-    markdown += "\n```\n";
-  }
-  
-  downloadFile(markdown, `${filename}.md`, "text/markdown");
+// Export utilities for test data
+
+export function exportToJSON(data: Record<string, any>[], filename: string) {
+  const jsonString = JSON.stringify(data, null, 2);
+  downloadFile(jsonString, `${filename}.json`, "application/json");
 }
 
-export function exportToJSON(data: any, filename: string): void {
-  const json = JSON.stringify(data, null, 2);
-  downloadFile(json, `${filename}.json`, "application/json");
-}
-
-export function exportToCSV(data: any[], filename: string): void {
-  if (!data || data.length === 0) {
-    downloadFile("", `${filename}.csv`, "text/csv");
-    return;
-  }
+export function exportToCSV(data: Record<string, any>[], filename: string) {
+  if (data.length === 0) return;
 
   const headers = Object.keys(data[0]);
   const csvRows = [
     headers.join(","),
-    ...data.map(row =>
-      headers.map(header => {
+    ...data.map((row) =>
+      headers.map((header) => {
         const value = row[header];
-        const escaped = String(value).replace(/"/g, '""');
-        return `"${escaped}"`;
+        // Escape values that contain commas or quotes
+        if (typeof value === "string" && (value.includes(",") || value.includes('"'))) {
+          return `"${value.replace(/"/g, '""')}"`;
+        }
+        return value;
       }).join(",")
     ),
   ];
 
-  downloadFile(csvRows.join("\n"), `${filename}.csv`, "text/csv");
+  const csvString = csvRows.join("\n");
+  downloadFile(csvString, `${filename}.csv`, "text/csv");
 }
 
-export function exportToSQL(data: any[], tableName: string, filename: string): void {
-  if (!data || data.length === 0) {
-    downloadFile("", `${filename}.sql`, "text/plain");
-    return;
-  }
+export function exportToSQL(
+  data: Record<string, any>[],
+  tableName: string,
+  filename: string
+) {
+  if (data.length === 0) return;
 
   const headers = Object.keys(data[0]);
-  const sqlStatements = data.map(row => {
-    const values = headers.map(header => {
-      const value = row[header];
-      if (typeof value === "string") return `'${value.replace(/'/g, "''")}'`;
-      if (value === null || value === undefined) return "NULL";
-      return value;
-    });
-    return `INSERT INTO ${tableName} (${headers.join(", ")}) VALUES (${values.join(", ")});`;
-  });
+  const sqlStatements = [
+    `-- SQL Insert Statements for ${tableName}`,
+    `-- Generated: ${new Date().toISOString()}`,
+    "",
+    ...data.map((row) => {
+      const values = headers.map((header) => {
+        const value = row[header];
+        if (value === null || value === undefined) return "NULL";
+        if (typeof value === "string") return `'${value.replace(/'/g, "''")}'`;
+        if (typeof value === "boolean") return value ? "1" : "0";
+        return value;
+      });
+      return `INSERT INTO ${tableName} (${headers.join(", ")}) VALUES (${values.join(", ")});`;
+    }),
+  ];
 
-  const sql = `-- Generated: ${new Date().toISOString()}\n\n${sqlStatements.join("\n")}`;
-  downloadFile(sql, `${filename}.sql`, "text/plain");
+  const sqlString = sqlStatements.join("\n");
+  downloadFile(sqlString, `${filename}.sql`, "text/plain");
 }
 
-export function downloadFile(content: string, filename: string, mimeType: string): void {
+function downloadFile(content: string, filename: string, mimeType: string) {
   const blob = new Blob([content], { type: mimeType });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");

@@ -16,7 +16,7 @@ import { SuggestionBanner } from "./suggestion-banner";
 import { toast } from "sonner";
 
 export function StoriesGenerator() {
-  const { generatedStories, generateStories } = useData();
+  const { generatedStories, generateStories, exportStory, resolveConflict } = useData();
   const [persona, setPersona] = useState("Buyer");
   const [goal, setGoal] = useState("Zapłacić kartą z autoryzacją 3DS");
   const [source, setSource] = useState("doc");
@@ -25,16 +25,37 @@ export function StoriesGenerator() {
 
   const handleGenerate = async () => {
     setIsGenerating(true);
-    await generateStories(persona, goal);
-    setIsGenerating(false);
-    toast.success("Wygenerowano stories", {
-      description: `Utworzono 2 wariantów`,
-    });
+    try {
+      await generateStories(persona, goal);
+      toast.success("Wygenerowano stories", {
+        description: `Utworzono ${generatedStories.length || 2} wariantów`,
+      });
+    } catch (error) {
+      toast.error("Błąd generowania", {
+        description: "Spróbuj ponownie",
+      });
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
-  const handleExport = (storyId: string) => {
-    toast.success("Wyeksportowano do PM", {
-      description: "Utworzono zadanie SZ-2001",
+  const handleExport = async (storyId: string) => {
+    try {
+      const taskId = await exportStory(storyId, "jira");
+      toast.success("Wyeksportowano do PM", {
+        description: `Utworzono zadanie ${taskId}`,
+      });
+    } catch (error) {
+      toast.error("Błąd eksportu", {
+        description: "Spróbuj ponownie",
+      });
+    }
+  };
+
+  const handleResolveConflict = (storyId: string) => {
+    resolveConflict(storyId, "keep");
+    toast.info("Konflikt rozwiązany", {
+      description: "Zachowano bieżącą wersję story",
     });
   };
 
@@ -160,9 +181,22 @@ export function StoriesGenerator() {
                   <AlertTitle>Wykryto konflikt</AlertTitle>
                   <AlertDescription>
                     {story.conflicts[0].description}
-                    <Button variant="link" className="p-0 h-auto ml-2">
-                      Zobacz {story.conflicts[0].existingIssueId}
-                    </Button>
+                    <div className="flex gap-2 mt-2">
+                      <Button 
+                        variant="link" 
+                        className="p-0 h-auto"
+                        onClick={() => toast.info("Otwieranie issue", { description: story.conflicts![0].existingIssueId })}
+                      >
+                        Zobacz {story.conflicts[0].existingIssueId}
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => handleResolveConflict(story.id)}
+                      >
+                        Rozwiąż konflikt
+                      </Button>
+                    </div>
                   </AlertDescription>
                 </Alert>
               )}

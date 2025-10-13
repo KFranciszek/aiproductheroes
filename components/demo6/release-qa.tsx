@@ -6,22 +6,30 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useData } from "@/lib/demo6/data-context";
+import { toast } from "sonner";
 
 export function ReleaseQA() {
-  const { releases } = useData();
+  const { releases, answerReleaseQuestion, getACCoverage } = useData();
   const [selectedRelease, setSelectedRelease] = useState("R-102");
   const [isLoading, setIsLoading] = useState(false);
   const [answer, setAnswer] = useState("");
 
   const release = releases.find(r => r.id === selectedRelease);
 
-  const handleQuestion = (question: string) => {
+  const handleQuestion = async (question: string) => {
     setIsLoading(true);
     setAnswer("");
-    setTimeout(() => {
-      setAnswer(`Release ${release?.id} (${release?.environment}, ${release?.deployedAt}) zawiera issues: ${release?.issues.join(", ")}. Pokrycie AC: SZ-1234 2/3, SZ-1235 0/0.`);
+    try {
+      const response = await answerReleaseQuestion(selectedRelease, question);
+      setAnswer(response);
+    } catch (error) {
+      setAnswer("Wystąpił błąd podczas przetwarzania pytania.");
+      toast.error("Błąd", {
+        description: "Nie udało się uzyskać odpowiedzi",
+      });
+    } finally {
       setIsLoading(false);
-    }, 500);
+    }
   };
 
   return (
@@ -87,8 +95,20 @@ export function ReleaseQA() {
                 {answer}
               </div>
               <div className="flex gap-2">
-                <Button variant="outline" size="sm">Open in DevMon</Button>
-                <Button variant="outline" size="sm">Open in PM</Button>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => toast.info("Otwieranie DevMon", { description: `Release ${selectedRelease}` })}
+                >
+                  Open in DevMon
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => toast.info("Otwieranie PM", { description: `Issues: ${release?.issues.join(", ")}` })}
+                >
+                  Open in PM
+                </Button>
               </div>
             </>
           ) : (

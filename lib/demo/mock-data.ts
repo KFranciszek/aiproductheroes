@@ -1110,14 +1110,14 @@ const automationExecutions: AutomationExecution[] = [
 const automationTemplates: AutomationTemplate[] = [
   {
     id: 'template-1',
-    name: 'GitLab → Jira Sync',
-    description: 'Dwukierunkowa synchronizacja statusów między GitLab a Jira',
+    name: 'GitLab → Atlas Sync',
+    description: 'Dwukierunkowa synchronizacja statusów między GitLab a Atlas',
     category: 'sync',
     icon: '🔄',
     popularity: 95,
     rule: {
       name: 'GitLab ↔ Jira Status Sync',
-      description: 'Synchronizuje statusy zadań między GitLab i Jira',
+      description: 'Synchronizuje statusy zadań między GitLab i Atlas',
       category: 'sync',
       trigger: { type: 'pr_merged', config: { source: 'gitlab' } },
       conditions: [],

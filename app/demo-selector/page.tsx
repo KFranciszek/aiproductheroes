@@ -220,7 +220,7 @@ export default function DemoSelector() {
                   {/* Bottom Note */}
                   <div className="pt-4 border-t border-border/50">
                     <p className="text-sm text-center text-muted-foreground italic">
-                      💡 Poniżej możesz przetestować <span className="font-semibold text-foreground">Project Management</span> i <span className="font-semibold text-foreground">Development Monitoring</span> — dwa kluczowe moduły ekosystemu
+                      💡 Poniżej możesz przetestować <span className="font-semibold text-foreground">Atlas i Helix</span> oraz <span className="font-semibold text-foreground">Canis i Pulsar Nova</span> —  moduły ekosystemu Syzio
                     </p>
                   </div>
                 </div>

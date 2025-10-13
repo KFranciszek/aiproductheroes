@@ -140,3 +140,32 @@ export interface SyncStatus {
     documents: boolean;
   };
 }
+
+export interface ReleaseComparison {
+  release1: Release;
+  release2: Release;
+  differences: {
+    addedIssues: string[];
+    removedIssues: string[];
+    addedCommits: CommitReference[];
+    removedCommits: CommitReference[];
+  };
+}
+
+export interface StoryRefinement {
+  storyId: string;
+  changes: {
+    title?: string;
+    acceptanceCriteria?: AcceptanceCriterion[];
+    estimate?: string;
+  };
+  timestamp: string;
+}
+
+export interface ExportResult {
+  format: 'jira' | 'azure' | 'linear' | 'json' | 'csv' | 'sql';
+  taskId?: string;
+  downloadUrl?: string;
+  success: boolean;
+  message: string;
+}

@@ -14,11 +14,16 @@ import { useData } from "@/lib/demo6/data-context";
 import { toast } from "sonner";
 
 export function TestDataGenerator() {
-  const { testDatasets, generateTestData } = useData();
+  const { testDatasets, generateTestData, updateSchema, exportData } = useData();
   const [schema, setSchema] = useState("payments.yaml#/Card");
   const [recordCount, setRecordCount] = useState(500);
   const [isGenerating, setIsGenerating] = useState(false);
   const [exportFormat, setExportFormat] = useState("csv");
+
+  const handleSchemaChange = (newSchema: string) => {
+    setSchema(newSchema);
+    updateSchema(newSchema);
+  };
 
   const currentDataset = testDatasets[0];
   const sampleData = currentDataset?.records.slice(0, 2) || [];
@@ -35,19 +40,16 @@ export function TestDataGenerator() {
   const handleExport = () => {
     if (!currentDataset) return;
     
-    const { exportToJSON, exportToCSV, exportToSQL } = require("@/lib/demo6/export-utils");
-    
-    if (exportFormat === "json") {
-      exportToJSON(currentDataset.records, `test-data-${schema.replace(/[^a-z0-9]/gi, '-')}`);
-    } else if (exportFormat === "csv") {
-      exportToCSV(currentDataset.records, `test-data-${schema.replace(/[^a-z0-9]/gi, '-')}`);
-    } else if (exportFormat === "sql") {
-      exportToSQL(currentDataset.records, "test_data", `test-data-${schema.replace(/[^a-z0-9]/gi, '-')}`);
+    try {
+      exportData(exportFormat as 'json' | 'csv' | 'sql');
+      toast.success(`Eksport ${exportFormat.toUpperCase()}`, {
+        description: `Pobrano ${currentDataset.records.length} rekordów`,
+      });
+    } catch (error) {
+      toast.error("Błąd eksportu", {
+        description: "Spróbuj ponownie",
+      });
     }
-    
-    toast.success(`Eksport ${exportFormat.toUpperCase()}`, {
-      description: `Pobrano ${currentDataset.records.length} rekordów`,
-    });
   };
 
   return (
@@ -61,7 +63,7 @@ export function TestDataGenerator() {
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <Label>Schemat</Label>
-            <Select value={schema} onValueChange={setSchema}>
+            <Select value={schema} onValueChange={handleSchemaChange}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>

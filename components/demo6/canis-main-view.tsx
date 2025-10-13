@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useUI } from "@/lib/demo6/ui-context";
 import { CanisChat } from "./canis-chat";
 import { StoriesGenerator } from "./stories-generator";
@@ -21,10 +22,17 @@ export function CanisMainView() {
             <h1 className="text-lg font-semibold">Syzio — Canis</h1>
           </div>
           <div className="flex items-center bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-md px-2 py-1 text-sm">
-            <span>ACME / SHOP</span>
+            <span>Projekt płatności</span>
           </div>
         </div>
         <div className="flex items-center space-x-4">
+          <Link
+            href="/demo-selector"
+            className="flex items-center space-x-1 text-sm text-text-secondary-light dark:text-text-secondary-dark hover:text-primary transition-colors"
+          >
+            <span className="material-icons text-base">arrow_back</span>
+            <span>Back to Demos</span>
+          </Link>
           <button 
             className="flex items-center space-x-2 px-3 py-1.5 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-md text-text-secondary-light dark:text-text-secondary-dark hover:text-text-light dark:hover:text-text-dark transition-colors"
             onClick={() => setCommandPaletteOpen(true)}

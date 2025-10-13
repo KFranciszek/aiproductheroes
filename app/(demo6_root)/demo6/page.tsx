@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { VerifyView, ReleaseQAView, SettingsView } from "./page-components";
 
 export default function Demo6Page() {
   const [activeTab, setActiveTab] = useState("chat");
@@ -32,9 +33,7 @@ export default function Demo6Page() {
             <h1 className="text-lg font-semibold">Syzio — Canis</h1>
           </div>
           <div className="flex items-center bg-[#F9FAFB] dark:bg-[#1F2937] border border-[#E5E7EB] dark:border-[#374151] rounded-md px-2 py-1 text-sm">
-            <span>System of Truth for knowledge & AI
-
-            </span>
+            <span>System of Truth for knowledge & AI</span>
           </div>
         </div>
         <div className="flex items-center space-x-4">
@@ -95,11 +94,111 @@ function ChatView({
   showBanner: boolean;
   setShowBanner: (show: boolean) => void;
 }) {
+  const [selectedThread, setSelectedThread] = useState("t-1");
+  const [message, setMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [threadMessages, setThreadMessages] = useState<Record<string, Array<{role: 'user' | 'ai', content: string, citations?: string[]}>>>({
+    "t-1": [
+      {
+        role: "ai",
+        content: "W skrócie: 3DS wymagany dla kwot > 100 PLN, opcjonalny poniżej. Zgodnie z dokumentacją Checkout_v2.pdf i konfiguracją w payments.yaml.",
+        citations: ["Checkout_v2.pdf p. 5", "payments.yaml threeDS"]
+      }
+    ],
+    "t-2": [
+      {
+        role: "user",
+        content: "Jaki jest limit transakcji?"
+      },
+      {
+        role: "ai",
+        content: "Znalazłem rozbieżność: Checkout_v2.pdf określa limit na 1000 PLN, ale payments.yaml ma 1500 PLN. Wymaga wyjaśnienia.",
+        citations: ["Checkout_v2.pdf p.12", "payments.yaml limits"]
+      }
+    ],
+    "t-3": [
+      {
+        role: "user",
+        content: "Jak walidować numer karty kredytowej?"
+      },
+      {
+        role: "ai",
+        content: "Używamy algorytmu Luhn do walidacji PAN. Dodatkowo sprawdzamy BIN (pierwsze 6 cyfr) dla identyfikacji wydawcy karty.",
+        citations: ["payments.yaml validation"]
+      }
+    ],
+    "t-4": [
+      {
+        role: "user",
+        content: "Co się dzieje gdy płatność się nie powiedzie?"
+      },
+      {
+        role: "ai",
+        content: "System implementuje retry policy z exponential backoff (3 próby). Po wyczerpaniu prób, transakcja jest oznaczana jako 'failed' i użytkownik otrzymuje notyfikację.",
+        citations: ["ErrorHandling.md"]
+      }
+    ],
+    "t-5": [
+      {
+        role: "user",
+        content: "Jak obsługujemy webhooks od payment service provider?"
+      },
+      {
+        role: "ai",
+        content: "Webhooks są weryfikowane przez HMAC signature, następnie przetwarzane asynchronicznie przez queue worker. Status transakcji jest aktualizowany w bazie danych.",
+        citations: ["PSP_Integration.pdf p.15", "architecture.yaml webhooks"]
+      }
+    ],
+  });
+
+  const threads = [
+    { id: "t-1", title: "Wymagania 3DS", preview: "3DS obowiązkowy dla…" },
+    { id: "t-2", title: "Limit transakcji", preview: "PDF mówi 1000, API 1500…" },
+    { id: "t-3", title: "Walidacja karty", preview: "Algorytm Luhn dla PAN..." },
+    { id: "t-4", title: "Obsługa błędów płatności", preview: "Retry policy i fallback..." },
+    { id: "t-5", title: "Integracja z PSP", preview: "Webhook handling..." },
+  ];
+
+  const currentMessages = threadMessages[selectedThread] || [];
+
+  const handleSend = () => {
+    if (!message.trim()) return;
+    
+    const userMessage = message;
+    setMessage("");
+    
+    // Add user message
+    setThreadMessages(prev => ({
+      ...prev,
+      [selectedThread]: [...(prev[selectedThread] || []), { role: "user", content: userMessage }]
+    }));
+    
+    setIsLoading(true);
+    
+    // Simulate AI response
+    setTimeout(() => {
+      const responses = [
+        { content: "Dodaję AC do scenariuszy negatywnych. Chcesz wysłać do PM?", citations: ["Requirements.md"] },
+        { content: "Znalazłem odpowiedź w dokumentacji. Czy to pomaga?", citations: ["Checkout_v2.pdf p.8"] },
+        { content: "Wykryłem potencjalny konflikt z istniejącym wymaganiem. Sprawdź SZ-1234.", citations: ["PM:SZ-1234"] },
+        { content: "Zgodnie z payments.yaml, ta konfiguracja jest poprawna.", citations: ["payments.yaml"] },
+      ];
+      const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+      
+      setThreadMessages(prev => ({
+        ...prev,
+        [selectedThread]: [...(prev[selectedThread] || []), { role: "ai", ...randomResponse }]
+      }));
+      setIsLoading(false);
+    }, 800 + Math.random() * 400);
+  };
+
   return (
     <>
       {/* Tip Banner */}
       {showBanner && (
-        <div className="bg-[#F9FAFB] dark:bg-[#1F2937] border border-[#E5E7EB] dark:border-[#374151] rounded-lg p-4 flex items-center justify-between">
+        <div className="bg-[#F9FAFB] dark:bg-[#1F2937] border border-[#E5E7EB] dark:border-[#374151] rounded-lg p-4 flex items-center justify-between animate-fade-in">
           <div className="flex items-center space-x-3">
             <span className="material-icons text-[#6B7280] dark:text-[#9CA3AF]">lightbulb</span>
             <div>
@@ -110,7 +209,10 @@ function ChatView({
             </div>
           </div>
           <div className="flex items-center space-x-4">
-            <button className="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-600">
+            <button 
+              className="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-600"
+              onClick={() => alert("Upload funkcja (demo)")}
+            >
               Prześlij dokument
             </button>
             <button
@@ -128,26 +230,26 @@ function ChatView({
         {/* Threads Sidebar */}
         <div className="col-span-1 bg-[#F9FAFB] dark:bg-[#1F2937] border border-[#E5E7EB] dark:border-[#374151] rounded-lg p-4 overflow-auto">
           <h2 className="text-sm font-semibold mb-2">Wątki</h2>
-          <p className="text-sm text-[#6B7280] dark:text-[#9CA3AF] mb-4">ACME / SHOP</p>
-          <ul>
-            <li className="mb-2">
-              <a
-                href="#"
-                className="flex items-center space-x-2 p-2 rounded-md bg-[#E0E7FF] dark:bg-[#3730A3] text-[#3730A3] dark:text-white font-medium"
-              >
-                <span className="material-icons text-sm">chat_bubble_outline</span>
-                <span>Wymagania 3DS</span>
-              </a>
-            </li>
-            <li className="mb-2">
-              <a
-                href="#"
-                className="flex items-center space-x-2 p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 text-[#6B7280] dark:text-[#9CA3AF]"
-              >
-                <span className="material-icons text-sm">chat_bubble_outline</span>
-                <span>Limit transakcji</span>
-              </a>
-            </li>
+          <p className="text-sm text-[#6B7280] dark:text-[#9CA3AF] mb-4">Projekt płatności</p>
+          <ul className="space-y-2">
+            {threads.map((thread) => (
+              <li key={thread.id}>
+                <button
+                  onClick={() => setSelectedThread(thread.id)}
+                  className={`w-full text-left flex items-center space-x-2 p-2 rounded-md transition-colors ${
+                    selectedThread === thread.id
+                      ? "bg-[#E0E7FF] dark:bg-[#3730A3] text-[#3730A3] dark:text-white font-medium"
+                      : "hover:bg-gray-100 dark:hover:bg-gray-800 text-[#6B7280] dark:text-[#9CA3AF]"
+                  }`}
+                >
+                  <span className="material-icons text-sm">chat_bubble_outline</span>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-sm truncate">{thread.title}</div>
+                    <div className="text-xs opacity-75 truncate">{thread.preview}</div>
+                  </div>
+                </button>
+              </li>
+            ))}
           </ul>
         </div>
 
@@ -167,38 +269,80 @@ function ChatView({
                 <span className="bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded">PM</span>
               </div>
             </div>
-            <div className="space-y-4">
-              <div className="prose prose-sm dark:prose-invert max-w-none">
-                <p>
-                  W skrócie: 3DS wymagany dla kwot &gt; 100 PLN, opcjonalny poniżej. Zgodnie z
-                  dokumentacją Checkout_v2.pdf i konfiguracją w payments.yaml.
-                </p>
-              </div>
-              <div className="flex flex-wrap gap-2 text-sm">
-                <span className="bg-[#E0E7FF] dark:bg-[#3730A3] text-[#3730A3] dark:text-white px-2 py-1 rounded-md cursor-pointer">
-                  Checkout_v2.pdf p. 5
-                </span>
-                <span className="bg-[#E0E7FF] dark:bg-[#3730A3] text-[#3730A3] dark:text-white px-2 py-1 rounded-md cursor-pointer">
-                  payments.yaml threeDS
-                </span>
-              </div>
+            <div className="space-y-4 max-h-[400px] overflow-y-auto">
+              {currentMessages.map((msg, i) => (
+                <div key={i} className="space-y-2 animate-fade-in">
+                  {msg.role === "user" ? (
+                    <div className="flex justify-end">
+                      <div className="bg-[#4F46E5] text-white rounded-lg px-4 py-2 max-w-[80%]">
+                        <p className="text-sm">{msg.content}</p>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="flex items-start space-x-2">
+                        <span className="material-icons text-[#4F46E5] text-base mt-0.5">auto_awesome</span>
+                        <div className="prose prose-sm dark:prose-invert max-w-none flex-1">
+                          <p className="text-sm">{msg.content}</p>
+                        </div>
+                      </div>
+                      {msg.citations && msg.citations.length > 0 && (
+                        <div className="flex flex-wrap gap-2 text-sm ml-7">
+                          {msg.citations.map((cite, ci) => (
+                            <span
+                              key={ci}
+                              className="bg-[#E0E7FF] dark:bg-[#3730A3] text-[#3730A3] dark:text-white px-2 py-1 rounded-md cursor-pointer hover:opacity-80 transition-opacity"
+                            >
+                              {cite}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div>
+              ))}
+              {isLoading && (
+                <div className="flex items-center space-x-2 animate-pulse-subtle">
+                  <span className="material-icons text-[#4F46E5]">auto_awesome</span>
+                  <span className="text-sm text-[#6B7280] dark:text-[#9CA3AF]">Canis myśli...</span>
+                </div>
+              )}
             </div>
           </div>
           <div className="mt-4">
             <div className="relative">
               <textarea
-                className="w-full bg-white dark:bg-gray-800 border border-[#E5E7EB] dark:border-[#374151] rounded-lg p-3 pr-24 text-sm focus:ring-[#4F46E5] focus:border-[#4F46E5]"
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                className="w-full bg-white dark:bg-gray-800 border border-[#E5E7EB] dark:border-[#374151] rounded-lg p-3 pr-24 text-sm focus:ring-[#4F46E5] focus:border-[#4F46E5] resize-none"
                 placeholder="Zadaj pytanie lub wklej fragment dokumentu..."
                 rows={3}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSend();
+                  }
+                }}
               />
               <div className="absolute right-3 top-3 flex flex-col space-y-2">
-                <button className="text-[#6B7280] dark:text-[#9CA3AF] hover:text-[#4F46E5]">
+                <button 
+                  onClick={handleSend}
+                  disabled={isLoading || !message.trim()}
+                  className="text-[#6B7280] dark:text-[#9CA3AF] hover:text-[#4F46E5] disabled:opacity-50"
+                >
                   <span className="material-icons">send</span>
                 </button>
-                <button className="text-[#6B7280] dark:text-[#9CA3AF] hover:text-[#4F46E5]">
+                <button 
+                  onClick={() => alert("Settings (demo)")}
+                  className="text-[#6B7280] dark:text-[#9CA3AF] hover:text-[#4F46E5]"
+                >
                   <span className="material-icons">tune</span>
                 </button>
-                <button className="text-[#6B7280] dark:text-[#9CA3AF] hover:text-[#4F46E5]">
+                <button 
+                  onClick={() => alert("Upload (demo)")}
+                  className="text-[#6B7280] dark:text-[#9CA3AF] hover:text-[#4F46E5]"
+                >
                   <span className="material-icons">upload_file</span>
                 </button>
               </div>
@@ -211,17 +355,17 @@ function ChatView({
           <h2 className="text-sm font-semibold mb-2">Źródła</h2>
           <p className="text-sm text-[#6B7280] dark:text-[#9CA3AF] mb-4">Najtrafniejsze fragmenty</p>
           <div className="space-y-3">
-            <div className="border border-[#E5E7EB] dark:border-[#374151] rounded-lg p-3 text-sm">
+            <div className="border border-[#E5E7EB] dark:border-[#374151] rounded-lg p-3 text-sm hover:bg-white dark:hover:bg-gray-800 transition-colors cursor-pointer">
               <p className="font-medium">Checkout_v2.pdf</p>
-              <p className="text-[#6B7280] dark:text-[#9CA3AF]">„3DS wymagany powyżej 100 PLN..."</p>
+              <p className="text-[#6B7280] dark:text-[#9CA3AF] text-xs">„3DS wymagany powyżej 100 PLN..."</p>
             </div>
-            <div className="border border-[#E5E7EB] dark:border-[#374151] rounded-lg p-3 text-sm">
+            <div className="border border-[#E5E7EB] dark:border-[#374151] rounded-lg p-3 text-sm hover:bg-white dark:hover:bg-gray-800 transition-colors cursor-pointer">
               <p className="font-medium">payments.yaml</p>
-              <p className="text-[#6B7280] dark:text-[#9CA3AF]">threeDS: default: true</p>
+              <p className="text-[#6B7280] dark:text-[#9CA3AF] text-xs font-mono">threeDS: default: true</p>
             </div>
-            <div className="border border-[#E5E7EB] dark:border-[#374151] rounded-lg p-3 text-sm">
+            <div className="border border-[#E5E7EB] dark:border-[#374151] rounded-lg p-3 text-sm hover:bg-white dark:hover:bg-gray-800 transition-colors cursor-pointer">
               <p className="font-medium">Pricing.md</p>
-              <p className="text-[#6B7280] dark:text-[#9CA3AF]">„Limit 1500 PLN"</p>
+              <p className="text-[#6B7280] dark:text-[#9CA3AF] text-xs">„Limit 1500 PLN"</p>
             </div>
           </div>
         </div>
@@ -231,6 +375,48 @@ function ChatView({
 }
 
 function StoriesView() {
+  const [persona, setPersona] = useState("Buyer");
+  const [goal, setGoal] = useState("Chce dodać opcję płatności kartą kredytową w sklepie");
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [stories, setStories] = useState<any[]>([]);
+
+  const handleGenerate = () => {
+    setIsGenerating(true);
+    setTimeout(() => {
+      setStories([
+        {
+          id: 1,
+          title: `Jako ${persona} chcę ${goal}`,
+          estimate: "5sp",
+          hasConflict: false,
+          acceptanceCriteria: [
+            "WHEN użytkownik wprowadza dane karty THEN system SHALL walidować format PAN",
+            "IF kwota > 100 PLN THEN system SHALL wymagać 3DS",
+            "WHEN płatność jest autoryzowana THEN system SHALL zapisać transakcję",
+          ],
+        },
+        {
+          id: 2,
+          title: `Jako ${persona} chcę ${goal} z zabezpieczeniem 3DS`,
+          estimate: "8sp",
+          hasConflict: true,
+          conflictDescription: "Istniejące story SZ-1234 definiuje próg 3DS na 150 PLN, a nie 100 PLN jak w Checkout_v2.pdf",
+          acceptanceCriteria: [
+            "WHEN kwota przekracza próg THEN system SHALL przekierować do 3DS",
+            "IF autoryzacja 3DS się powiedzie THEN system SHALL sfinalizować płatność",
+            "WHEN użytkownik anuluje 3DS THEN system SHALL zwrócić błąd",
+          ],
+        },
+      ]);
+      setIsGenerating(false);
+    }, 1200);
+  };
+
+  const handleExport = (storyId: number) => {
+    const taskId = `JIRA-${Math.floor(1000 + Math.random() * 9000)}`;
+    alert(`Wyeksportowano do PM!\nUtworzono zadanie: ${taskId}`);
+  };
+
   return (
     <div className="grid grid-cols-12 gap-6 h-[calc(100vh-150px)]">
       {/* Left Panel - Form */}
@@ -240,7 +426,7 @@ function StoriesView() {
           Generowanie user stories z kryteriami akceptacji
         </p>
 
-        <form className="flex-grow flex flex-col">
+        <form className="flex-grow flex flex-col" onSubmit={(e) => { e.preventDefault(); handleGenerate(); }}>
           <div className="space-y-6 flex-grow">
             {/* Persona */}
             <div>
@@ -253,7 +439,8 @@ function StoriesView() {
                 name="persona"
                 placeholder="np. Buyer, Admin"
                 type="text"
-                defaultValue="Buyer"
+                value={persona}
+                onChange={(e) => setPersona(e.target.value)}
               />
             </div>
 
@@ -268,7 +455,8 @@ function StoriesView() {
                 name="goal"
                 placeholder="Opisz, co użytkownik chce osiągnąć"
                 rows={4}
-                defaultValue="Chce dodać opcję płatności kartą kredytową w sklepie"
+                value={goal}
+                onChange={(e) => setGoal(e.target.value)}
               />
             </div>
 
@@ -329,11 +517,12 @@ function StoriesView() {
 
           <div className="mt-8">
             <button
-              className="w-full bg-[#4F46E5] text-white rounded-md py-2.5 text-sm font-semibold hover:bg-indigo-700 flex items-center justify-center space-x-2"
+              className="w-full bg-[#4F46E5] text-white rounded-md py-2.5 text-sm font-semibold hover:bg-indigo-700 flex items-center justify-center space-x-2 disabled:opacity-50"
               type="submit"
+              disabled={isGenerating}
             >
-              <span className="material-icons">auto_awesome</span>
-              <span>Generuj Story</span>
+              <span className="material-icons">{isGenerating ? "hourglass_empty" : "auto_awesome"}</span>
+              <span>{isGenerating ? "Generowanie..." : "Generuj Story"}</span>
             </button>
           </div>
         </form>
@@ -342,125 +531,94 @@ function StoriesView() {
       {/* Right Panel - Generated Stories */}
       <div className="col-span-8 flex flex-col space-y-6">
         <div className="flex items-center space-x-4">
-          <h2 className="text-lg font-semibold">Wygenerowane Stories (2 warianty)</h2>
+          <h2 className="text-lg font-semibold">
+            {stories.length > 0 ? `Wygenerowane Stories (${stories.length} warianty)` : "Wygenerowane Stories"}
+          </h2>
         </div>
 
+        {stories.length === 0 && !isGenerating && (
+          <div className="bg-[#F9FAFB] dark:bg-[#1F2937] border border-[#E5E7EB] dark:border-[#374151] rounded-lg p-8 text-center">
+            <p className="text-[#6B7280] dark:text-[#9CA3AF]">
+              Uzupełnij formularz i kliknij <strong>Generuj Story</strong> aby rozpocząć.
+            </p>
+          </div>
+        )}
+
+        {isGenerating && (
+          <div className="bg-[#F9FAFB] dark:bg-[#1F2937] border border-[#E5E7EB] dark:border-[#374151] rounded-lg p-8 text-center animate-pulse-subtle">
+            <p className="text-[#6B7280] dark:text-[#9CA3AF]">Generowanie stories...</p>
+          </div>
+        )}
+
         <div className="grid grid-cols-2 gap-6 flex-grow">
-          {/* Variant 1 */}
-          <div className="bg-[#F9FAFB] dark:bg-[#1F2937] border border-[#E5E7EB] dark:border-[#374151] rounded-lg p-4 flex flex-col space-y-4">
-            <div className="flex justify-between items-start">
-              <div>
-                <h3 className="font-semibold">Wariant 1: Podstawowa płatność</h3>
-                <p className="text-sm text-[#6B7280] dark:text-[#9CA3AF]">INVEST: ✅</p>
+          {stories.map((story, index) => (
+            <div
+              key={story.id}
+              className={`bg-[#F9FAFB] dark:bg-[#1F2937] border ${
+                story.hasConflict ? "border-[#F59E0B] border-2" : "border-[#E5E7EB] dark:border-[#374151]"
+              } rounded-lg p-4 flex flex-col space-y-4 relative animate-fade-in`}
+            >
+              {story.hasConflict && (
+                <div className="absolute -top-3 left-4 bg-[#F59E0B] text-white px-2 py-0.5 text-xs font-semibold rounded-full flex items-center space-x-1">
+                  <span className="material-icons text-sm">warning_amber</span>
+                  <span>Konflikt</span>
+                </div>
+              )}
+
+              <div className="flex justify-between items-start">
+                <div>
+                  <h3 className="font-semibold">Wariant {index + 1}: {story.title.substring(0, 40)}...</h3>
+                  <p className="text-sm text-[#6B7280] dark:text-[#9CA3AF]">INVEST: ✅ | Estymata: {story.estimate}</p>
+                </div>
+                <div className="flex items-center space-x-1">
+                  <button 
+                    className="p-1.5 text-[#6B7280] dark:text-[#9CA3AF] hover:text-[#1F2937] dark:hover:text-[#F9FAFB] rounded-md"
+                    onClick={() => alert("Refine (demo)")}
+                  >
+                    <span className="material-icons text-base">edit</span>
+                  </button>
+                  <button 
+                    className="p-1.5 text-[#6B7280] dark:text-[#9CA3AF] hover:text-[#1F2937] dark:hover:text-[#F9FAFB] rounded-md"
+                    onClick={() => navigator.clipboard.writeText(story.title)}
+                  >
+                    <span className="material-icons text-base">content_copy</span>
+                  </button>
+                </div>
               </div>
-              <div className="flex items-center space-x-1">
-                <button className="p-1.5 text-[#6B7280] dark:text-[#9CA3AF] hover:text-[#1F2937] dark:hover:text-[#F9FAFB] rounded-md">
-                  <span className="material-icons text-base">edit</span>
-                </button>
-                <button className="p-1.5 text-[#6B7280] dark:text-[#9CA3AF] hover:text-[#1F2937] dark:hover:text-[#F9FAFB] rounded-md">
-                  <span className="material-icons text-base">content_copy</span>
+
+              <div className="prose prose-sm dark:prose-invert max-w-none flex-grow">
+                <p className="text-sm">{story.title}</p>
+                <p className="font-semibold mt-4 text-sm">Kryteria akceptacji:</p>
+                <ul className="text-xs space-y-1 mt-2">
+                  {story.acceptanceCriteria.map((ac: string, i: number) => (
+                    <li key={i}><code className="bg-gray-100 dark:bg-gray-900/50 px-1 py-0.5 rounded">{ac}</code></li>
+                  ))}
+                </ul>
+              </div>
+
+              {story.hasConflict && (
+                <div className="bg-[#F59E0B]/10 border border-[#F59E0B]/30 text-[#92400E] dark:text-[#FCD34D] p-3 rounded-md text-xs">
+                  <p className="font-semibold">Konflikt z istniejącym backlogiem</p>
+                  <p>{story.conflictDescription}</p>
+                  <button 
+                    className="mt-2 text-[#4F46E5] underline hover:no-underline"
+                    onClick={() => alert("Otwieranie SZ-1234 (demo)")}
+                  >
+                    Zobacz SZ-1234
+                  </button>
+                </div>
+              )}
+
+              <div className="flex space-x-2">
+                <button 
+                  className="flex-1 bg-[#4F46E5] text-white rounded-md py-2 text-sm font-semibold hover:bg-indigo-700"
+                  onClick={() => handleExport(story.id)}
+                >
+                  Eksportuj do Atlas
                 </button>
               </div>
             </div>
-
-            <div className="prose prose-sm dark:prose-invert max-w-none flex-grow">
-              <p>
-                <strong>Jako</strong> Kupujący,
-                <br />
-                <strong>chcę</strong> móc zapłacić kartą kredytową,
-                <br />
-                <strong>aby</strong> szybko sfinalizować zakup.
-              </p>
-              <p className="font-semibold mt-4">Kryteria akceptacji:</p>
-              <pre className="bg-gray-100 dark:bg-gray-900/50 p-3 rounded-md text-xs">
-                <code>
-                  <span className="gherkin-keyword">Given</span> jestem na stronie płatności{"\n"}
-                  <span className="gherkin-keyword">When</span> wybieram opcję "Karta kredytowa"
-                  {"\n"}
-                  <span className="gherkin-keyword">And</span> podaję poprawne dane karty{"\n"}
-                  <span className="gherkin-keyword">And</span> klikam "Zapłać"{"\n"}
-                  <span className="gherkin-keyword">Then</span> transakcja jest pomyślnie
-                  zakończona{"\n"}
-                  <span className="gherkin-keyword">And</span> widzę potwierdzenie zamówienia
-                </code>
-              </pre>
-            </div>
-
-            <div className="flex space-x-2">
-              <button className="flex-1 bg-[#4F46E5] text-white rounded-md py-2 text-sm font-semibold hover:bg-indigo-700">
-                Eksportuj do Atlas
-              </button>
-            </div>
-          </div>
-
-          {/* Variant 2 - With Conflict */}
-          <div className="bg-[#F9FAFB] dark:bg-[#1F2937] border-2 border-[#F59E0B]/50 rounded-lg p-4 flex flex-col space-y-4 relative">
-            <div className="absolute -top-3 left-4 bg-[#F59E0B] text-white px-2 py-0.5 text-xs font-semibold rounded-full flex items-center space-x-1">
-              <span className="material-icons text-sm">warning_amber</span>
-              <span>Konflikt</span>
-            </div>
-
-            <div className="flex justify-between items-start">
-              <div>
-                <h3 className="font-semibold">Wariant 2: Płatność z 3D Secure</h3>
-                <p className="text-sm text-[#6B7280] dark:text-[#9CA3AF]">INVEST: ✅</p>
-              </div>
-              <div className="flex items-center space-x-1">
-                <button className="p-1.5 text-[#6B7280] dark:text-[#9CA3AF] hover:text-[#1F2937] dark:hover:text-[#F9FAFB] rounded-md">
-                  <span className="material-icons text-base">edit</span>
-                </button>
-                <button className="p-1.5 text-[#6B7280] dark:text-[#9CA3AF] hover:text-[#1F2937] dark:hover:text-[#F9FAFB] rounded-md">
-                  <span className="material-icons text-base">content_copy</span>
-                </button>
-              </div>
-            </div>
-
-            <div className="prose prose-sm dark:prose-invert max-w-none flex-grow">
-              <p>
-                <strong>Jako</strong> Kupujący,
-                <br />
-                <strong>chcę</strong> móc zapłacić kartą z 3D Secure,
-                <br />
-                <strong>aby</strong> zapewnić bezpieczeństwo transakcji.
-              </p>
-              <p className="font-semibold mt-4">Kryteria akceptacji:</p>
-              <pre className="bg-gray-100 dark:bg-gray-900/50 p-3 rounded-md text-xs">
-                <code>
-                  <span className="gherkin-keyword">Given</span> kwota zamówienia przekracza 100
-                  PLN{"\n"}
-                  <span className="gherkin-keyword">When</span> wybieram opcję "Karta kredytowa"
-                  {"\n"}
-                  <span className="gherkin-keyword">And</span> podaję dane karty{"\n"}
-                  <span className="gherkin-keyword">And</span> jestem przekierowany na stronę 3DS
-                  {"\n"}
-                  <span className="gherkin-keyword">And</span> pomyślnie autoryzuję transakcję
-                  {"\n"}
-                  <span className="gherkin-keyword">Then</span> transakcja jest zakończona sukcesem
-                </code>
-              </pre>
-            </div>
-
-            <div className="bg-[#F59E0B]/10 border border-[#F59E0B]/30 text-[#92400E] dark:text-[#FCD34D] p-3 rounded-md text-xs">
-              <p className="font-semibold">Konflikt z istniejącym backlogiem</p>
-              <p>
-                Story{" "}
-                <a className="underline" href="#">
-                  #PM-123
-                </a>{" "}
-                definiuje próg 3DS na 150 PLN. <br />
-                Źródło:{" "}
-                <span className="font-mono bg-gray-200 dark:bg-gray-700 px-1 rounded">
-                  Checkout_v1.pdf
-                </span>
-              </p>
-            </div>
-
-            <div className="flex space-x-2">
-              <button className="flex-1 bg-[#4F46E5] text-white rounded-md py-2 text-sm font-semibold hover:bg-indigo-700">
-                Eksportuj do Atlas
-              </button>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
     </div>
@@ -468,6 +626,50 @@ function StoriesView() {
 }
 
 function TestDataView() {
+  const [schema, setSchema] = useState("payments.yaml#/Card");
+  const [recordCount, setRecordCount] = useState(500);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [data, setData] = useState<any[]>([]);
+
+  const handleGenerate = () => {
+    setIsGenerating(true);
+    setTimeout(() => {
+      const newData = Array.from({ length: Math.min(recordCount, 10) }, (_, i) => {
+        if (schema === "payments.yaml#/Card") {
+          return {
+            pan: `4539${Math.random().toString().slice(2, 14)}`,
+            expiry: `${String(Math.floor(Math.random() * 12) + 1).padStart(2, "0")}/2${7 + Math.floor(Math.random() * 3)}`,
+            holder: `CARDHOLDER ${i + 1}`,
+            brand: ["VISA", "MASTERCARD", "AMEX"][Math.floor(Math.random() * 3)],
+            cvv: String(Math.floor(Math.random() * 900) + 100),
+          };
+        } else if (schema === "payments.yaml#/ChargeRequest") {
+          return {
+            amount: (Math.random() * 2000).toFixed(2),
+            currency: ["PLN", "EUR", "USD"][Math.floor(Math.random() * 3)],
+            pan: `4539${Math.random().toString().slice(2, 14)}`,
+            threeDS: Math.random() > 0.5 ? "true" : "false",
+            merchantId: `MERCH-${String(i + 1).padStart(4, "0")}`,
+          };
+        } else {
+          return {
+            id: `user-${i + 1}`,
+            email: `user${i + 1}@example.com`,
+            name: `User ${i + 1}`,
+            role: ["admin", "user", "viewer"][Math.floor(Math.random() * 3)],
+            createdAt: new Date(Date.now() - Math.random() * 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+          };
+        }
+      });
+      setData(newData);
+      setIsGenerating(false);
+    }, 1000);
+  };
+
+  const handleExport = (format: string) => {
+    alert(`Eksportowanie ${recordCount} rekordów do ${format.toUpperCase()}...\n(demo - plik zostałby pobrany)`);
+  };
+
   return (
     <div className="flex-grow grid grid-cols-3 gap-6">
       {/* Left Column - Configuration */}
@@ -492,8 +694,14 @@ function TestDataView() {
                 <select
                   className="w-full bg-white dark:bg-[#1F2937] border border-[#E5E7EB] dark:border-[#374151] rounded-md pl-3 pr-10 py-2 text-sm focus:ring-[#4F46E5] focus:border-[#4F46E5]"
                   id="schema"
+                  value={schema}
+                  onChange={(e) => {
+                    setSchema(e.target.value);
+                    setData([]);
+                  }}
                 >
                   <option>payments.yaml#/Card</option>
+                  <option>payments.yaml#/ChargeRequest</option>
                   <option>users.yaml#/User</option>
                 </select>
               </div>
@@ -511,9 +719,21 @@ function TestDataView() {
                 className="w-full bg-white dark:bg-[#1F2937] border border-[#E5E7EB] dark:border-[#374151] rounded-md px-3 py-2 text-sm focus:ring-[#4F46E5] focus:border-[#4F46E5]"
                 id="records"
                 type="number"
-                defaultValue="10"
+                value={recordCount}
+                onChange={(e) => setRecordCount(Number(e.target.value))}
+                min={1}
+                max={10000}
               />
             </div>
+
+            <button
+              onClick={handleGenerate}
+              disabled={isGenerating}
+              className="w-full bg-[#4F46E5] hover:bg-[#3730A3] text-white rounded-md px-4 py-2 text-sm font-medium flex items-center justify-center space-x-2 disabled:opacity-50"
+            >
+              <span className="material-icons text-base">{isGenerating ? "hourglass_empty" : "refresh"}</span>
+              <span>{isGenerating ? "Generowanie..." : "Generuj"}</span>
+            </button>
           </div>
         </div>
 
@@ -572,502 +792,63 @@ function TestDataView() {
       {/* Right Column - Data Preview */}
       <div className="col-span-2 bg-[#F9FAFB] dark:bg-[#1F2937] border border-[#E5E7EB] dark:border-[#374151] rounded-lg p-6 flex flex-col">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-semibold">Podgląd danych</h2>
+          <div>
+            <h2 className="text-lg font-semibold">Podgląd danych</h2>
+            <p className="text-sm text-[#6B7280] dark:text-[#9CA3AF]">
+              {data.length > 0 ? `Pierwsze ${data.length} z ${recordCount} rekordów` : "Kliknij Generuj aby utworzyć dane"}
+            </p>
+          </div>
           <div className="flex items-center space-x-2">
-            <button className="bg-[#4F46E5] hover:bg-[#3730A3] text-white rounded-md px-4 py-2 text-sm font-medium flex items-center space-x-2">
-              <span className="material-icons text-base">refresh</span>
-              <span>Generuj</span>
-            </button>
             <div className="relative inline-block text-left">
-              <button
-                aria-expanded="true"
-                aria-haspopup="true"
-                className="inline-flex justify-center w-full rounded-md border border-[#E5E7EB] dark:border-[#374151] shadow-sm px-4 py-2 bg-white dark:bg-[#1F2937] text-sm font-medium text-[#1F2937] dark:text-[#F9FAFB] hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-[#4F46E5]"
-                id="menu-button"
-                type="button"
+              <select
+                className="inline-flex justify-center rounded-md border border-[#E5E7EB] dark:border-[#374151] shadow-sm px-4 py-2 bg-white dark:bg-[#1F2937] text-sm font-medium text-[#1F2937] dark:text-[#F9FAFB] hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-[#4F46E5]"
+                onChange={(e) => handleExport(e.target.value)}
+                defaultValue=""
               >
-                Eksportuj
-                <span className="material-icons -mr-1 ml-2 h-5 w-5">expand_more</span>
-              </button>
+                <option value="" disabled>Eksportuj</option>
+                <option value="json">JSON</option>
+                <option value="csv">CSV</option>
+                <option value="sql">SQL</option>
+              </select>
             </div>
           </div>
         </div>
 
         {/* Data Table */}
-        <div className="flex-grow overflow-x-auto border border-[#E5E7EB] dark:border-[#374151] rounded-md">
-          <table className="min-w-full divide-y divide-[#E5E7EB] dark:divide-[#374151] text-sm">
-            <thead className="bg-gray-50 dark:bg-gray-800">
-              <tr>
-                <th
-                  className="px-6 py-3 text-left font-medium text-[#6B7280] dark:text-[#9CA3AF] tracking-wider"
-                  scope="col"
-                >
-                  card_number
-                </th>
-                <th
-                  className="px-6 py-3 text-left font-medium text-[#6B7280] dark:text-[#9CA3AF] tracking-wider"
-                  scope="col"
-                >
-                  expiry_date
-                </th>
-                <th
-                  className="px-6 py-3 text-left font-medium text-[#6B7280] dark:text-[#9CA3AF] tracking-wider"
-                  scope="col"
-                >
-                  cvv
-                </th>
-                <th
-                  className="px-6 py-3 text-left font-medium text-[#6B7280] dark:text-[#9CA3AF] tracking-wider"
-                  scope="col"
-                >
-                  currency
-                </th>
-                <th
-                  className="px-6 py-3 text-left font-medium text-[#6B7280] dark:text-[#9CA3AF] tracking-wider"
-                  scope="col"
-                >
-                  amount
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white dark:bg-[#1F2937] divide-y divide-[#E5E7EB] dark:divide-[#374151]">
-              <tr>
-                <td className="px-6 py-4 whitespace-nowrap">4992...7392</td>
-                <td className="px-6 py-4 whitespace-nowrap">10/25</td>
-                <td className="px-6 py-4 whitespace-nowrap">342</td>
-                <td className="px-6 py-4 whitespace-nowrap">PLN</td>
-                <td className="px-6 py-4 whitespace-nowrap">120.50</td>
-              </tr>
-              <tr>
-                <td className="px-6 py-4 whitespace-nowrap">5102...3948</td>
-                <td className="px-6 py-4 whitespace-nowrap">03/26</td>
-                <td className="px-6 py-4 whitespace-nowrap">817</td>
-                <td className="px-6 py-4 whitespace-nowrap">EUR</td>
-                <td className="px-6 py-4 whitespace-nowrap">75.00</td>
-              </tr>
-              <tr>
-                <td className="px-6 py-4 whitespace-nowrap">4242...4242</td>
-                <td className="px-6 py-4 whitespace-nowrap">11/24</td>
-                <td className="px-6 py-4 whitespace-nowrap">123</td>
-                <td className="px-6 py-4 whitespace-nowrap">USD</td>
-                <td className="px-6 py-4 whitespace-nowrap">99.99</td>
-              </tr>
-              <tr>
-                <td className="px-6 py-4 whitespace-nowrap">3782...85007</td>
-                <td className="px-6 py-4 whitespace-nowrap">12/27</td>
-                <td className="px-6 py-4 whitespace-nowrap">1001</td>
-                <td className="px-6 py-4 whitespace-nowrap">PLN</td>
-                <td className="px-6 py-4 whitespace-nowrap">50.00</td>
-              </tr>
-              <tr>
-                <td className="px-6 py-4 whitespace-nowrap">6011...0000</td>
-                <td className="px-6 py-4 whitespace-nowrap">01/25</td>
-                <td className="px-6 py-4 whitespace-nowrap">589</td>
-                <td className="px-6 py-4 whitespace-nowrap">EUR</td>
-                <td className="px-6 py-4 whitespace-nowrap">250.00</td>
-              </tr>
-              <tr>
-                <td className="px-6 py-4 whitespace-nowrap text-[#6B7280] dark:text-[#9CA3AF]">
-                  ...
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-[#6B7280] dark:text-[#9CA3AF]">
-                  ...
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-[#6B7280] dark:text-[#9CA3AF]">
-                  ...
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-[#6B7280] dark:text-[#9CA3AF]">
-                  ...
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-[#6B7280] dark:text-[#9CA3AF]">
-                  ...
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div className="pt-4 text-right text-sm text-[#6B7280] dark:text-[#9CA3AF]">
-          Wygenerowano 10 rekordów. Pokazano 5.
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function VerifyView() {
-  return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold">Weryfikator wymagań</h2>
-          <p className="text-[#6B7280] dark:text-[#9CA3AF]">
-            Analiza kompletności, spójności i niejednoznaczności
-          </p>
-        </div>
-        <button className="bg-[#4F46E5] text-white rounded-md px-4 py-2 text-sm font-medium flex items-center space-x-2 hover:bg-opacity-90">
-          <span className="material-icons text-base">refresh</span>
-          <span>Uruchom ponownie</span>
-        </button>
-      </div>
-
-      {/* Findings Table */}
-      <div className="bg-white dark:bg-[#1F2937] border border-[#E5E7EB] dark:border-[#374151] rounded-lg">
-        <div className="p-4 border-b border-[#E5E7EB] dark:border-[#374151]">
-          <h3 className="font-semibold">Findings (3)</h3>
-        </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead className="bg-[#F9FAFB] dark:bg-[#111827]">
-              <tr>
-                <th className="px-4 py-3 text-left font-medium text-[#6B7280] dark:text-[#9CA3AF]">
-                  Typ
-                </th>
-                <th className="px-4 py-3 text-left font-medium text-[#6B7280] dark:text-[#9CA3AF]">
-                  Ważność
-                </th>
-                <th className="px-4 py-3 text-left font-medium text-[#6B7280] dark:text-[#9CA3AF]">
-                  Opis
-                </th>
-                <th className="px-4 py-3 text-left font-medium text-[#6B7280] dark:text-[#9CA3AF]">
-                  Źródło
-                </th>
-                <th className="px-4 py-3 text-left font-medium text-[#6B7280] dark:text-[#9CA3AF]"></th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr className="border-b border-[#E5E7EB] dark:border-[#374151]">
-                <td className="px-4 py-3">Niespójność</td>
-                <td className="px-4 py-3">
-                  <span className="px-2 py-1 rounded-full text-xs font-medium severity-high">
-                    High
-                  </span>
-                </td>
-                <td className="px-4 py-3">
-                  Limit płatności w dokumencie (100 PLN) vs. Story (150 PLN)
-                </td>
-                <td className="px-4 py-3 text-[#6B7280] dark:text-[#9CA3AF]">
-                  Checkout_v2.pdf, US-123
-                </td>
-                <td className="px-4 py-3">
-                  <button className="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md px-3 py-1 text-xs font-medium hover:bg-gray-50 dark:hover:bg-gray-600 flex items-center space-x-1">
-                    <span className="material-icons text-xs">add_task</span>
-                    <span>Create Task</span>
-                  </button>
-                </td>
-              </tr>
-              <tr className="border-b border-[#E5E7EB] dark:border-[#374151]">
-                <td className="px-4 py-3">Brak</td>
-                <td className="px-4 py-3">
-                  <span className="px-2 py-1 rounded-full text-xs font-medium severity-medium">
-                    Medium
-                  </span>
-                </td>
-                <td className="px-4 py-3">
-                  Brak zdefiniowanych kryteriów akceptacji dla obsługi błędu 3DS
-                </td>
-                <td className="px-4 py-3 text-[#6B7280] dark:text-[#9CA3AF]">US-124</td>
-                <td className="px-4 py-3">
-                  <button className="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md px-3 py-1 text-xs font-medium hover:bg-gray-50 dark:hover:bg-gray-600 flex items-center space-x-1">
-                    <span className="material-icons text-xs">add_task</span>
-                    <span>Create Task</span>
-                  </button>
-                </td>
-              </tr>
-              <tr>
-                <td className="px-4 py-3">Niejednoznaczność</td>
-                <td className="px-4 py-3">
-                  <span className="px-2 py-1 rounded-full text-xs font-medium severity-low">
-                    Low
-                  </span>
-                </td>
-                <td className="px-4 py-3">
-                  Termin "natychmiast" jest nieprecyzyjny. Należy zdefiniować SLA
-                </td>
-                <td className="px-4 py-3 text-[#6B7280] dark:text-[#9CA3AF]">NFRs.md</td>
-                <td className="px-4 py-3">
-                  <button className="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md px-3 py-1 text-xs font-medium hover:bg-gray-50 dark:hover:bg-gray-600 flex items-center space-x-1">
-                    <span className="material-icons text-xs">add_task</span>
-                    <span>Create Task</span>
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* Trace Matrix */}
-      <div className="bg-white dark:bg-[#1F2937] border border-[#E5E7EB] dark:border-[#374151] rounded-lg">
-        <div className="p-4 border-b border-[#E5E7EB] dark:border-[#374151]">
-          <h3 className="font-semibold">Trace Matrix</h3>
-        </div>
-        <div className="p-4 grid grid-cols-3 gap-6">
-          {/* Documents */}
-          <div>
-            <h4 className="font-medium mb-3">Dokumenty</h4>
-            <div className="space-y-2">
-              <div className="bg-[#EEF2FF] dark:bg-[#3730A3] text-[#3730A3] dark:text-white rounded-md p-3 text-sm font-medium">
-                Checkout_v2.pdf
-              </div>
-              <div className="bg-[#F9FAFB] dark:bg-[#1F2937] border border-[#E5E7EB] dark:border-[#374151] rounded-md p-3 text-sm">
-                NFRs.md
-              </div>
-              <div className="bg-[#F9FAFB] dark:bg-[#1F2937] border border-[#E5E7EB] dark:border-[#374151] rounded-md p-3 text-sm">
-                payments.yaml
-              </div>
-            </div>
+        {data.length > 0 ? (
+          <div className="flex-grow overflow-x-auto border border-[#E5E7EB] dark:border-[#374151] rounded-md">
+            <table className="min-w-full divide-y divide-[#E5E7EB] dark:divide-[#374151] text-sm">
+              <thead className="bg-gray-50 dark:bg-gray-800">
+                <tr>
+                  {Object.keys(data[0]).map((key) => (
+                    <th
+                      key={key}
+                      className="px-6 py-3 text-left font-medium text-[#6B7280] dark:text-[#9CA3AF] tracking-wider"
+                      scope="col"
+                    >
+                      {key}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="bg-white dark:bg-[#1F2937] divide-y divide-[#E5E7EB] dark:divide-[#374151]">
+                {data.map((row, i) => (
+                  <tr key={i} className="hover:bg-gray-50 dark:hover:bg-gray-800">
+                    {Object.values(row).map((val: any, j) => (
+                      <td key={j} className="px-6 py-4 whitespace-nowrap text-sm font-mono">
+                        {String(val)}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-
-          {/* Stories */}
-          <div>
-            <h4 className="font-medium mb-3">Stories</h4>
-            <div className="space-y-2">
-              <div className="bg-[#EEF2FF] dark:bg-[#3730A3] text-[#3730A3] dark:text-white rounded-md p-3 text-sm font-medium">
-                US-123: Płatność &gt; 100 PLN
-              </div>
-              <div className="bg-[#EEF2FF] dark:bg-[#3730A3] text-[#3730A3] dark:text-white rounded-md p-3 text-sm font-medium">
-                US-124: Obsługa błędów 3DS
-              </div>
-              <div className="bg-[#F9FAFB] dark:bg-[#1F2937] border border-[#E5E7EB] dark:border-[#374151] rounded-md p-3 text-sm">
-                US-125: Płatność cykliczna
-              </div>
-            </div>
+        ) : (
+          <div className="flex-grow flex items-center justify-center border border-[#E5E7EB] dark:border-[#374151] rounded-md">
+            <p className="text-[#6B7280] dark:text-[#9CA3AF]">Brak danych do wyświetlenia</p>
           </div>
-
-          {/* Releases */}
-          <div>
-            <h4 className="font-medium mb-3">Releasy</h4>
-            <div className="space-y-2">
-              <div className="bg-[#EEF2FF] dark:bg-[#3730A3] text-[#3730A3] dark:text-white rounded-md p-3 text-sm font-medium">
-                R-101
-              </div>
-              <div className="bg-[#F9FAFB] dark:bg-[#1F2937] border border-[#E5E7EB] dark:border-[#374151] rounded-md p-3 text-sm">
-                R-102
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function ReleaseQAView() {
-  return (
-    <div className="flex flex-col gap-4 max-w-4xl mx-auto">
-      {/* Header with Release Selector */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <h2 className="text-xl font-semibold">Release Q&A</h2>
-        <div className="flex items-center space-x-2">
-          <label
-            className="text-sm font-medium text-[#6B7280] dark:text-[#9CA3AF]"
-            htmlFor="release-select"
-          >
-            Wersja
-          </label>
-          <div className="relative">
-            <select
-              className="w-full sm:w-auto bg-[#F9FAFB] dark:bg-[#1F2937] border border-[#E5E7EB] dark:border-[#374151] rounded-md pl-3 pr-8 py-2 text-sm font-medium focus:ring-[#4F46E5] focus:border-[#4F46E5]"
-              id="release-select"
-            >
-              <option>R-102 (SHOP) 3DS</option>
-              <option>R-101 (SHOP) Limits</option>
-            </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-[#6B7280] dark:text-[#9CA3AF]">
-              <span className="material-icons text-sm">unfold_more</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Q&A Card */}
-      <div className="bg-[#F9FAFB] dark:bg-[#1F2937] border border-[#E5E7EB] dark:border-[#374151] rounded-lg p-6">
-        <div className="flex flex-col gap-6">
-          {/* Suggested Questions */}
-          <div className="flex flex-wrap gap-2">
-            <button className="bg-[#E0E7FF] dark:bg-[#3730A3] text-[#3730A3] dark:text-white px-3 py-1.5 rounded-md text-sm font-medium">
-              Co było w paczce?
-            </button>
-            <button className="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-[#1F2937] dark:text-[#F9FAFB] px-3 py-1.5 rounded-md text-sm font-medium">
-              Czy gate spełnione?
-            </button>
-            <button className="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-[#1F2937] dark:text-[#F9FAFB] px-3 py-1.5 rounded-md text-sm font-medium">
-              Co się zmieniło vs poprzedni?
-            </button>
-          </div>
-
-          {/* Answer */}
-          <div className="flex gap-4">
-            <span className="material-icons text-[#4F46E5] mt-1">auto_awesome</span>
-            <div className="flex-1 space-y-4">
-              <div className="prose prose-sm dark:prose-invert max-w-none">
-                <p>
-                  Wdrożenie mechanizmu 3D Secure dla transakcji kartowych powyżej 100 PLN.
-                  Obejmuje to 3 user stories (SHOP-12, SHOP-15, SHOP-16) i aktualizację schematu
-                  API. Zmiana dotyczy 5 plików konfiguracyjnych.
-                </p>
-              </div>
-
-              {/* Sources and Links */}
-              <div className="flex flex-col sm:flex-row sm:items-center gap-4 text-sm">
-                <div className="flex items-center gap-2">
-                  <span className="font-medium">Źródła:</span>
-                  <span className="bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded">Atlas</span>
-                  <span className="bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded">Helix</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <button className="flex items-center gap-1 text-[#4F46E5] hover:underline">
-                    <span className="material-icons text-sm">launch</span>
-                    <span>Otwórz w Helix</span>
-                  </button>
-                  <button className="flex items-center gap-1 text-[#4F46E5] hover:underline">
-                    <span className="material-icons text-sm">launch</span>
-                    <span>Otwórz w Atlas</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Input Area */}
-      <div className="relative">
-        <textarea
-          className="w-full bg-white dark:bg-gray-800 border border-[#E5E7EB] dark:border-[#374151] rounded-lg p-3 pr-12 text-sm focus:ring-[#4F46E5] focus:border-[#4F46E5]"
-          placeholder="Zadaj kolejne pytanie o release..."
-          rows={2}
-        />
-        <button className="absolute right-3 top-1/2 -translate-y-1/2 text-[#6B7280] dark:text-[#9CA3AF] hover:text-[#4F46E5]">
-          <span className="material-icons">send</span>
-        </button>
-      </div>
-    </div>
-  );
-}
-
-function SettingsView() {
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-      {/* Left Column - Connectors */}
-      <div className="space-y-6">
-        <div>
-          <h2 className="text-xl font-semibold mb-4">Connectors</h2>
-          <div className="space-y-4">
-            {/* PM Connector */}
-            <div className="bg-[#F9FAFB] dark:bg-[#1F2937] border border-[#E5E7EB] dark:border-[#374151] rounded-lg p-4 flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <span className="material-icons text-[#4F46E5]">work_outline</span>
-                <div>
-                  <h3 className="font-medium">Syzio Atlas</h3>
-                  <p className="text-sm text-[#6B7280] dark:text-[#9CA3AF]">
-                    Dane o backlogu i projektach, storkach
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center space-x-3">
-                <span className="text-sm inline-flex items-center bg-[#D1FAE5] text-[#10B981] dark:bg-[#064E3B] dark:text-green-300 px-2 py-1 rounded-full">
-                  <span className="material-icons text-sm mr-1">check_circle</span>
-                  Connected
-                </span>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input defaultChecked className="sr-only peer" type="checkbox" />
-                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-[#4F46E5]"></div>
-                </label>
-              </div>
-            </div>
-
-            {/* Dev Monitoring Connector */}
-            <div className="bg-[#F9FAFB] dark:bg-[#1F2937] border border-[#E5E7EB] dark:border-[#374151] rounded-lg p-4 flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <span className="material-icons text-[#4F46E5]">monitoring</span>
-                <div>
-                  <h3 className="font-medium">Syzio Helix</h3>
-                  <p className="text-sm text-[#6B7280] dark:text-[#9CA3AF]">
-                    Dane o deploymentach
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center space-x-3">
-                <span className="text-sm inline-flex items-center bg-[#D1FAE5] text-[#10B981] dark:bg-[#064E3B] dark:text-green-300 px-2 py-1 rounded-full">
-                  <span className="material-icons text-sm mr-1">check_circle</span>
-                  Connected
-                </span>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input defaultChecked className="sr-only peer" type="checkbox" />
-                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-[#4F46E5]"></div>
-                </label>
-              </div>
-            </div>
-
-            {/* Document Repo Connector */}
-            <div className="bg-[#F9FAFB] dark:bg-[#1F2937] border border-[#E5E7EB] dark:border-[#374151] rounded-lg p-4 flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <span className="material-icons text-[#4F46E5]">folder_open</span>
-                <div>
-                  <h3 className="font-medium">Repo dokumentów</h3>
-                  <p className="text-sm text-[#6B7280] dark:text-[#9CA3AF]">
-                    Analiza dokumentów PDF/MD
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center space-x-3">
-                <span className="text-sm inline-flex items-center bg-[#FEE2E2] text-[#EF4444] dark:bg-[#991B1B] dark:text-red-300 px-2 py-1 rounded-full">
-                  <span className="material-icons text-sm mr-1">cancel</span>
-                  Not Connected
-                </span>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input className="sr-only peer" type="checkbox" />
-                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-[#4F46E5]"></div>
-                </label>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Right Column - Rules and Dictionary */}
-      <div className="space-y-6">
-        <div>
-          <h2 className="text-xl font-semibold mb-4">Reguły i słownik</h2>
-
-          {/* NFR Rules */}
-          <div className="bg-[#F9FAFB] dark:bg-[#1F2937] border border-[#E5E7EB] dark:border-[#374151] rounded-lg p-4">
-            <h3 className="font-medium mb-2">NFR rules</h3>
-            <div className="bg-white dark:bg-gray-800 rounded-md">
-              <pre className="p-4 text-sm text-[#1F2937] dark:text-[#F9FAFB] font-mono rounded-md overflow-x-auto">
-                <code className="language-yaml">
-                  P95 &lt; 300ms{"\n"}
-                  WCAG AA
-                </code>
-              </pre>
-            </div>
-          </div>
-
-          {/* Domain Dictionary */}
-          <div className="bg-[#F9FAFB] dark:bg-[#1F2937] border border-[#E5E7EB] dark:border-[#374151] rounded-lg p-4 mt-4">
-            <h3 className="font-medium mb-2">Słownik domeny</h3>
-            <div className="bg-white dark:bg-gray-800 rounded-md">
-              <pre className="p-4 text-sm text-[#1F2937] dark:text-[#F9FAFB] font-mono rounded-md overflow-x-auto">
-                <code className="language-yaml">
-                  payments{"\n"}
-                  card{"\n"}
-                  charge{"\n"}
-                  3DS
-                </code>
-              </pre>
-            </div>
-          </div>
-
-          {/* Save Button */}
-          <div className="mt-6 text-right">
-            <button className="bg-[#4F46E5] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#3730A3] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#4F46E5]">
-              Zapisz zmiany
-            </button>
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );
