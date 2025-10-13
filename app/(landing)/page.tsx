@@ -78,10 +78,10 @@ export default function LandingPage() {
               Stop juggling 6 tools. Achieve syzio.
             </p>
             <div className="flex flex-col sm:flex-row justify-center md:justify-start items-center space-y-4 sm:space-y-0 sm:space-x-4 mb-10">
-              <Link href="/demo-selector" className="px-6 py-3 font-medium text-white bg-gradient-to-r from-[#667eea] to-[#764ba2] rounded-lg hover:opacity-90 transition-opacity w-full sm:w-auto text-center">
+              <Link href="/demo-selector" className="px-6 py-3 font-medium text-white bg-gradient-to-r from-[#667eea] to-[#764ba2] rounded-lg hover:opacity-90 transition-opacity text-center whitespace-nowrap">
                 Try Demo
               </Link>
-              <a href="#features" className="px-6 py-3 font-medium text-muted-foreground border border-border rounded-lg hover:bg-muted transition-colors w-full sm:w-auto text-center">
+              <a href="#features" className="px-6 py-3 font-medium text-muted-foreground border border-border rounded-lg hover:bg-muted transition-colors text-center whitespace-nowrap">
                 See How It Works ↓
               </a>
             </div>
@@ -336,6 +336,14 @@ export default function LandingPage() {
           <span className="text-muted-foreground text-lg">←→</span>
           <div className="p-3 md:p-4 border border-border rounded-lg transform -rotate-2 shadow-sm">
             Design <span className="text-[#06b6d4]">●</span>
+          </div>
+          <span className="text-muted-foreground text-lg">←→</span>
+          <div className="p-3 md:p-4 border border-border rounded-lg transform rotate-1 shadow-sm">
+            Testing <span className="text-[#f97316]">●</span>
+          </div>
+          <span className="text-muted-foreground text-lg">←→</span>
+          <div className="p-3 md:p-4 border border-border rounded-lg transform -rotate-1 shadow-sm">
+            Analysis <span className="text-[#ec4899]">●</span>
           </div>
         </div>
         <p className="text-lg text-muted-foreground max-w-3xl mx-auto relative z-10">

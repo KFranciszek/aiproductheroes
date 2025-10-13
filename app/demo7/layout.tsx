@@ -20,13 +20,12 @@ export default function Demo7RootLayout({
   children: React.ReactNode;
 }>) {
   useEffect(() => {
-    return () => {
-      // Cleanup demo7 theme classes when leaving (next-themes adds 'dark' class)
-      if (typeof document !== 'undefined') {
-        document.documentElement.classList.remove('dark', 'light');
-        document.documentElement.removeAttribute('style');
-      }
-    };
+    // Wyczyść wszystkie theme classes z innych demo przy mount
+    // Demo7 ThemeProvider w Providers ustawi swój theme
+    document.documentElement.classList.remove('dark', 'light', 'theme-dark-blue')
+    document.documentElement.removeAttribute('style')
+    
+    // NIE MA cleanup przy unmount - następna strona ustawi swój theme
   }, []);
 
   return (

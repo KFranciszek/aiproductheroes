@@ -12,12 +12,11 @@ export default function Demo6RootLayout({
   children: React.ReactNode;
 }>) {
   useEffect(() => {
-    return () => {
-      // Cleanup demo6 theme classes when leaving
-      if (typeof document !== 'undefined') {
-        document.documentElement.classList.remove('dark', 'light', 'theme-dark-blue');
-      }
-    };
+    // Wyczyść wszystkie theme classes z innych demo przy mount
+    // Demo6 ThemeProvider w Providers ustawi swój theme
+    document.documentElement.classList.remove('dark', 'light', 'theme-dark-blue')
+    
+    // NIE MA cleanup przy unmount - następna strona ustawi swój theme
   }, []);
 
   return (
