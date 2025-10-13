@@ -2,6 +2,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 
 export function VerifyView() {
   const findings = [
@@ -232,17 +233,19 @@ export function ReleaseQAView() {
               {answer}
             </div>
             <div className="flex gap-2">
-              <button 
-                onClick={() => alert("Otwieranie DevMon (demo)")}
-                className="px-4 py-2 text-sm bg-white dark:bg-gray-800 border border-[#E5E7EB] dark:border-[#374151] rounded-md hover:bg-gray-50 dark:hover:bg-gray-700"
+              <Link
+                href="/demo5"
+                className="px-4 py-2 text-sm bg-white dark:bg-gray-800 border border-[#E5E7EB] dark:border-[#374151] rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 inline-flex items-center space-x-2"
               >
-                Open in DevMon
-              </button>
-              <button 
-                onClick={() => alert("Otwieranie PM (demo)")}
-                className="px-4 py-2 text-sm bg-white dark:bg-gray-800 border border-[#E5E7EB] dark:border-[#374151] rounded-md hover:bg-gray-50 dark:hover:bg-gray-700"
+                <span className="material-icons text-base">analytics</span>
+                <span>Open in Helix</span>
+              </Link>
+              <button
+                onClick={() => alert("Otwieranie Atlas (demo)")}
+                className="px-4 py-2 text-sm bg-white dark:bg-gray-800 border border-[#E5E7EB] dark:border-[#374151] rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 inline-flex items-center space-x-2"
               >
-                Open in PM
+                <span className="material-icons text-base">hub</span>
+                <span>Open in Atlas</span>
               </button>
             </div>
           </>
@@ -312,11 +315,10 @@ export function SettingsView() {
                   setAtlasConnected(!atlasConnected);
                   alert(atlasConnected ? "Rozłączono z Syzio Atlas" : "Połączono z Syzio Atlas!");
                 }}
-                className={`px-4 py-2 text-sm font-medium rounded-md ${
-                  atlasConnected
+                className={`px-4 py-2 text-sm font-medium rounded-md ${atlasConnected
                     ? "bg-red-100 text-red-700 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400"
                     : "bg-[#4F46E5] text-white hover:bg-indigo-700"
-                }`}
+                  }`}
               >
                 {atlasConnected ? "Rozłącz" : "Połącz"}
               </button>
@@ -353,11 +355,10 @@ export function SettingsView() {
                   setHelixConnected(!helixConnected);
                   alert(helixConnected ? "Rozłączono z Syzio Helix" : "Połączono z Syzio Helix!");
                 }}
-                className={`px-4 py-2 text-sm font-medium rounded-md ${
-                  helixConnected
+                className={`px-4 py-2 text-sm font-medium rounded-md ${helixConnected
                     ? "bg-red-100 text-red-700 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400"
                     : "bg-[#4F46E5] text-white hover:bg-indigo-700"
-                }`}
+                  }`}
               >
                 {helixConnected ? "Rozłącz" : "Połącz"}
               </button>
@@ -421,11 +422,10 @@ export function SettingsView() {
               </div>
               <div className="flex items-center space-x-2">
                 <span
-                  className={`px-2 py-1 text-xs font-medium rounded ${
-                    source.status === "connected"
+                  className={`px-2 py-1 text-xs font-medium rounded ${source.status === "connected"
                       ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
                       : "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400"
-                  }`}
+                    }`}
                 >
                   {source.status === "connected" ? "Połączono" : "Rozłączono"}
                 </span>

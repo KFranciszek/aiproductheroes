@@ -294,6 +294,180 @@ const initialPackages: DeploymentPackage[] = [
     healthStatus: 'healthy',
     metrics: { buildTime: 320, deployTime: 410, errorRate: 2, successRate: 98, rollbackCount: 0 },
     createdBy: 'Diana Prince'
+  },
+  // Canis Releases
+  {
+    id: 'pkg-canis-100',
+    name: 'R-100 (Canis)',
+    version: 'R-100',
+    status: 'deployed',
+    environment: 'production',
+    linkedIssues: ['SZ-1200', 'SZ-1201'],
+    jiraIssues: [
+      {
+        id: 'canis-1',
+        key: 'SZ-1200',
+        summary: 'Initial payment gateway integration',
+        description: 'Integrate with payment service provider for card processing',
+        type: 'story',
+        status: 'done',
+        priority: 'highest',
+        assignee: 'Jan Kowalski',
+        reporter: 'Product Team',
+        storyPoints: 13,
+        labels: ['payments', 'integration', 'backend'],
+        createdAt: new Date('2025-09-20'),
+        updatedAt: new Date('2025-09-28')
+      },
+      {
+        id: 'canis-2',
+        key: 'SZ-1201',
+        summary: 'Currency conversion bug fix',
+        description: 'Fix incorrect EUR to PLN conversion rates',
+        type: 'bug',
+        status: 'done',
+        priority: 'high',
+        assignee: 'Anna Nowak',
+        reporter: 'QA Team',
+        storyPoints: 3,
+        labels: ['payments', 'bugfix', 'currency'],
+        createdAt: new Date('2025-09-25'),
+        updatedAt: new Date('2025-09-28')
+      }
+    ],
+    commits: [
+      { hash: 'xyz789', message: 'feat: initial payment gateway integration', author: 'Jan Kowalski', timestamp: new Date('2025-09-28T10:00:00Z'), linkedIssues: ['SZ-1200'] },
+      { hash: 'abc456', message: 'fix: currency conversion bug', author: 'Anna Nowak', timestamp: new Date('2025-09-28T11:30:00Z'), linkedIssues: ['SZ-1201'] }
+    ],
+    createdAt: new Date('2025-09-27'),
+    deployedAt: new Date('2025-09-28T14:00:00Z'),
+    healthStatus: 'healthy',
+    metrics: { buildTime: 180, deployTime: 240, errorRate: 0.5, successRate: 99.5, rollbackCount: 0 },
+    createdBy: 'Jan Kowalski'
+  },
+  {
+    id: 'pkg-canis-101',
+    name: 'R-101 (Canis)',
+    version: 'R-101',
+    status: 'deployed',
+    environment: 'staging',
+    linkedIssues: ['SZ-1250'],
+    jiraIssues: [
+      {
+        id: 'canis-3',
+        key: 'SZ-1250',
+        summary: 'Add 3DS validation',
+        description: 'Implement 3D Secure authentication for card payments above threshold',
+        type: 'story',
+        status: 'done',
+        priority: 'highest',
+        assignee: 'Jan Kowalski',
+        reporter: 'Security Team',
+        storyPoints: 8,
+        labels: ['payments', '3ds', 'security'],
+        createdAt: new Date('2025-10-01'),
+        updatedAt: new Date('2025-10-04')
+      }
+    ],
+    commits: [
+      { hash: 'abc123', message: 'feat: add 3DS validation', author: 'Jan Kowalski', timestamp: new Date('2025-10-04T16:00:00Z'), linkedIssues: ['SZ-1250'] },
+      { hash: 'def456', message: 'fix: handle edge cases', author: 'Anna Nowak', timestamp: new Date('2025-10-04T17:00:00Z'), linkedIssues: ['SZ-1250'] },
+      { hash: 'ghi789', message: 'test: add integration tests', author: 'Piotr Wiśniewski', timestamp: new Date('2025-10-04T18:00:00Z'), linkedIssues: ['SZ-1250'] }
+    ],
+    createdAt: new Date('2025-10-03'),
+    deployedAt: new Date('2025-10-04T18:30:00Z'),
+    healthStatus: 'healthy',
+    metrics: { buildTime: 195, deployTime: 265, errorRate: 1.2, successRate: 98.8, rollbackCount: 0 },
+    createdBy: 'Jan Kowalski'
+  },
+  {
+    id: 'pkg-canis-102',
+    name: 'R-102 (Canis)',
+    version: 'R-102',
+    status: 'ready',
+    environment: 'staging',
+    linkedIssues: ['SZ-1234', 'SZ-1235'],
+    jiraIssues: [
+      {
+        id: 'canis-4',
+        key: 'SZ-1234',
+        summary: 'Implement payment limits',
+        description: 'Add configurable payment limits per merchant and transaction type',
+        type: 'story',
+        status: 'done',
+        priority: 'high',
+        assignee: 'Jan Kowalski',
+        reporter: 'Product Team',
+        storyPoints: 5,
+        labels: ['payments', 'limits', 'configuration'],
+        createdAt: new Date('2025-10-05'),
+        updatedAt: new Date('2025-10-10')
+      },
+      {
+        id: 'canis-5',
+        key: 'SZ-1235',
+        summary: 'Add 3DS flow',
+        description: 'Complete 3DS authentication flow with redirect handling',
+        type: 'story',
+        status: 'in-review',
+        priority: 'high',
+        assignee: 'Anna Nowak',
+        reporter: 'Security Team',
+        storyPoints: 8,
+        labels: ['payments', '3ds', 'authentication'],
+        createdAt: new Date('2025-10-06'),
+        updatedAt: new Date('2025-10-10')
+      }
+    ],
+    commits: [
+      { hash: 'jkl012', message: 'feat: implement payment limits', author: 'Jan Kowalski', timestamp: new Date('2025-10-10T14:00:00Z'), linkedIssues: ['SZ-1234'] },
+      { hash: 'mno345', message: 'feat: add 3DS flow', author: 'Anna Nowak', timestamp: new Date('2025-10-10T15:00:00Z'), linkedIssues: ['SZ-1235'] },
+      { hash: 'pqr678', message: 'fix: validation errors', author: 'Piotr Wiśniewski', timestamp: new Date('2025-10-10T16:00:00Z'), linkedIssues: ['SZ-1234'] },
+      { hash: 'stu901', message: 'docs: update API documentation', author: 'Maria Kowalczyk', timestamp: new Date('2025-10-10T17:00:00Z'), linkedIssues: ['SZ-1234', 'SZ-1235'] },
+      { hash: 'vwx234', message: 'test: e2e payment tests', author: 'Tomasz Lewandowski', timestamp: new Date('2025-10-10T18:00:00Z'), linkedIssues: ['SZ-1234', 'SZ-1235'] }
+    ],
+    createdAt: new Date('2025-10-09'),
+    scheduledAt: new Date('2025-10-11T10:00:00Z'),
+    healthStatus: 'healthy',
+    createdBy: 'Jan Kowalski'
+  },
+  {
+    id: 'pkg-canis-103',
+    name: 'R-103 (Canis)',
+    version: 'R-103',
+    status: 'deployed',
+    environment: 'production',
+    linkedIssues: ['SZ-1234', 'SZ-1250', 'SZ-1260'],
+    jiraIssues: [
+      {
+        id: 'canis-6',
+        key: 'SZ-1260',
+        summary: 'Webhook retry mechanism',
+        description: 'Implement exponential backoff retry for failed webhook deliveries',
+        type: 'story',
+        status: 'done',
+        priority: 'high',
+        assignee: 'Piotr Wiśniewski',
+        reporter: 'DevOps Team',
+        storyPoints: 5,
+        labels: ['webhooks', 'reliability', 'backend'],
+        createdAt: new Date('2025-10-08'),
+        updatedAt: new Date('2025-10-12')
+      }
+    ],
+    commits: [
+      { hash: 'uvw123', message: 'feat: webhook retry mechanism', author: 'Piotr Wiśniewski', timestamp: new Date('2025-10-12T10:00:00Z'), linkedIssues: ['SZ-1260'] },
+      { hash: 'xyz456', message: 'feat: enhanced error logging', author: 'Maria Kowalczyk', timestamp: new Date('2025-10-12T11:00:00Z'), linkedIssues: ['SZ-1260'] },
+      { hash: 'rst789', message: 'fix: 3DS redirect issue', author: 'Jan Kowalski', timestamp: new Date('2025-10-12T12:00:00Z'), linkedIssues: ['SZ-1234'] },
+      { hash: 'lmn012', message: 'perf: optimize database queries', author: 'Anna Nowak', timestamp: new Date('2025-10-12T13:00:00Z'), linkedIssues: ['SZ-1250'] },
+      { hash: 'opq345', message: 'test: add performance tests', author: 'Tomasz Lewandowski', timestamp: new Date('2025-10-12T14:00:00Z'), linkedIssues: ['SZ-1260'] },
+      { hash: 'hij678', message: 'docs: update deployment guide', author: 'Maria Kowalczyk', timestamp: new Date('2025-10-12T15:00:00Z'), linkedIssues: ['SZ-1260'] }
+    ],
+    createdAt: new Date('2025-10-11'),
+    deployedAt: new Date('2025-10-12T16:00:00Z'),
+    healthStatus: 'healthy',
+    metrics: { buildTime: 205, deployTime: 280, errorRate: 0.3, successRate: 99.7, rollbackCount: 0 },
+    createdBy: 'Piotr Wiśniewski'
   }
 ];
 
@@ -337,11 +511,10 @@ function useMonitoringStore() {
 const Card = ({ children, className = '' }: { children: ReactNode; className?: string }) => {
   const { theme } = useTheme();
   return (
-    <div className={`rounded-lg border shadow-sm ${
-      theme === 'dark' 
-        ? 'border-[#3a4152] bg-[#232938]' 
+    <div className={`rounded-lg border shadow-sm ${theme === 'dark'
+        ? 'border-[#3a4152] bg-[#232938]'
         : 'border-slate-200 bg-white'
-    } ${className}`}>
+      } ${className}`}>
       {children}
     </div>
   );
@@ -356,9 +529,8 @@ const CardHeader = ({ children, className = '' }: { children: ReactNode; classNa
 const CardTitle = ({ children, className = '' }: { children: ReactNode; className?: string }) => {
   const { theme } = useTheme();
   return (
-    <h3 className={`text-lg font-semibold leading-none tracking-tight ${
-      theme === 'dark' ? 'text-slate-50' : 'text-slate-900'
-    } ${className}`}>
+    <h3 className={`text-lg font-semibold leading-none tracking-tight ${theme === 'dark' ? 'text-slate-50' : 'text-slate-900'
+      } ${className}`}>
       {children}
     </h3>
   );
@@ -367,9 +539,8 @@ const CardTitle = ({ children, className = '' }: { children: ReactNode; classNam
 const CardDescription = ({ children, className = '' }: { children: ReactNode; className?: string }) => {
   const { theme } = useTheme();
   return (
-    <p className={`text-sm ${
-      theme === 'dark' ? 'text-slate-400' : 'text-slate-500'
-    } ${className}`}>
+    <p className={`text-sm ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'
+      } ${className}`}>
       {children}
     </p>
   );
@@ -383,7 +554,7 @@ const CardContent = ({ children, className = '' }: { children: ReactNode; classN
 
 const Badge = ({ children, variant = 'default', className = '' }: { children: ReactNode; variant?: 'default' | 'success' | 'warning' | 'error' | 'secondary'; className?: string }) => {
   const { theme } = useTheme();
-  
+
   const variants = theme === 'dark' ? {
     default: 'border-slate-700 bg-slate-800 text-slate-300',
     success: 'border-green-900 bg-green-950 text-green-400',
@@ -407,10 +578,10 @@ const Badge = ({ children, variant = 'default', className = '' }: { children: Re
 
 const Button = ({ children, variant = 'default', size = 'default', className = '', onClick }: { children: ReactNode; variant?: 'default' | 'outline' | 'secondary' | 'ghost'; size?: 'default' | 'sm' | 'lg' | 'icon'; className?: string; onClick?: () => void }) => {
   const { theme } = useTheme();
-  
+
   const variants = theme === 'dark' ? {
     default: 'bg-white text-slate-900 hover:bg-white/90',
-    outline: 'border border-[#3a4152] bg-transparent hover:bg-[#2d3342] hover:text-slate-50',
+    outline: 'border border-white bg-white text-slate-900 hover:bg-white/90',
     secondary: 'bg-[#232938] text-slate-50 hover:bg-[#2d3342]',
     ghost: 'hover:bg-[#2d3342] hover:text-slate-50'
   } : {
@@ -430,9 +601,8 @@ const Button = ({ children, variant = 'default', size = 'default', className = '
   return (
     <button
       onClick={onClick}
-      className={`inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 ${
-        theme === 'dark' ? 'focus-visible:ring-slate-300' : 'focus-visible:ring-slate-700'
-      } disabled:pointer-events-none disabled:opacity-50 ${variants[variant]} ${sizes[size]} ${className}`}
+      className={`inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 ${theme === 'dark' ? 'focus-visible:ring-slate-300' : 'focus-visible:ring-slate-700'
+        } disabled:pointer-events-none disabled:opacity-50 ${variants[variant]} ${sizes[size]} ${className}`}
     >
       {children}
     </button>
@@ -465,34 +635,33 @@ const StatusBadge = ({ status }: { status: string }) => {
 const Separator = ({ className = '' }: { className?: string }) => {
   const { theme } = useTheme();
   return (
-    <div className={`h-px w-full ${
-      theme === 'dark' ? 'bg-slate-800' : 'bg-slate-200'
-    } ${className}`} />
+    <div className={`h-px w-full ${theme === 'dark' ? 'bg-slate-800' : 'bg-slate-200'
+      } ${className}`} />
   );
 };
 
 // JIRA Issue Type Badge
 const IssueTypeBadge = ({ type }: { type: 'story' | 'bug' | 'task' | 'epic' }) => {
   const { theme } = useTheme();
-  
+
   const configs = {
-    story: { 
-      icon: <Package className="w-3 h-3" />, 
+    story: {
+      icon: <Package className="w-3 h-3" />,
       label: 'Story',
       color: theme === 'dark' ? 'bg-green-950 text-green-400 border-green-900' : 'bg-green-100 text-green-700 border-green-200'
     },
-    bug: { 
-      icon: <AlertCircle className="w-3 h-3" />, 
+    bug: {
+      icon: <AlertCircle className="w-3 h-3" />,
       label: 'Bug',
       color: theme === 'dark' ? 'bg-red-950 text-red-400 border-red-900' : 'bg-red-100 text-red-700 border-red-200'
     },
-    task: { 
-      icon: <CheckCircle className="w-3 h-3" />, 
+    task: {
+      icon: <CheckCircle className="w-3 h-3" />,
       label: 'Task',
       color: theme === 'dark' ? 'bg-blue-950 text-blue-400 border-blue-900' : 'bg-blue-100 text-blue-700 border-blue-200'
     },
-    epic: { 
-      icon: <Activity className="w-3 h-3" />, 
+    epic: {
+      icon: <Activity className="w-3 h-3" />,
       label: 'Epic',
       color: theme === 'dark' ? 'bg-purple-950 text-purple-400 border-purple-900' : 'bg-purple-100 text-purple-700 border-purple-200'
     }
@@ -511,30 +680,30 @@ const IssueTypeBadge = ({ type }: { type: 'story' | 'bug' | 'task' | 'epic' }) =
 // JIRA Priority Badge
 const PriorityBadge = ({ priority }: { priority: 'highest' | 'high' | 'medium' | 'low' | 'lowest' }) => {
   const { theme } = useTheme();
-  
+
   const configs = {
-    highest: { 
-      icon: '🔴', 
+    highest: {
+      icon: '🔴',
       label: 'Highest',
       color: theme === 'dark' ? 'text-red-400' : 'text-red-600'
     },
-    high: { 
-      icon: '🟠', 
+    high: {
+      icon: '🟠',
       label: 'High',
       color: theme === 'dark' ? 'text-orange-400' : 'text-orange-600'
     },
-    medium: { 
-      icon: '🟡', 
+    medium: {
+      icon: '🟡',
       label: 'Medium',
       color: theme === 'dark' ? 'text-yellow-400' : 'text-yellow-600'
     },
-    low: { 
-      icon: '🟢', 
+    low: {
+      icon: '🟢',
       label: 'Low',
       color: theme === 'dark' ? 'text-green-400' : 'text-green-600'
     },
-    lowest: { 
-      icon: '⚪', 
+    lowest: {
+      icon: '⚪',
       label: 'Lowest',
       color: theme === 'dark' ? 'text-slate-400' : 'text-slate-500'
     }
@@ -553,21 +722,21 @@ const PriorityBadge = ({ priority }: { priority: 'highest' | 'high' | 'medium' |
 // JIRA Issue Status Badge
 const IssueStatusBadge = ({ status }: { status: 'todo' | 'in-progress' | 'in-review' | 'done' }) => {
   const { theme } = useTheme();
-  
+
   const configs = {
-    'todo': { 
+    'todo': {
       label: 'To Do',
       color: theme === 'dark' ? 'bg-slate-800 text-slate-300 border-slate-700' : 'bg-slate-100 text-slate-700 border-slate-200'
     },
-    'in-progress': { 
+    'in-progress': {
       label: 'In Progress',
       color: theme === 'dark' ? 'bg-blue-950 text-blue-400 border-blue-900' : 'bg-blue-100 text-blue-700 border-blue-200'
     },
-    'in-review': { 
+    'in-review': {
       label: 'In Review',
       color: theme === 'dark' ? 'bg-purple-950 text-purple-400 border-purple-900' : 'bg-purple-100 text-purple-700 border-purple-200'
     },
-    'done': { 
+    'done': {
       label: 'Done',
       color: theme === 'dark' ? 'bg-green-950 text-green-400 border-green-900' : 'bg-green-100 text-green-700 border-green-200'
     }
@@ -683,7 +852,7 @@ const PackageDetailView = ({ packageId, onBack }: { packageId: string; onBack: (
         <div className="md:col-span-2 space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>JIRA Issues ({pkg.jiraIssues.length})</CardTitle>
+              <CardTitle>Atlas Issues ({pkg.jiraIssues.length})</CardTitle>
               <CardDescription>Tasks and stories included in this deployment</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -754,9 +923,8 @@ const PackageDetailView = ({ packageId, onBack }: { packageId: string; onBack: (
             </CardHeader>
             <CardContent className="space-y-3">
               {pkg.commits.map((commit) => (
-                <div key={commit.hash} className={`border-l-2 ${
-                  theme === 'dark' ? 'border-blue-500' : 'border-blue-600'
-                } pl-4 py-2`}>
+                <div key={commit.hash} className={`border-l-2 ${theme === 'dark' ? 'border-blue-500' : 'border-blue-600'
+                  } pl-4 py-2`}>
                   <div className="flex items-start justify-between mb-1">
                     <p className={`font-medium ${textPrimary}`}>{commit.message}</p>
                     <span className={`text-xs font-mono ${textSecondary}`}>{commit.hash.slice(0, 7)}</span>
@@ -824,9 +992,8 @@ const PackageDetailView = ({ packageId, onBack }: { packageId: string; onBack: (
                       {Math.floor(pkg.metrics.buildTime / 60)}m {pkg.metrics.buildTime % 60}s
                     </span>
                   </div>
-                  <div className={`w-full h-2 rounded-full ${
-                    theme === 'dark' ? 'bg-slate-800' : 'bg-slate-200'
-                  }`}>
+                  <div className={`w-full h-2 rounded-full ${theme === 'dark' ? 'bg-slate-800' : 'bg-slate-200'
+                    }`}>
                     <div className="bg-blue-500 h-2 rounded-full" style={{ width: '70%' }} />
                   </div>
                 </div>
@@ -838,9 +1005,8 @@ const PackageDetailView = ({ packageId, onBack }: { packageId: string; onBack: (
                       {Math.floor(pkg.metrics.deployTime / 60)}m {pkg.metrics.deployTime % 60}s
                     </span>
                   </div>
-                  <div className={`w-full h-2 rounded-full ${
-                    theme === 'dark' ? 'bg-slate-800' : 'bg-slate-200'
-                  }`}>
+                  <div className={`w-full h-2 rounded-full ${theme === 'dark' ? 'bg-slate-800' : 'bg-slate-200'
+                    }`}>
                     <div className="bg-purple-500 h-2 rounded-full" style={{ width: '85%' }} />
                   </div>
                 </div>
@@ -872,13 +1038,12 @@ const PackageDetailView = ({ packageId, onBack }: { packageId: string; onBack: (
             </CardHeader>
             <CardContent>
               <div className="flex items-center gap-3">
-                <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
-                  pkg.healthStatus === 'healthy' 
+                <div className={`w-12 h-12 rounded-full flex items-center justify-center ${pkg.healthStatus === 'healthy'
                     ? theme === 'dark' ? 'bg-green-950' : 'bg-green-100'
                     : pkg.healthStatus === 'warning'
-                    ? theme === 'dark' ? 'bg-yellow-950' : 'bg-yellow-100'
-                    : theme === 'dark' ? 'bg-red-950' : 'bg-red-100'
-                }`}>
+                      ? theme === 'dark' ? 'bg-yellow-950' : 'bg-yellow-100'
+                      : theme === 'dark' ? 'bg-red-950' : 'bg-red-100'
+                  }`}>
                   {pkg.healthStatus === 'healthy' ? (
                     <CheckCircle className="w-6 h-6 text-green-500" />
                   ) : pkg.healthStatus === 'warning' ? (
@@ -992,9 +1157,8 @@ const MonitoringDashboard = ({ onViewDetails }: { onViewDetails: (id: string) =>
             {environments.map((env) => (
               <div key={env.name} className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${
-                    theme === 'dark' ? 'bg-slate-800' : 'bg-slate-100'
-                  }`}>
+                  <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${theme === 'dark' ? 'bg-slate-800' : 'bg-slate-100'
+                    }`}>
                     <Server className={`h-5 w-5 ${iconColor}`} />
                   </div>
                   <div>
@@ -1051,9 +1215,8 @@ const MonitoringDashboard = ({ onViewDetails }: { onViewDetails: (id: string) =>
           <div className="relative w-full overflow-auto">
             <table className="w-full caption-bottom text-sm">
               <thead className={`border-b ${theme === 'dark' ? 'border-[#3a4152]' : 'border-slate-200'}`}>
-                <tr className={`border-b transition-colors ${
-                  theme === 'dark' ? 'border-[#3a4152] hover:bg-[#2d3342]/50' : 'border-slate-200 hover:bg-slate-50'
-                }`}>
+                <tr className={`border-b transition-colors ${theme === 'dark' ? 'border-[#3a4152] hover:bg-[#2d3342]/50' : 'border-slate-200 hover:bg-slate-50'
+                  }`}>
                   <th className={`h-12 px-4 text-left align-middle font-medium ${textSecondary}`}>Package</th>
                   <th className={`h-12 px-4 text-left align-middle font-medium ${textSecondary}`}>Status</th>
                   <th className={`h-12 px-4 text-left align-middle font-medium ${textSecondary}`}>Environment</th>
@@ -1066,9 +1229,8 @@ const MonitoringDashboard = ({ onViewDetails }: { onViewDetails: (id: string) =>
               </thead>
               <tbody>
                 {recentDeployments.map((pkg) => (
-                  <tr key={pkg.id} className={`border-b transition-colors ${
-                    theme === 'dark' ? 'border-[#3a4152] hover:bg-[#2d3342]/50' : 'border-slate-200 hover:bg-slate-50'
-                  }`}>
+                  <tr key={pkg.id} className={`border-b transition-colors ${theme === 'dark' ? 'border-[#3a4152] hover:bg-[#2d3342]/50' : 'border-slate-200 hover:bg-slate-50'
+                    }`}>
                     <td className="p-4 align-middle">
                       <div>
                         <div className={`font-medium ${textPrimary}`}>{pkg.name}</div>
@@ -1157,17 +1319,15 @@ const DeploymentsView = ({ onViewDetails }: { onViewDetails: (id: string) => voi
                 placeholder="Search packages..."
                 value={filters.search}
                 onChange={(e) => setFilters({ ...filters, search: e.target.value })}
-                className={`flex h-10 w-full rounded-md border ${inputBorder} ${inputBg} px-3 py-2 pl-10 text-sm ${textPrimary} placeholder:${textSecondary} focus:outline-none focus:ring-1 ${
-                  theme === 'dark' ? 'focus:ring-slate-300' : 'focus:ring-slate-700'
-                }`}
+                className={`flex h-10 w-full rounded-md border ${inputBorder} ${inputBg} px-3 py-2 pl-10 text-sm ${textPrimary} placeholder:${textSecondary} focus:outline-none focus:ring-1 ${theme === 'dark' ? 'focus:ring-slate-300' : 'focus:ring-slate-700'
+                  }`}
               />
             </div>
             <select
               value={filters.status}
               onChange={(e) => setFilters({ ...filters, status: e.target.value })}
-              className={`flex h-10 rounded-md border ${inputBorder} ${inputBg} px-3 py-2 text-sm ${textPrimary} focus:outline-none focus:ring-1 ${
-                theme === 'dark' ? 'focus:ring-slate-300' : 'focus:ring-slate-700'
-              }`}
+              className={`flex h-10 rounded-md border ${inputBorder} ${inputBg} px-3 py-2 text-sm ${textPrimary} focus:outline-none focus:ring-1 ${theme === 'dark' ? 'focus:ring-slate-300' : 'focus:ring-slate-700'
+                }`}
             >
               <option value="all">All Status</option>
               <option value="draft">Draft</option>
@@ -1178,9 +1338,8 @@ const DeploymentsView = ({ onViewDetails }: { onViewDetails: (id: string) => voi
             <select
               value={filters.environment}
               onChange={(e) => setFilters({ ...filters, environment: e.target.value })}
-              className={`flex h-10 rounded-md border ${inputBorder} ${inputBg} px-3 py-2 text-sm ${textPrimary} focus:outline-none focus:ring-1 ${
-                theme === 'dark' ? 'focus:ring-slate-300' : 'focus:ring-slate-700'
-              }`}
+              className={`flex h-10 rounded-md border ${inputBorder} ${inputBg} px-3 py-2 text-sm ${textPrimary} focus:outline-none focus:ring-1 ${theme === 'dark' ? 'focus:ring-slate-300' : 'focus:ring-slate-700'
+                }`}
             >
               <option value="all">All Environments</option>
               <option value="dev">Development</option>
@@ -1284,9 +1443,8 @@ const EnvironmentsView = () => {
                     <span className={textSecondary}>Uptime</span>
                     <span className={`font-medium ${textPrimary}`}>{env.uptime}%</span>
                   </div>
-                  <div className={`h-2 w-full overflow-hidden rounded-full ${
-                    theme === 'dark' ? 'bg-slate-800' : 'bg-slate-200'
-                  }`}>
+                  <div className={`h-2 w-full overflow-hidden rounded-full ${theme === 'dark' ? 'bg-slate-800' : 'bg-slate-200'
+                    }`}>
                     <div className="h-full bg-green-500 transition-all" style={{ width: `${env.uptime}%` }} />
                   </div>
                 </div>
@@ -1357,9 +1515,9 @@ export function SyzioDevMonitoring() {
   );
 }
 
-function AppContent({ activeView, setActiveView }: { 
-  activeView: 'dashboard' | 'deployments' | 'environments'; 
-  setActiveView: (view: 'dashboard' | 'deployments' | 'environments') => void 
+function AppContent({ activeView, setActiveView }: {
+  activeView: 'dashboard' | 'deployments' | 'environments';
+  setActiveView: (view: 'dashboard' | 'deployments' | 'environments') => void
 }) {
   const { theme, toggleTheme } = useTheme();
   const [selectedPackageId, setSelectedPackageId] = useState<string | null>(null);
@@ -1410,8 +1568,8 @@ function AppContent({ activeView, setActiveView }: {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 size="icon"
                 onClick={toggleTheme}
                 className="transition-transform hover:scale-105"
@@ -1440,11 +1598,10 @@ function AppContent({ activeView, setActiveView }: {
                 <button
                   key={tab.id}
                   onClick={() => setActiveView(tab.id as any)}
-                  className={`flex items-center gap-2 border-b-2 px-1 py-4 text-sm font-medium transition-colors ${
-                    activeView === tab.id
+                  className={`flex items-center gap-2 border-b-2 px-1 py-4 text-sm font-medium transition-colors ${activeView === tab.id
                       ? `${theme === 'dark' ? 'border-slate-50 text-slate-50' : 'border-slate-900 text-slate-900'}`
                       : `border-transparent ${textSecondary} ${theme === 'dark' ? 'hover:border-slate-700 hover:text-slate-300' : 'hover:border-slate-300 hover:text-slate-700'}`
-                  }`}
+                    }`}
                 >
                   {tab.icon}
                   {tab.label}

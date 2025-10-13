@@ -100,14 +100,14 @@ export function ReleaseQA() {
                   size="sm"
                   onClick={() => toast.info("Otwieranie DevMon", { description: `Release ${selectedRelease}` })}
                 >
-                  Open in DevMon
+                  Open in Helix
                 </Button>
                 <Button 
                   variant="outline" 
                   size="sm"
                   onClick={() => toast.info("Otwieranie PM", { description: `Issues: ${release?.issues.join(", ")}` })}
                 >
-                  Open in PM
+                  Open in Atlas
                 </Button>
               </div>
             </>
