@@ -1,6 +1,7 @@
 ﻿"use client";
 import React, { useState, useEffect } from 'react';
-import { Star, Settings, Menu, TrendingUp, TrendingDown, AlertTriangle, CheckCircle, Target, Rocket, BarChart3, FileText, Clock, Users, Download, MoreVertical, ChevronRight, Plus, Activity, Shield, Calendar, Zap, ArrowUpRight } from 'lucide-react';
+import Link from 'next/link';
+import { Star, Settings, Menu, TrendingUp, TrendingDown, AlertTriangle, CheckCircle, Target, Rocket, BarChart3, FileText, Clock, Users, Download, MoreVertical, ChevronRight, Plus, Activity, Shield, Calendar, Zap, ArrowUpRight, ArrowLeft } from 'lucide-react';
 
 const NovaSystem = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -1231,6 +1232,13 @@ const NovaSystem = () => {
               {navigationItems.find(item => item.id === activeTab)?.name}
             </span>
           </div>
+          <Link 
+            href="/demo-selector"
+            className="flex items-center gap-2 px-3 py-1.5 text-sm text-gray-600 hover:text-indigo-600 hover:bg-gray-100 rounded-lg transition"
+          >
+            <ArrowLeft size={16} />
+            <span>Back to Demos</span>
+          </Link>
         </div>
 
         <div className="flex items-center gap-3">
