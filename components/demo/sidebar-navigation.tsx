@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 import { IssueForm } from "./issue-form"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { 
   LayoutDashboard,
   Target,
@@ -239,6 +240,76 @@ export function SidebarNavigation({
               </Button>
             }
           />
+        )}
+
+        {/* User Info */}
+        <div className={cn(
+          "flex items-center gap-3 px-2 py-2",
+          isCollapsed && "justify-center"
+        )}>
+          <Avatar className="h-8 w-8 shrink-0">
+            <AvatarImage src="/avatars/demo-user.png" />
+            <AvatarFallback className="bg-[#1173d4] text-white">JD</AvatarFallback>
+          </Avatar>
+          {!isCollapsed && (
+            <div className="flex-1 text-left">
+              <p className="text-sm font-medium">John Doe</p>
+              <p className="text-xs text-muted-foreground">Atlas Pod</p>
+            </div>
+          )}
+        </div>
+
+        {/* Integrations Section */}
+        {!isCollapsed && (
+          <div className="px-2 py-2 space-y-2">
+            <div className="flex items-center justify-between px-2">
+              <span className="text-xs font-semibold text-muted-foreground">Integracje</span>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-6 px-2 text-xs"
+                onClick={() => onViewChange("settings")}
+              >
+                Więcej
+              </Button>
+            </div>
+            
+            {/* Integration Status Indicators */}
+            <div className="space-y-1">
+              <div className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-accent/50 transition-colors">
+                <div className="h-5 w-5 rounded bg-orange-100 dark:bg-orange-900/20 flex items-center justify-center shrink-0">
+                  <span className="text-orange-600 dark:text-orange-400 text-[10px] font-semibold">H</span>
+                </div>
+                <span className="text-xs flex-1">Helix</span>
+                <div className="h-2 w-2 rounded-full bg-green-500 shrink-0" title="Connected" />
+              </div>
+              
+              <div className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-accent/50 transition-colors">
+                <div className="h-5 w-5 rounded bg-purple-100 dark:bg-purple-900/20 flex items-center justify-center shrink-0">
+                  <span className="text-purple-600 dark:text-purple-400 text-[10px] font-semibold">C</span>
+                </div>
+                <span className="text-xs flex-1">Canis</span>
+                <div className="h-2 w-2 rounded-full bg-green-500 shrink-0" title="Connected" />
+              </div>
+              
+              <div className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-accent/50 transition-colors">
+                <div className="h-5 w-5 rounded bg-pink-100 dark:bg-pink-900/20 flex items-center justify-center shrink-0">
+                  <span className="text-pink-600 dark:text-pink-400 text-[10px] font-semibold">P</span>
+                </div>
+                <span className="text-xs flex-1">Pulsar</span>
+                <div className="h-2 w-2 rounded-full bg-green-500 shrink-0" title="Connected" />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Collapsed view - just show status dots */}
+        {isCollapsed && (
+          <div className="flex justify-center gap-1 py-2">
+            <div className="h-2 w-2 rounded-full bg-orange-500" title="Helix: Connected" />
+            <div className="h-2 w-2 rounded-full bg-purple-500" title="Canis: Connected" />
+            <div className="h-2 w-2 rounded-full bg-pink-500" title="Pulsar: Connected" />
+          </div>
         )}
 
         {/* Theme Toggle */}

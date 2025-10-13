@@ -9,20 +9,22 @@ import { Button } from '@/components/ui/button'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Badge } from '@/components/ui/badge'
 import { DataManager } from './data-manager'
-import { 
-  Settings, 
+import {
+  Settings,
   Palette,
-  Bell, 
-  Database, 
-  Keyboard, 
+  Bell,
+  Database,
+  Keyboard,
   Zap,
   Moon,
-  Sun
+  Sun,
+  Plug,
+  ExternalLink
 } from 'lucide-react'
 import { useTheme } from "next-themes"
 
 interface SettingsViewProps {
-  onExport: () => void
+  onExport: () => string
   onImport: (data: any) => void
 }
 
@@ -76,10 +78,14 @@ export function SettingsView({ onExport, onImport }: SettingsViewProps) {
       </div>
 
       <Tabs defaultValue="general" className="w-full">
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="general">
             <Settings className="h-4 w-4 mr-2" />
             Ogólne
+          </TabsTrigger>
+          <TabsTrigger value="integrations">
+            <Plug className="h-4 w-4 mr-2" />
+            Integracje
           </TabsTrigger>
           <TabsTrigger value="appearance">
             <Palette className="h-4 w-4 mr-2" />
@@ -150,6 +156,109 @@ export function SettingsView({ onExport, onImport }: SettingsViewProps) {
           </Card>
         </TabsContent>
 
+        {/* Integrations Tab */}
+        <TabsContent value="integrations" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Integracje ekosystemu Syzio</CardTitle>
+              <CardDescription>
+                Zarządzaj połączeniami z innymi modułami Syzio
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between py-3 border-b">
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-lg bg-orange-100 dark:bg-orange-900/20 flex items-center justify-center">
+                    <span className="text-orange-600 dark:text-orange-400 font-semibold text-sm">H</span>
+                  </div>
+                  <div className="space-y-0.5">
+                    <Label className="text-base">Syzio Helix</Label>
+                    <p className="text-sm text-muted-foreground">
+                      Deployment tracking & monitoring
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Badge variant="secondary" className="bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400">
+                    ON
+                  </Badge>
+                  <Switch defaultChecked />
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between py-3 border-b">
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-lg bg-purple-100 dark:bg-purple-900/20 flex items-center justify-center">
+                    <span className="text-purple-600 dark:text-purple-400 font-semibold text-sm">C</span>
+                  </div>
+                  <div className="space-y-0.5">
+                    <Label className="text-base">Syzio Canis</Label>
+                    <p className="text-sm text-muted-foreground">
+                      AI Agent dla dokumentacji i backlogu
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Badge variant="secondary" className="bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400">
+                    ON
+                  </Badge>
+                  <Switch defaultChecked />
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between py-3 border-b">
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-lg bg-pink-100 dark:bg-pink-900/20 flex items-center justify-center">
+                    <span className="text-pink-600 dark:text-pink-400 font-semibold text-sm">P</span>
+                  </div>
+                  <div className="space-y-0.5">
+                    <Label className="text-base">Syzio Pulsar Nova</Label>
+                    <p className="text-sm text-muted-foreground">
+                      Prognozy i analityka DORA/Flow
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Badge variant="secondary" className="bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400">
+                    ON
+                  </Badge>
+                  <Switch defaultChecked />
+                </div>
+              </div>
+
+              <div className="pt-4">
+                <Button variant="outline" className="w-full">
+                  <ExternalLink className="h-4 w-4 mr-2" />
+                  Więcej opcji integracji
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Status synchronizacji</CardTitle>
+              <CardDescription>
+                Ostatnia synchronizacja danych między modułami
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">Helix → Atlas:</span>
+                <span className="text-sm font-medium">2 minuty temu</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">Canis → Atlas:</span>
+                <span className="text-sm font-medium">5 minut temu</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">Pulsar → Atlas:</span>
+                <span className="text-sm font-medium">1 minutę temu</span>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
         {/* Appearance Tab */}
         <TabsContent value="appearance" className="space-y-4">
           <Card>
@@ -213,7 +322,7 @@ export function SettingsView({ onExport, onImport }: SettingsViewProps) {
                     Powiadomienie gdy ktoś przypisze Ci nowe zadanie
                   </p>
                 </div>
-                <Switch 
+                <Switch
                   checked={notifications.taskAssigned}
                   onCheckedChange={(v) => handleNotificationChange('taskAssigned', v)}
                 />
@@ -226,7 +335,7 @@ export function SettingsView({ onExport, onImport }: SettingsViewProps) {
                     Powiadomienie o nowych komentarzach
                   </p>
                 </div>
-                <Switch 
+                <Switch
                   checked={notifications.commentAdded}
                   onCheckedChange={(v) => handleNotificationChange('commentAdded', v)}
                 />
@@ -239,7 +348,7 @@ export function SettingsView({ onExport, onImport }: SettingsViewProps) {
                     Powiadomienie gdy zadanie staje się pilne
                   </p>
                 </div>
-                <Switch 
+                <Switch
                   checked={notifications.priorityChanged}
                   onCheckedChange={(v) => handleNotificationChange('priorityChanged', v)}
                 />
@@ -252,7 +361,7 @@ export function SettingsView({ onExport, onImport }: SettingsViewProps) {
                     Przypomnienie o zbliżającym się końcu sprintu
                   </p>
                 </div>
-                <Switch 
+                <Switch
                   checked={notifications.sprintEnding}
                   onCheckedChange={(v) => handleNotificationChange('sprintEnding', v)}
                 />
